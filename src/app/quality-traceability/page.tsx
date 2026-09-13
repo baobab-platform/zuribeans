@@ -6,6 +6,7 @@ import { QUALITY_LAYERS } from "@/lib/content/corporate-estate"
 export const metadata: Metadata = {
   title: "Quality & traceability",
   description: "How ZuriBeans represents product evidence, verification and provenance.",
+  alternates: { canonical: "/quality-traceability" },
 }
 
 export default function QualityAndTraceabilityPage() {

@@ -8,6 +8,7 @@ import { getMarket } from "@/lib/market/markets"
 export const metadata: Metadata = {
   title: "Origins & markets",
   description: "Understand ZuriBeans operating roles in Uganda and South Africa.",
+  alternates: { canonical: "/origins-markets" },
 }
 
 export default function OriginsAndMarketsPage() {

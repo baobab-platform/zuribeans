@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 export const metadata: Metadata = {
   title: "Contact",
   description: "Discuss a sourcing, product or cross-border trade requirement with ZuriBeans.",
+  alternates: { canonical: "/contact" },
 }
 
 export default function ContactPage() {

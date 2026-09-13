@@ -6,6 +6,7 @@ import { TRADE_RESPONSIBILITIES } from "@/lib/content/corporate-estate"
 export const metadata: Metadata = {
   title: "Trade",
   description: "How ZuriBeans structures accountable cross-border B2B trade.",
+  alternates: { canonical: "/trade" },
 }
 
 export default function TradePage() {

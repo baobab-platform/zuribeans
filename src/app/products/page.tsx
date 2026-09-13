@@ -17,6 +17,7 @@ export const metadata: Metadata = {
   title: "Product catalogue",
   description:
     "Explore ZuriBeans agricultural product classes and published lots for professional buyers.",
+  alternates: { canonical: "/products" },
 }
 
 const PAGE_SIZE = 12

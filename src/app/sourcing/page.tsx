@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 export const metadata: Metadata = {
   title: "Sourcing",
   description: "How ZuriBeans engages and qualifies agricultural suppliers.",
+  alternates: { canonical: "/sourcing" },
 }
 
 export default function SourcingPage() {

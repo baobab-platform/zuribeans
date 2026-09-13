@@ -6,6 +6,7 @@ export const metadata = {
   title: "Become a supplier",
   description:
     "Apply to join the ZuriBeans sourcing network with structured business, product, origin and capacity information.",
+  alternates: { canonical: "/sourcing/become-a-supplier" },
 }
 
 export default function BecomeASupplierPage() {

@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   title: "African products, traded with rigour",
   description:
     "ZuriBeans connects professional buyers and qualified suppliers through disciplined sourcing, quality information and cross-border trade capability.",
+  alternates: { canonical: "/" },
 }
 
 const assurances = [

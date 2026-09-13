@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "ZuriBeans is building accountable sourcing and cross-border trade relationships for African agricultural products.",
+  alternates: { canonical: "/about" },
 }
 
 export default function AboutPage() {
