@@ -27,7 +27,7 @@ export function MarketSwitcher({
         <Link
           key={market.marketKey}
           href={`${pathname}?market=${market.marketKey}`}
-          className="font-semibold text-clay underline decoration-dotted underline-offset-4 hover:text-ink"
+          className="py-1 font-semibold text-clay underline decoration-dotted underline-offset-4 hover:text-ink"
         >
           {market.displayName}
           <span className="sr-only"> market</span>

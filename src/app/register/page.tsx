@@ -36,11 +36,15 @@ export default async function RegisterPage({
       description="Create a personal sign-in for buyer and supplier journeys. This does not approve an organisation for trading or sourcing."
     >
       {message ? (
-        <Alert tone="danger" title="We could not create the account.">
+        <Alert id="registration-error" tone="danger" title="We could not create the account.">
           {message}
         </Alert>
       ) : null}
-      <form action={registerAction} className="mt-2 space-y-5">
+      <form
+        action={registerAction}
+        className="mt-2 space-y-5"
+        aria-describedby={message ? "registration-error" : undefined}
+      >
         <input type="hidden" name="next" value={next} />
         <label className="block font-semibold">
           Company name
