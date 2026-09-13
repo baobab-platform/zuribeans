@@ -61,6 +61,8 @@ jobs:
         run: pnpm build
       - name: Enforce frontend performance budgets
         run: pnpm perf:budget
+      - name: Prepare Firefox home ownership
+        run: chown 0:0 /github/home
       - name: End-to-end tests
         env:
           CI: "true"
