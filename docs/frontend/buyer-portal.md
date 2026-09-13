@@ -1,6 +1,6 @@
 # Buyer portal
 
-Status: Gate 10 boundary implemented  
+Status: Gate 10 boundary implemented; Gates 11–12 contract-blocked
 Reviewed: 2026-09-13
 
 The authenticated buyer shell remains intentionally restricted. ZuriBeans can identify a Medusa
@@ -32,6 +32,11 @@ must receive normalized capabilities and must not call Baobab engines directly.
 | Documents            | Buyer-scoped Trade/ERP document projection                      |
 | Approval authorities | Trade purchasing-approval contract; no route is exposed yet     |
 | RFQs and quotations  | Trade RFQ/quotation contracts; deferred to Gate 12              |
+
+The Gate 11 and Gate 12 dependency audit is recorded in
+[`docs/frontend/purchasing.md`](./purchasing.md). It confirms that Medusa-native carts and orders
+remain the preferred commerce primitives, but they cannot be exposed to a merely authenticated
+customer before organisation approval and commercial entitlement contracts exist.
 
 ## Activation rule
 
