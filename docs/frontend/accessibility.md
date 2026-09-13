@@ -26,8 +26,8 @@ Target: WCAG 2.2 AA
   (`#172219`). Keeping the roles distinct prevents a light-surface fix from regressing dark sections.
 - Primary, footer, breadcrumb and market-switch links gained larger vertical targets without adding
   client JavaScript.
-- The supplier shell derives its exact current route, so Overview is current only on `/supplier` and
-  not while the nested application page is open.
+- A narrow supplier-navigation client boundary observes App Router pathname changes, so Overview is
+  current only on `/supplier` and never remains stale after navigating to the nested application.
 - Playwright coverage now checks bypass navigation, one main landmark, one named level-one heading on
   every public top-level route, and accessible names on authentication controls.
 
