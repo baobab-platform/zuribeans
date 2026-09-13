@@ -1,9 +1,9 @@
 import type { Metadata } from "next"
-import Link from "next/link"
 import { requireCustomer } from "@/lib/auth/require-customer"
 import { logoutAction } from "@/app/account/actions"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { Button } from "@/components/ui/button"
+import { SupplierNavigation } from "@/components/supplier/supplier-navigation"
 
 export const metadata: Metadata = {
   title: "Supplier account",
@@ -28,14 +28,7 @@ export default async function SupplierLayout({ children }: { children: React.Rea
           </Button>
         </form>
       </div>
-      <nav className="mt-6 flex gap-2 border-b border-line" aria-label="Supplier navigation">
-        <Link
-          href="/supplier"
-          className="border-b-2 border-transparent px-3 py-3 text-sm font-semibold hover:border-line-strong"
-        >
-          Overview
-        </Link>
-      </nav>
+      <SupplierNavigation />
       <div className="mt-10">{children}</div>
     </section>
   )

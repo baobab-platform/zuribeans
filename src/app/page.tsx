@@ -143,7 +143,7 @@ export default async function HomePage() {
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-sm font-semibold text-clay">{summary.role}</p>
+                      <p className="text-sm font-semibold text-clay-inverse">{summary.role}</p>
                       <h3 className="mt-2 font-display text-4xl">{item.displayName}</h3>
                     </div>
                     <p className="text-sm font-semibold text-white/60">{item.currency}</p>

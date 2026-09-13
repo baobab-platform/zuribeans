@@ -11,6 +11,7 @@ export default {
         leaf: "var(--color-leaf)",
         "leaf-dark": "var(--color-leaf-dark)",
         clay: "var(--color-clay)",
+        "clay-inverse": "var(--color-clay-inverse)",
         sand: "var(--color-sand)",
         surface: "var(--color-surface)",
         "surface-raised": "var(--color-surface-raised)",
