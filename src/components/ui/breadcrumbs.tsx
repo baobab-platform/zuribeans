@@ -12,7 +12,7 @@ export function Breadcrumbs({ items }: { items: readonly BreadcrumbItem[] }) {
             <li key={`${item.label}-${index}`} className="flex items-center gap-2">
               {index > 0 ? <span aria-hidden="true">/</span> : null}
               {item.href && !isCurrent ? (
-                <Link href={item.href} className="hover:text-ink hover:underline">
+                <Link href={item.href} className="inline-block py-1 hover:text-ink hover:underline">
                   {item.label}
                 </Link>
               ) : (

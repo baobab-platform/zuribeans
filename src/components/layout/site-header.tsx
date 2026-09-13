@@ -42,7 +42,7 @@ export function SiteHeader({
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap text-muted-strong hover:text-clay"
+              className="whitespace-nowrap py-2 text-muted-strong hover:text-clay"
             >
               {item.label}
             </Link>
@@ -52,7 +52,7 @@ export function SiteHeader({
           <MarketSwitcher marketContext={marketContext} className="max-w-64 justify-end" />
           <Link
             href={hasSession ? "/account" : "/login"}
-            className="whitespace-nowrap text-sm font-semibold hover:text-clay"
+            className="whitespace-nowrap py-2 text-sm font-semibold hover:text-clay"
           >
             {hasSession ? "Account" : "Portal sign in"}
           </Link>

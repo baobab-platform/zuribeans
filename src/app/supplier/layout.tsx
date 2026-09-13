@@ -31,8 +31,7 @@ export default async function SupplierLayout({ children }: { children: React.Rea
       <nav className="mt-6 flex gap-2 border-b border-line" aria-label="Supplier navigation">
         <Link
           href="/supplier"
-          aria-current="page"
-          className="border-b-2 border-ink px-3 py-3 text-sm font-semibold"
+          className="border-b-2 border-transparent px-3 py-3 text-sm font-semibold hover:border-line-strong"
         >
           Overview
         </Link>

@@ -53,7 +53,7 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
             <ul className="mt-4 space-y-3 text-sm text-white/65">
               {group.links.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="hover:text-white">
+                  <Link href={item.href} className="inline-block py-1 hover:text-white">
                     {item.label}
                   </Link>
                 </li>

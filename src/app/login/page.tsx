@@ -36,11 +36,15 @@ export default async function LoginPage({
       description="Sign in to the existing Medusa customer identity. Authentication establishes who you are; approved trading access remains a separate commercial decision."
     >
       {message ? (
-        <Alert tone="danger" title="We could not sign you in.">
+        <Alert id="login-error" tone="danger" title="We could not sign you in.">
           {message}
         </Alert>
       ) : null}
-      <form action={loginAction} className="mt-2 space-y-5">
+      <form
+        action={loginAction}
+        className="mt-2 space-y-5"
+        aria-describedby={message ? "login-error" : undefined}
+      >
         <input type="hidden" name="next" value={next} />
         <label className="block font-semibold">
           Business email
