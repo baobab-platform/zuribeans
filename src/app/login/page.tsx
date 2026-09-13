@@ -1,7 +1,17 @@
+import type { Metadata } from "next"
 import Link from "next/link"
-import { loginSchema } from "@/lib/validation/login"
+import { AuthShell } from "@/components/auth/auth-shell"
+import { Alert } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/form-controls"
 import { toSafeRelativePath } from "@/lib/auth/safe-redirect"
+import { loginSchema } from "@/lib/validation/login"
 import { loginAction, type LoginErrorCode } from "./actions"
+
+export const metadata: Metadata = {
+  title: "Buyer login",
+  robots: { index: false, follow: false },
+}
 
 const errorMessages: Record<LoginErrorCode, string> = {
   invalid_input: "Enter a valid business email and password.",
@@ -20,57 +30,45 @@ export default async function LoginPage({
   const next = toSafeRelativePath(rawNext) ?? "/account"
 
   return (
-    <section className="mx-auto max-w-lg px-5 py-20">
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-clay">Trade account</p>
-      <h1 className="mt-4 font-display text-5xl">Buyer login</h1>
-      <p className="mt-4 text-ink/60">
-        Authentication uses Medusa customer identity. No separate Zuribeans identity store is
-        created.
-      </p>
+    <AuthShell
+      eyebrow="Trade account"
+      title="Buyer login"
+      description="Sign in to the existing Medusa customer identity. Authentication establishes who you are; approved trading access remains a separate commercial decision."
+    >
       {message ? (
-        <p
-          role="alert"
-          className="mt-6 rounded-xl bg-clay/10 px-4 py-3 text-sm font-semibold text-clay"
-        >
+        <Alert tone="danger" title="We could not sign you in.">
           {message}
-        </p>
+        </Alert>
       ) : null}
-      <form action={loginAction} className="mt-10 space-y-5">
+      <form action={loginAction} className="mt-2 space-y-5">
         <input type="hidden" name="next" value={next} />
-        <label className="block font-bold">
+        <label className="block font-semibold">
           Business email
-          <input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            className="mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3"
-          />
+          <Input name="email" type="email" required autoComplete="email" />
         </label>
-        <label className="block font-bold">
+        <label className="block font-semibold">
           Password
-          <input
+          <Input
             name="password"
             type="password"
             required
             autoComplete="current-password"
             minLength={loginSchema.shape.password.minLength ?? 8}
-            className="mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3"
           />
         </label>
-        <button type="submit" className="w-full rounded-full bg-ink px-6 py-4 font-bold text-white">
+        <Button type="submit" size="lg" className="w-full">
           Sign in
-        </button>
+        </Button>
       </form>
-      <p className="mt-6 text-sm text-ink/60">
+      <p className="mt-6 text-sm text-muted">
         New buyer or supplier?{" "}
         <Link
           href={`/register?next=${encodeURIComponent(next)}`}
-          className="font-bold text-ink underline"
+          className="font-semibold text-ink underline underline-offset-4"
         >
-          Create a Zuribeans login
+          Create a ZuriBeans login
         </Link>
       </p>
-    </section>
+    </AuthShell>
   )
 }
