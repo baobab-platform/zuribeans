@@ -8,8 +8,9 @@ supplier-application surfaces are not acquisition pages and must not be indexed.
 
 ## Implemented controls
 
-- Every stable public route declares a canonical path. Catalogue searches, filters, market query
-  parameters and pagination consolidate on `/products` rather than creating duplicate indexable URLs.
+- Every stable public route receives matching canonical and Open Graph URLs from one metadata
+  builder. Catalogue searches, filters, market query parameters and pagination consolidate on
+  `/products` rather than creating duplicate indexable URLs.
 - The root metadata supplies organization-wide Open Graph and Twitter cards using the optimized,
   versioned origin image. Product detail metadata overrides these values with authoritative product
   content and media when available.

@@ -23,6 +23,12 @@ test("public estate publishes canonical and social metadata", async ({ page }) =
       expect.objectContaining({ "@type": "Organization", name: "ZuriBeans" }),
     ]),
   )
+
+  await page.goto("/trade")
+  const tradeCanonical = await page.locator('link[rel="canonical"]').getAttribute("href")
+  const tradeOpenGraphUrl = await page.locator('meta[property="og:url"]').getAttribute("content")
+  expect(new URL(tradeCanonical!).pathname).toBe("/trade")
+  expect(new URL(tradeOpenGraphUrl!).pathname).toBe("/trade")
 })
 
 test("crawler policy excludes private application and API surfaces", async ({ request }) => {

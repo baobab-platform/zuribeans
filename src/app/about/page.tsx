@@ -1,13 +1,13 @@
-import type { Metadata } from "next"
 import { CorporateHero } from "@/components/marketing/corporate-hero"
 import { Card } from "@/components/ui/card"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
-export const metadata: Metadata = {
+export const metadata = getPublicPageMetadata({
   title: "About",
   description:
     "ZuriBeans is building accountable sourcing and cross-border trade relationships for African agricultural products.",
-  alternates: { canonical: "/about" },
-}
+  path: "/about",
+})
 
 export default function AboutPage() {
   return (

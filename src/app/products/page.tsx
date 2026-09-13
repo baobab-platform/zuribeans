@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { ProductCard } from "@/components/commerce/product-card"
@@ -10,15 +9,16 @@ import { catalogueHref, parseCatalogueQuery } from "@/lib/catalogue/query"
 import { getMarketContext } from "@/lib/market/request"
 import { listProductCategories, listProducts } from "@/lib/medusa/products"
 import type { ProductCategoryModel, ProductListModel } from "@/lib/medusa/types"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
 export const dynamic = "force-dynamic"
 
-export const metadata: Metadata = {
+export const metadata = getPublicPageMetadata({
   title: "Product catalogue",
   description:
     "Explore ZuriBeans agricultural product classes and published lots for professional buyers.",
-  alternates: { canonical: "/products" },
-}
+  path: "/products",
+})
 
 const PAGE_SIZE = 12
 

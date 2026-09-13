@@ -4,41 +4,26 @@ import { SiteHeader } from "@/components/layout/site-header"
 import { getMarketContext } from "@/lib/market/request"
 import { hasCustomerSession } from "@/lib/auth/session-storage"
 import { StructuredData } from "@/components/seo/structured-data"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
 import { getOrganizationStructuredData } from "@/lib/seo/structured-data"
 import "./globals.css"
 
 const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000")
 const siteDescription =
   "B2B sourcing and cross-border trade for quality African coffee, vanilla and future product classes."
+const homeMetadata = getPublicPageMetadata({
+  title: "ZuriBeans — African products, traded with rigour",
+  description: siteDescription,
+  path: "/",
+})
 
 export const metadata: Metadata = {
+  ...homeMetadata,
   title: {
     default: "ZuriBeans — African products, traded with rigour",
     template: "%s | ZuriBeans",
   },
-  description: siteDescription,
   metadataBase: siteUrl,
-  openGraph: {
-    type: "website",
-    siteName: "ZuriBeans",
-    title: "ZuriBeans — African products, traded with rigour",
-    description: siteDescription,
-    url: "/",
-    images: [
-      {
-        url: "/images/zuribeans-origin-trade-hero-v1.webp",
-        width: 1536,
-        height: 1024,
-        alt: "African agricultural products prepared for accountable cross-border trade",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ZuriBeans — African products, traded with rigour",
-    description: siteDescription,
-    images: ["/images/zuribeans-origin-trade-hero-v1.webp"],
-  },
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

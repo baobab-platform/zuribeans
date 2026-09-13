@@ -1,15 +1,15 @@
-import type { Metadata } from "next"
 import { CorporateHero } from "@/components/marketing/corporate-hero"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { MARKET_CAPABILITY } from "@/lib/content/corporate-estate"
 import { getMarket } from "@/lib/market/markets"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
-export const metadata: Metadata = {
+export const metadata = getPublicPageMetadata({
   title: "Origins & markets",
   description: "Understand ZuriBeans operating roles in Uganda and South Africa.",
-  alternates: { canonical: "/origins-markets" },
-}
+  path: "/origins-markets",
+})
 
 export default function OriginsAndMarketsPage() {
   return (
