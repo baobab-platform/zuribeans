@@ -1,6 +1,16 @@
+import type { Metadata } from "next"
 import Link from "next/link"
+import { AuthShell } from "@/components/auth/auth-shell"
+import { Alert } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { FieldDescription, Input } from "@/components/ui/form-controls"
 import { toSafeRelativePath } from "@/lib/auth/safe-redirect"
 import { registerAction, type RegisterErrorCode } from "./actions"
+
+export const metadata: Metadata = {
+  title: "Create a trade login",
+  robots: { index: false, follow: false },
+}
 
 const errorMessages: Record<RegisterErrorCode, string> = {
   invalid_input: "Check the form for missing or invalid fields.",
@@ -20,101 +30,73 @@ export default async function RegisterPage({
   const next = toSafeRelativePath(rawNext) ?? "/account"
 
   return (
-    <section className="mx-auto max-w-lg px-5 py-20">
-      <p className="text-xs font-bold uppercase tracking-[0.25em] text-clay">Trade account</p>
-      <h1 className="mt-4 font-display text-5xl">Create a Zuribeans login</h1>
-      <p className="mt-4 text-ink/60">
-        This creates your personal sign-in, used for both buyer and supplier applications. It does
-        not yet approve any organisation for trading or sourcing — our team reviews and activates
-        that separately, and we will notify you by email once that review is complete.
-      </p>
+    <AuthShell
+      eyebrow="Trade account"
+      title="Create a ZuriBeans login"
+      description="Create a personal sign-in for buyer and supplier journeys. This does not approve an organisation for trading or sourcing."
+    >
       {message ? (
-        <p
-          role="alert"
-          className="mt-6 rounded-xl bg-clay/10 px-4 py-3 text-sm font-semibold text-clay"
-        >
+        <Alert tone="danger" title="We could not create the account.">
           {message}
-        </p>
+        </Alert>
       ) : null}
-      <form action={registerAction} className="mt-10 space-y-5">
+      <form action={registerAction} className="mt-2 space-y-5">
         <input type="hidden" name="next" value={next} />
-        <label className="block font-bold">
+        <label className="block font-semibold">
           Company name
-          <input
-            name="companyName"
-            type="text"
-            required
-            autoComplete="organization"
-            className="mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3"
-          />
+          <Input name="companyName" type="text" required autoComplete="organization" />
         </label>
-        <div className="grid grid-cols-2 gap-4">
-          <label className="block font-bold">
+        <div className="grid gap-5 sm:grid-cols-2">
+          <label className="block font-semibold">
             First name
-            <input
-              name="firstName"
-              type="text"
-              required
-              autoComplete="given-name"
-              className="mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3"
-            />
+            <Input name="firstName" type="text" required autoComplete="given-name" />
           </label>
-          <label className="block font-bold">
+          <label className="block font-semibold">
             Last name
-            <input
-              name="lastName"
-              type="text"
-              required
-              autoComplete="family-name"
-              className="mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3"
-            />
+            <Input name="lastName" type="text" required autoComplete="family-name" />
           </label>
         </div>
-        <label className="block font-bold">
+        <label className="block font-semibold">
           Business email
-          <input
-            name="email"
-            type="email"
-            required
-            autoComplete="email"
-            className="mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3"
-          />
+          <Input name="email" type="email" required autoComplete="email" />
         </label>
-        <label className="block font-bold">
+        <label className="block font-semibold">
           Password
-          <input
+          <Input
             name="password"
             type="password"
             required
             minLength={8}
             autoComplete="new-password"
-            className="mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3"
+            aria-describedby="password-requirements"
           />
+          <FieldDescription id="password-requirements">
+            Use at least eight characters.
+          </FieldDescription>
         </label>
-        <label className="block font-bold">
+        <label className="block font-semibold">
           Confirm password
-          <input
+          <Input
             name="confirmPassword"
             type="password"
             required
             minLength={8}
             autoComplete="new-password"
-            className="mt-2 w-full rounded-xl border border-ink/20 bg-white px-4 py-3"
           />
         </label>
-        <button type="submit" className="w-full rounded-full bg-ink px-6 py-4 font-bold text-white">
+        <Button type="submit" size="lg" className="w-full">
           Create account
-        </button>
+        </Button>
       </form>
-      <p className="mt-6 text-sm text-ink/60">
+      <p className="mt-6 text-sm text-muted">
         Already have a login?{" "}
         <Link
           href={`/login?next=${encodeURIComponent(next)}`}
-          className="font-bold text-ink underline"
+          className="font-semibold text-ink underline underline-offset-4"
         >
           Sign in
         </Link>
       </p>
-    </section>
+    </AuthShell>
   )
 }
