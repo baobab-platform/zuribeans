@@ -1,12 +1,14 @@
 import Image from "next/image"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
-export const metadata = {
+export const metadata = getPublicPageMetadata({
   title: "Become a supplier",
   description:
     "Apply to join the ZuriBeans sourcing network with structured business, product, origin and capacity information.",
-}
+  path: "/sourcing/become-a-supplier",
+})
 
 export default function BecomeASupplierPage() {
   return (

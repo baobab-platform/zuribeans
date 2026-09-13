@@ -1,12 +1,13 @@
-import type { Metadata } from "next"
 import { CorporateHero } from "@/components/marketing/corporate-hero"
 import { Card } from "@/components/ui/card"
 import { TRADE_RESPONSIBILITIES } from "@/lib/content/corporate-estate"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
-export const metadata: Metadata = {
+export const metadata = getPublicPageMetadata({
   title: "Trade",
   description: "How ZuriBeans structures accountable cross-border B2B trade.",
-}
+  path: "/trade",
+})
 
 export default function TradePage() {
   return (

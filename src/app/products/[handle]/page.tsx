@@ -7,6 +7,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ErrorState } from "@/components/ui/state-panel"
+import { StructuredData } from "@/components/seo/structured-data"
 import { getMarketContext } from "@/lib/market/request"
 import { retrieveProduct } from "@/lib/medusa/products"
 
@@ -26,17 +27,37 @@ const getProductForRequest = cache(async (handle: string) => {
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { handle } = await params
+  const canonical = `/products/${encodeURIComponent(handle)}`
   const result = await getProductForRequest(handle)
   if (result.status === "failure") {
-    return { title: "Product unavailable", robots: { index: false, follow: false } }
+    return {
+      title: "Product unavailable",
+      alternates: { canonical },
+      robots: { index: false, follow: false },
+    }
   }
-  if (!result.product) return { title: "Product not found" }
+  if (!result.product) return { title: "Product not found", alternates: { canonical } }
+  const description =
+    result.product.description ||
+    result.product.subtitle ||
+    `Review ${result.product.title} specifications and sourcing context from ZuriBeans.`
   return {
     title: result.product.title,
-    description:
-      result.product.description ||
-      result.product.subtitle ||
-      `Review ${result.product.title} specifications and sourcing context from ZuriBeans.`,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      title: result.product.title,
+      description,
+      url: canonical,
+      ...(result.product.thumbnail ? { images: [{ url: result.product.thumbnail }] } : {}),
+    },
+    twitter: {
+      card: result.product.thumbnail ? "summary_large_image" : "summary",
+      title: result.product.title,
+      description,
+      ...(result.product.thumbnail ? { images: [result.product.thumbnail] } : {}),
+    },
   }
 }
 
@@ -56,9 +77,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
   }
   const { product, market } = result
   if (!product) notFound()
+  const structuredProperties = [
+    ...(product.origin
+      ? [{ "@type": "PropertyValue", name: "Origin", value: product.origin }]
+      : []),
+    ...product.specifications.map((item) => ({
+      "@type": "PropertyValue",
+      name: item.label,
+      value: item.value,
+    })),
+  ]
 
   return (
     <article className="page-container py-12 lg:py-16">
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.title,
+          description:
+            product.description ||
+            product.subtitle ||
+            `Published sourcing information for ${product.title}.`,
+          ...(product.thumbnail ? { image: product.thumbnail } : {}),
+          ...(product.categories.length ? { category: product.categories.join(", ") } : {}),
+          ...(structuredProperties.length ? { additionalProperty: structuredProperties } : {}),
+        }}
+      />
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },

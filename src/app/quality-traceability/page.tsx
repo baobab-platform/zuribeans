@@ -1,12 +1,13 @@
-import type { Metadata } from "next"
 import { CorporateHero } from "@/components/marketing/corporate-hero"
 import { Card } from "@/components/ui/card"
 import { QUALITY_LAYERS } from "@/lib/content/corporate-estate"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
-export const metadata: Metadata = {
+export const metadata = getPublicPageMetadata({
   title: "Quality & traceability",
   description: "How ZuriBeans represents product evidence, verification and provenance.",
-}
+  path: "/quality-traceability",
+})
 
 export default function QualityAndTraceabilityPage() {
   return (

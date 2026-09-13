@@ -1,4 +1,3 @@
-import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { ButtonLink } from "@/components/ui/button"
@@ -6,17 +5,19 @@ import { Card } from "@/components/ui/card"
 import { SectionHeading } from "@/components/marketing/section-heading"
 import { getMarketContext } from "@/lib/market/request"
 import { getMarket } from "@/lib/market/markets"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
 import {
   PUBLIC_MARKET_SUMMARIES,
   PUBLIC_PRODUCT_CLASSES,
   TRADE_STEPS,
 } from "@/lib/content/public-estate"
 
-export const metadata: Metadata = {
+export const metadata = getPublicPageMetadata({
   title: "African products, traded with rigour",
   description:
     "ZuriBeans connects professional buyers and qualified suppliers through disciplined sourcing, quality information and cross-border trade capability.",
-}
+  path: "/",
+})
 
 const assurances = [
   ["Origin", "Product information connected to where and how supply begins."],
