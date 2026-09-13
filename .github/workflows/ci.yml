@@ -59,6 +59,8 @@ jobs:
           NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm build
+      - name: Enforce frontend performance budgets
+        run: pnpm perf:budget
       - name: End-to-end tests
         env:
           CI: "true"

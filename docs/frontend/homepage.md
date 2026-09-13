@@ -15,7 +15,7 @@ Baobab CMS contracts without restructuring the page.
 
 ## Original hero asset
 
-`public/images/zuribeans-origin-trade-hero.webp` is an original project asset showing green coffee,
+`public/images/zuribeans-origin-trade-hero-v1.webp` is an original project asset showing green coffee,
 vanilla and export preparation in an East African setting. The optimized WebP is 1536×1024 at about
 184 KiB. The page declares responsive sizes, stable fill geometry, priority only for this LCP image,
 and descriptive alternative text.
