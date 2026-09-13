@@ -3,7 +3,10 @@ import { expect, test } from "@playwright/test"
 test("public estate publishes canonical and social metadata", async ({ page }) => {
   await page.goto("/")
 
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/$/)
+  const canonical = await page.locator('link[rel="canonical"]').getAttribute("href")
+  expect(canonical).not.toBeNull()
+  expect(new URL(canonical!).origin).toBe(new URL(page.url()).origin)
+  expect(new URL(canonical!).pathname).toBe("/")
   await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
     "content",
     "ZuriBeans",
