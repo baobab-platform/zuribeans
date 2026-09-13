@@ -1,6 +1,12 @@
 import "server-only"
 import { createMedusaClient } from "./client"
-import type { ProductCardModel, ProductDetailModel } from "./types"
+import { normalizeProductMediaUrl } from "@/lib/configuration/product-media"
+import type {
+  ProductCardModel,
+  ProductCategoryModel,
+  ProductDetailModel,
+  ProductListModel,
+} from "./types"
 
 type MedusaProduct = {
   id: string
@@ -18,7 +24,7 @@ const toCard = (product: MedusaProduct): ProductCardModel => ({
   handle: product.handle || product.id,
   title: product.title,
   subtitle: product.subtitle || null,
-  thumbnail: product.thumbnail || null,
+  thumbnail: normalizeProductMediaUrl(product.thumbnail),
   origin: typeof product.metadata?.origin === "string" ? product.metadata.origin : null,
 })
 
@@ -27,13 +33,34 @@ export type MarketPricingContext = {
   countryCode: string
 }
 
-export const listProducts = async (context?: MarketPricingContext): Promise<ProductCardModel[]> => {
+export type ProductListOptions = MarketPricingContext & {
+  query?: string
+  categoryId?: string
+  limit?: number
+  offset?: number
+}
+
+export const listProductCategories = async (): Promise<ProductCategoryModel[]> => {
   const sdk = createMedusaClient()
-  const { products } = await sdk.store.product.list({
-    limit: 24,
-    ...(context ? { country_code: context.countryCode.toLowerCase() } : {}),
+  const { product_categories: categories } = await sdk.store.category.list({ limit: 100 })
+  return categories.map(({ id, handle, name }) => ({ id, handle, name }))
+}
+
+export const listProducts = async (options: ProductListOptions): Promise<ProductListModel> => {
+  const sdk = createMedusaClient()
+  const { products, count, limit, offset } = await sdk.store.product.list({
+    limit: options.limit ?? 12,
+    offset: options.offset ?? 0,
+    country_code: options.countryCode.toLowerCase(),
+    ...(options.query ? { q: options.query } : {}),
+    ...(options.categoryId ? { category_id: options.categoryId } : {}),
   })
-  return (products as MedusaProduct[]).map(toCard)
+  return {
+    items: (products as MedusaProduct[]).map(toCard),
+    count,
+    limit,
+    offset,
+  }
 }
 
 export const retrieveProduct = async (
