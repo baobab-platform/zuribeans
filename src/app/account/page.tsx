@@ -1,3 +1,4 @@
+import { BuyerCapabilityBoundary } from "@/components/buyer/capability-boundary"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
@@ -35,6 +36,7 @@ export default function AccountDashboardPage() {
           Browse products
         </ButtonLink>
       </Card>
+      <BuyerCapabilityBoundary capabilities={null} />
     </div>
   )
 }
