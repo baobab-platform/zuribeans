@@ -1,6 +1,7 @@
 import "server-only"
 import { createMedusaClient } from "./client"
 import { normalizeProductMediaUrl } from "@/lib/configuration/product-media"
+import { normalizeProductMetadata } from "./product-presentation"
 import type {
   ProductCardModel,
   ProductCategoryModel,
@@ -16,7 +17,8 @@ type MedusaProduct = {
   description?: string | null
   thumbnail?: string | null
   metadata?: Record<string, unknown> | null
-  variants?: Array<{ id: string; title: string }> | null
+  categories?: Array<{ name: string }> | null
+  variants?: Array<{ id: string; title?: string | null; sku?: string | null }> | null
 }
 
 const toCard = (product: MedusaProduct): ProductCardModel => ({
@@ -75,9 +77,17 @@ export const retrieveProduct = async (
   })
   const product = (products as MedusaProduct[])[0]
   if (!product) return null
+  const presentation = normalizeProductMetadata(product.metadata)
   return {
     ...toCard(product),
     description: product.description || null,
-    variants: product.variants?.map(({ id, title }) => ({ id, title })) || [],
+    categories: product.categories?.map(({ name }) => name) || [],
+    ...presentation,
+    variants:
+      product.variants?.map(({ id, title, sku }) => ({
+        id,
+        title: title || "Standard",
+        sku: sku || null,
+      })) || [],
   }
 }
