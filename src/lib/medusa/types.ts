@@ -22,5 +22,9 @@ export type ProductListModel = {
 
 export type ProductDetailModel = ProductCardModel & {
   description: string | null
-  variants: Array<{ id: string; title: string }>
+  categories: string[]
+  certifications: string[]
+  qualityInformation: string | null
+  specifications: Array<{ label: string; value: string }>
+  variants: Array<{ id: string; title: string; sku: string | null }>
 }
