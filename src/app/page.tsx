@@ -55,7 +55,7 @@ export default async function HomePage() {
         </div>
         <div className="relative min-h-[30rem] overflow-hidden rounded-[2rem] bg-ink shadow-panel sm:min-h-[36rem]">
           <Image
-            src="/images/zuribeans-origin-trade-hero.webp"
+            src="/images/zuribeans-origin-trade-hero-v1.webp"
             alt="Green coffee beans, vanilla pods and export-ready sacks at an East African processing facility"
             fill
             priority

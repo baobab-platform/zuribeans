@@ -17,7 +17,7 @@ export default function AboutPage() {
         title="A trading company built around useful evidence."
         description="ZuriBeans connects professional buyers and qualified suppliers through disciplined product representation, market context and accountable commercial execution."
         image={{
-          src: "/images/zuribeans-origin-trade-hero.webp",
+          src: "/images/zuribeans-origin-trade-hero-v1.webp",
           alt: "Coffee, vanilla and export preparation representing the ZuriBeans trading estate",
           position: "center 55%",
         }}

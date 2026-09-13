@@ -17,7 +17,7 @@ export default function SourcingPage() {
         title="Qualification starts with a clear supply picture."
         description="Growers, cooperatives, exporters and other eligible suppliers can present business, product, origin, capacity and certification information for structured review."
         image={{
-          src: "/images/zuribeans-origin-trade-hero.webp",
+          src: "/images/zuribeans-origin-trade-hero-v1.webp",
           alt: "Agricultural products and export preparation at origin",
           position: "left center",
         }}

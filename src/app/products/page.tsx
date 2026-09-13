@@ -33,20 +33,36 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   let failed = false
 
   try {
-    categories = await listProductCategories()
+    const categoriesPromise = listProductCategories()
+    if (!query.category) {
+      const [resolvedCategories, resolvedCatalogue] = await Promise.all([
+        categoriesPromise,
+        listProducts({
+          countryCode: market.countryCode,
+          query: query.query,
+          limit: PAGE_SIZE,
+          offset: (query.page - 1) * PAGE_SIZE,
+        }),
+      ])
+      categories = resolvedCategories
+      catalogue = resolvedCatalogue
+    } else {
+      categories = await categoriesPromise
+    }
     const category = query.category
       ? categories.find((candidate) => candidate.handle === query.category)
       : undefined
-    catalogue =
-      query.category && !category
-        ? { items: [], count: 0, limit: PAGE_SIZE, offset: 0 }
-        : await listProducts({
+    if (query.category) {
+      catalogue = category
+        ? await listProducts({
             countryCode: market.countryCode,
             query: query.query,
-            categoryId: category?.id,
+            categoryId: category.id,
             limit: PAGE_SIZE,
             offset: (query.page - 1) * PAGE_SIZE,
           })
+        : { items: [], count: 0, limit: PAGE_SIZE, offset: 0 }
+    }
   } catch {
     failed = true
   }

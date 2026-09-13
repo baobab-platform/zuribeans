@@ -27,7 +27,7 @@ export default function BecomeASupplierPage() {
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-panel bg-surface-muted">
           <Image
-            src="/images/zuribeans-origin-trade-hero.webp"
+            src="/images/zuribeans-origin-trade-hero-v1.webp"
             alt="Coffee cherries, green coffee and prepared export sacks representing origin-to-market supply"
             fill
             sizes="(min-width: 1024px) 42vw, 100vw"
