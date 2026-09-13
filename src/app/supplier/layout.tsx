@@ -1,9 +1,12 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { headers } from "next/headers"
 import { requireCustomer } from "@/lib/auth/require-customer"
 import { logoutAction } from "@/app/account/actions"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { Button } from "@/components/ui/button"
+import { PATHNAME_HEADER_NAME } from "@/lib/http/constants"
+import { classNames } from "@/lib/ui/classnames"
 
 export const metadata: Metadata = {
   title: "Supplier account",
@@ -12,6 +15,8 @@ export const metadata: Metadata = {
 
 export default async function SupplierLayout({ children }: { children: React.ReactNode }) {
   const customer = await requireCustomer("/supplier")
+  const pathname = (await headers()).get(PATHNAME_HEADER_NAME)
+  const isOverview = pathname === "/supplier"
 
   return (
     <section className="page-container py-12 lg:py-16">
@@ -31,7 +36,13 @@ export default async function SupplierLayout({ children }: { children: React.Rea
       <nav className="mt-6 flex gap-2 border-b border-line" aria-label="Supplier navigation">
         <Link
           href="/supplier"
-          className="border-b-2 border-transparent px-3 py-3 text-sm font-semibold hover:border-line-strong"
+          aria-current={isOverview ? "page" : undefined}
+          className={classNames(
+            "border-b-2 px-3 py-3 text-sm font-semibold",
+            isOverview
+              ? "border-ink text-ink"
+              : "border-transparent text-muted-strong hover:border-line-strong hover:text-ink",
+          )}
         >
           Overview
         </Link>

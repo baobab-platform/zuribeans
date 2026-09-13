@@ -28,7 +28,9 @@ export default function OriginsAndMarketsPage() {
                 key={capability.marketKey}
                 className="rounded-panel border border-white/15 bg-white/5 p-8"
               >
-                <p className="text-sm font-semibold text-clay">{capability.operatingRole}</p>
+                <p className="text-sm font-semibold text-clay-inverse">
+                  {capability.operatingRole}
+                </p>
                 <div className="mt-3 flex items-baseline justify-between gap-4">
                   <h2 className="font-display text-4xl">{market.displayName}</h2>
                   <span className="text-sm text-white/60">{market.currency}</span>

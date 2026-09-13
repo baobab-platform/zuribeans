@@ -19,13 +19,15 @@ Target: WCAG 2.2 AA
 
 ## Gate 14 changes
 
-- The clay text token was darkened from `#bb5b35` to `#9f4829`. Its contrast is 5.72:1 on the canvas,
-  6.12:1 on white and 4.55:1 on the solid sand token, meeting normal-text contrast requirements for
-  the surfaces where it is used.
+- The light-surface clay text token was darkened from `#bb5b35` to `#9f4829`. Its contrast is 5.72:1
+  on the canvas, 6.12:1 on white and 4.55:1 on the solid sand token, meeting normal-text contrast
+  requirements for each light surface.
+- Dark surfaces use the separate `#d37a57` clay-inverse token, which measures 5.23:1 on ink
+  (`#172219`). Keeping the roles distinct prevents a light-surface fix from regressing dark sections.
 - Primary, footer, breadcrumb and market-switch links gained larger vertical targets without adding
   client JavaScript.
-- The supplier shell no longer marks Overview as the current page while the nested application page
-  is open.
+- The supplier shell derives its exact current route, so Overview is current only on `/supplier` and
+  not while the nested application page is open.
 - Playwright coverage now checks bypass navigation, one main landmark, one named level-one heading on
   every public top-level route, and accessible names on authentication controls.
 

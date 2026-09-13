@@ -35,7 +35,7 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
         <div className="lg:pr-10">
           <Link href="/" className="font-display text-3xl" aria-label="ZuriBeans home">
             ZuriBeans
-            <span className="text-clay" aria-hidden="true">
+            <span className="text-clay-inverse" aria-hidden="true">
               .
             </span>
           </Link>

@@ -22,7 +22,7 @@ export default function TradePage() {
           <ol className="grid gap-px overflow-hidden rounded-panel border border-white/15 bg-white/15 md:grid-cols-2 lg:grid-cols-4">
             {TRADE_RESPONSIBILITIES.map((item, index) => (
               <li key={item.title} className="bg-ink p-7">
-                <p className="font-display text-3xl text-clay">0{index + 1}</p>
+                <p className="font-display text-3xl text-clay-inverse">0{index + 1}</p>
                 <h2 className="mt-8 text-lg font-semibold">{item.title}</h2>
                 <p className="mt-3 text-sm leading-6 text-white/65">{item.detail}</p>
               </li>
