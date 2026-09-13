@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { Button } from "@/components/ui/button"
 import { requireCustomer } from "@/lib/auth/require-customer"
+import { getBuyerNavigation } from "@/lib/buyer/capabilities"
 import { logoutAction } from "./actions"
 
 export const metadata: Metadata = {
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const customer = await requireCustomer("/account")
+  const navigation = getBuyerNavigation(null)
   return (
     <section className="page-container py-12 lg:py-16">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Buyer account" }]} />
@@ -31,13 +33,16 @@ export default async function AccountLayout({ children }: { children: React.Reac
         </form>
       </div>
       <nav className="mt-6 flex gap-2 border-b border-line" aria-label="Buyer account navigation">
-        <Link
-          href="/account"
-          aria-current="page"
-          className="border-b-2 border-ink px-3 py-3 text-sm font-semibold"
-        >
-          Overview
-        </Link>
+        {navigation.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={item.href === "/account" ? "page" : undefined}
+            className="border-b-2 border-ink px-3 py-3 text-sm font-semibold"
+          >
+            {item.label}
+          </Link>
+        ))}
       </nav>
       <div className="mt-10">{children}</div>
     </section>
