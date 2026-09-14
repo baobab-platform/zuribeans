@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted
+Superseded by ADR-0007. This record is retained as the decision made for the original Next.js 15
+baseline.
 
 ## Decision
 
