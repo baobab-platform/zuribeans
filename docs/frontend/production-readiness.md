@@ -64,10 +64,7 @@ Before even the narrower public/supplier release, the release owner must record:
    those journeys.
 3. Approve the observability provider, ingestion endpoint, data handling/redaction policy and
    operational ownership described in `docs/frontend/observability.md`.
-4. Align the Next.js ESLint configuration in a dedicated dependency PR with the full verification
-   matrix; Gate 18 aligns the React runtimes only because a render-level test demonstrated that the
-   mixed installed versions fail immediately.
-5. Complete and retain the deployment prerequisites above in the infrastructure/release system of
+4. Complete and retain the deployment prerequisites above in the infrastructure/release system of
    record.
 
 ## Rollback and incident posture
