@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test"
 
 test.describe("responsive shell", () => {
-  test.skip(({ browserName }) => browserName !== "chromium", "Width matrix runs once in Chromium")
+  test.beforeEach(({}, testInfo) => {
+    test.skip(testInfo.project.name !== "chromium-desktop", "Width matrix runs once in Chromium")
+  })
 
   test("mobile navigation exposes all essential journeys without horizontal overflow", async ({
     page,

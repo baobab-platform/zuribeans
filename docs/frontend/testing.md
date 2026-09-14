@@ -19,9 +19,9 @@ The core Playwright journeys run against the current engines represented by:
 | `chromium-mobile`  | Pixel 7           | Touch/mobile Chromium behavior                      |
 | `webkit-mobile`    | iPhone 15         | Touch/mobile WebKit behavior                        |
 
-Responsive-specific assertions run in Chromium at 390 × 844, 820 × 1180 and 1920 × 1080. The general
-public, supplier, accessibility and SEO journeys still run across every project, so the mobile device
-profiles exercise more than the dedicated width checks.
+Responsive-specific assertions run once in Chromium desktop at 390 × 844, 820 × 1180 and 1920 × 1080.
+The general public, supplier, accessibility and SEO journeys still run across every project, so the
+mobile device profiles exercise more than the dedicated width checks.
 
 ## Current coverage
 
