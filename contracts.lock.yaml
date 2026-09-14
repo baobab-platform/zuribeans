@@ -16,8 +16,10 @@ sources:
     api: "Medusa v2 Store API"
 gaps:
   - "Shared has not published a canonical commerce Store API package."
-  - "Trade has not published company accounts, quotations, saved lists or approval-flow contracts (ADR-0017 describes the intended model; no API/schema is published yet)."
-  - "Control Plane (`nabhold/baobab-cp`) has only a stub `estate.digital_estate` table (tenant_id, name, domain, status); it does not yet model business_model, markets or capability bindings for a Digital Estate (see docs/reconciliation/canonical-contract-matrix.md, row DigitalEstate, action P3: confirm scope with an ADR first)."
-  - "Control Plane's `market.market` table exists but is unimplemented (no Go type, no API); Zuribeans' zuribeans_ug/zuribeans_za market keys (src/lib/market/markets.ts) are candidates mirroring Trade's own bootstrap config, not yet registered, canonical Market records."
+  - "Trade now persists B2B organisations, memberships, roles, approvals, commercial terms, contract prices and purchase constraints, but no buyer-context, cart-eligibility, checkout, order-history, RFQ or quotation HTTP contract is published. Its custom HTTP surface still contains only health and readiness routes."
+  - "Shared has not published buyer-organisation, purchasing, RFQ or quotation schemas."
+  - "Control Plane now implements Market and capability-resolution domains, but ZuriBeans has not locked a canonical UG/ZA Market and buyer-capability resolution contract that Trade exposes to this frontend."
+  - "IAM ADR-0010 defines the intended ZuriBeans B2B identity and organisation-access model but remains Proposed; the approved end-to-end identity-to-Trade buyer-context contract is not published."
 notes:
   - "Resolved: shared's ADR-0001 now classifies Zuribeans as B2B/Next.js (contracts/legal-entity/registry.yaml `ZURIBEANS.business_model: B2B`, `digital_estate.status: active`); the organisational mismatch this repo previously recorded no longer exists upstream."
+  - "Contract audit repeated 2026-09-14 at Shared 798a16822f5ea46c826fafc689a64303d32ba3e4, Trade 44b8da95e5800b1ef904fa4b6883d984d602cf04, Control Plane 597cac261d47a4de8d49efd5cf2a52f2f74456c2 and IAM 38f8d27f831ee50959db05a60430d9e5983079cb. These audit revisions are evidence only; they do not replace the consumed source pins above."

@@ -1,14 +1,15 @@
 # Frontend production readiness
 
-Status: Gate 18 assessed — **not approved for full B2B trading launch**
+Status: Gate 18 **outstanding** — readiness assessment is No-Go
 
 Reviewed: 2026-09-14
 
-Baseline: `main` after Gate 17 (`5ba2a302c0b93d0d19cfeb670ed2100316261a0f`)
+Baseline: `main` after the Next.js 16 lint alignment (`82e447f2d7acee66f4fb9dae4dcae8a50f1f4dfb`)
 
 ## Release decision
 
-The public estate, market-aware product discovery, customer identity boundary and supplier
+This assessment is evidence for Gate 18; it is not completion of Gate 18. The public estate,
+market-aware product discovery, customer identity boundary and supplier
 application slice are production-shaped and protected by automated quality, security, performance,
 accessibility and cross-browser gates. The complete B2B trading estate is not production-ready.
 Authoritative buyer approval, purchasing, RFQ/quotation and operational telemetry contracts are not
@@ -27,8 +28,8 @@ deployment prerequisite below is evidenced. This document does not authorize dep
 | Uganda and South Africa context                  | Pass with constraint             | Resolver/unit coverage; candidate keys remain non-canonical until Control Plane publishes Market records                             |
 | Catalogue and product detail                     | Pass with environment dependency | Server-only Medusa adapter, intentional service states, normalized presentation; controlled deployed Trade smoke test still required |
 | Buyer authentication and protected route         | Pass with environment dependency | HttpOnly session adapter and protected layout; deployed identity smoke test still required                                           |
-| Trading approval and B2B purchasing              | Blocked                          | No authoritative organisation/capability, cart eligibility, checkout, order or private-pricing contract                              |
-| RFQ and quotations                               | Blocked                          | No published Trade command/query or status contract                                                                                  |
+| Gate 11: trading approval and B2B purchasing     | Outstanding / blocked            | Trade has internal B2B models but no authoritative buyer-context, cart-eligibility, checkout, order or private-pricing HTTP contract |
+| Gate 12: RFQ and quotations                      | Outstanding / blocked            | No published Trade command/query or canonical status contract                                                                        |
 | Supplier application                             | Pass with constraints            | Postgres-backed tests and state machine; documents, resume/edit, staff review and notifications remain deferred                      |
 | Private cache isolation                          | Pass by architecture/review      | Account and supplier paths are dynamic; no shared cache for identity or supplier state                                               |
 | Intentional loading/empty/error/not-found states | Pass for implemented slice       | Route loading, domain states and root Next.js failure boundaries are present                                                         |
@@ -66,6 +67,10 @@ Before even the narrower public/supplier release, the release owner must record:
    operational ownership described in `docs/frontend/observability.md`.
 4. Complete and retain the deployment prerequisites above in the infrastructure/release system of
    record.
+
+Gate 18 remains outstanding until every blocker is closed and the release evidence is rerun against
+one immutable candidate SHA. A No-Go decision is the correct result of the current assessment, not a
+completed production-readiness gate.
 
 ## Rollback and incident posture
 
