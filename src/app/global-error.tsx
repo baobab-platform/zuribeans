@@ -5,10 +5,14 @@ import "./globals.css"
 
 export default function GlobalError({
   retry,
+  reset,
 }: {
   error: Error & { digest?: string }
-  retry: () => void
+  retry?: () => void
+  reset: () => void
 }) {
+  const recover = retry ?? reset
+
   return (
     <html lang="en">
       <body className="font-sans antialiased">
@@ -26,7 +30,7 @@ export default function GlobalError({
               Retry the request. No order, quotation or supplier status should be assumed to have
               changed until the relevant journey confirms it.
             </p>
-            <Button className="mt-6" onClick={retry}>
+            <Button className="mt-6" onClick={recover}>
               Try again
             </Button>
           </section>

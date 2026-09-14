@@ -4,10 +4,14 @@ import { Button, ButtonLink } from "@/components/ui/button"
 
 export default function ErrorPage({
   retry,
+  reset,
 }: {
   error: Error & { digest?: string }
-  retry: () => void
+  retry?: () => void
+  reset: () => void
 }) {
+  const recover = retry ?? reset
+
   return (
     <section className="page-container py-16" role="alert">
       <div className="rounded-panel border border-line bg-surface-raised p-8 md:p-10">
@@ -20,7 +24,7 @@ export default function ErrorPage({
           contact ZuriBeans with the time it occurred.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button onClick={retry}>Try again</Button>
+          <Button onClick={recover}>Try again</Button>
           <ButtonLink href="/contact" variant="outline">
             Contact ZuriBeans
           </ButtonLink>
