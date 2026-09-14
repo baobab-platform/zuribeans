@@ -21,11 +21,12 @@ native install), then run `pnpm db:migrate` to apply `drizzle/`. After changing
 `src/lib/db/schema.ts`, run `pnpm db:generate` to create a new migration file and commit it
 alongside the schema change — never hand-edit a file under `drizzle/`.
 
-The repository consumes `ghcr.io/nabhold/baobab-dev:1.2.6-frontend` for GitHub
+The repository consumes `ghcr.io/nabhold/baobab-dev:1.3.0-frontend` for GitHub
 Codespaces and compatible local Dev Containers. Browser-dependent CI uses the
 separately published `1.2.6-frontend-e2e` profile.
 
-Run `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build`
-before submitting a change. The current home-page Playwright journey is intentionally
-independent of Trade and runs in CI; Trade-backed browser journeys remain deferred until
-a controlled Trade test service is available.
+Run `pnpm format:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`,
+`pnpm perf:budget` and `pnpm test:e2e` before submitting a change. CI runs the public, supplier,
+accessibility, SEO, responsive and failure-state journeys across Chromium, Firefox and WebKit
+projects; Trade-backed buyer purchasing journeys remain deferred until a controlled Trade test
+service and authoritative capability contracts are available.

@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted
+Superseded by ADR-0008. This record is retained as the decision made for the 1.2.6 environment
+baseline.
 
 ## Decision
 

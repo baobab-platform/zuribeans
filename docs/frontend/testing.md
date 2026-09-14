@@ -31,6 +31,7 @@ mobile device profiles exercise more than the dedicated width checks.
 - authentication fields expose accessible names;
 - supplier visitor understands qualification and reaches the application entry point;
 - canonical/social metadata, structured data, crawler policy and sitemap fundamentals;
+- unmatched routes return an intentional, non-indexable 404 experience;
 - mobile menu destinations, tablet supplier CTA, desktop navigation and horizontal-overflow guards.
 
 Supplier persistence tests use PostgreSQL when `SUPPLIER_DB_URL` is available. Buyer checkout,

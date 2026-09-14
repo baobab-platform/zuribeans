@@ -34,6 +34,7 @@ Target: WCAG 2.2 AA
 ## Verification approach
 
 `pnpm lint`, component semantics and Playwright keyboard assertions provide automated regression
-coverage. CI executes the Playwright suite in Chromium. Manual release review must still include a
-complete keyboard walkthrough, zoom/reflow at 200% and 400%, and a screen-reader-oriented pass across
-public, buyer and supplier journeys. Automated checks do not replace those release checks.
+coverage. CI executes the core journeys in Chromium, Firefox and WebKit desktop plus Chromium and
+WebKit mobile projects. Manual release review must still include a complete keyboard walkthrough,
+zoom/reflow at 200% and 400%, and a screen-reader-oriented pass across public, buyer and supplier
+journeys. Automated checks do not replace those release checks.

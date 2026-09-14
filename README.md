@@ -15,9 +15,11 @@ company. It owns the customer experience and consumes commerce from
 ## First vertical slice
 
 The initial application provides a branded home page, live server-rendered catalogue,
-product detail, buyer-login boundary, health endpoint, SEO metadata, sitemap, robots policy
-and accessible responsive components. Login remains visibly unavailable until the Trade
-customer-auth contract and market configuration are verified.
+product detail, server-only customer identity, protected buyer/supplier boundaries, a
+Postgres-backed supplier application, health endpoint, SEO metadata, sitemap, robots policy,
+intentional failure states and accessible responsive components. Authentication does not grant
+trading approval; buyer purchasing remains unavailable until the authoritative Trade capability
+contracts are published.
 
 ## Start locally
 
@@ -28,11 +30,11 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-See `docs/architecture.md`, `docs/development.md` and
-`docs/medusa-integration.md`.
+See `docs/architecture.md`, `docs/development.md`, `docs/medusa-integration.md` and the explicit
+release decision in `docs/frontend/production-readiness.md`.
 
 ## Foundation 4
 
-Codespaces uses `ghcr.io/nabhold/baobab-dev:1.2.6-frontend`. The SHA-pinned
+Codespaces uses `ghcr.io/nabhold/baobab-dev:1.3.0-frontend`. The SHA-pinned
 Foundation gate validates contract compatibility and reproducibility and scans
 source, dependencies, secrets, configuration, and the deployable image.
