@@ -1,4 +1,4 @@
-FROM node:24.20.0-alpine3.24 AS dependencies
+FROM node:26.8-alpine3.24 AS dependencies
 WORKDIR /app
 # Next.js documents libc6-compat as needed on Alpine for some native dependencies.
 RUN apk add --no-cache libc6-compat
@@ -20,7 +20,7 @@ ENV NEXT_PUBLIC_ENABLED_MARKETS=$NEXT_PUBLIC_ENABLED_MARKETS
 ENV NEXT_PUBLIC_DEFAULT_MARKET=$NEXT_PUBLIC_DEFAULT_MARKET
 RUN pnpm build
 
-FROM node:24.20.0-alpine3.24 AS runtime
+FROM node:26.8-alpine3.24 AS runtime
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
