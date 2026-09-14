@@ -20,9 +20,9 @@ to Baobab services; this version reconciliation does not alter domain authority,
 market resolution, cache audiences or supplier ownership.
 
 Align `react` and `react-dom` on 19.2.8 because React rejects mixed runtime versions. Keep Tailwind
-CSS 3 for this programme. The Next.js ESLint configuration migration recorded in the
-production-readiness assessment requires a separate dependency change rather than being hidden
-inside this ADR reconciliation.
+CSS 3 for this programme. Lint with the framework-matched `eslint-config-next` flat configuration;
+ESLint 9 remains the compatible major until Next's bundled React plugin supports ESLint 10.
+Dependency updates remain separate from visual implementation work.
 
 ## Consequences
 
