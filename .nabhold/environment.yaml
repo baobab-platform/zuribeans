@@ -28,5 +28,5 @@ validation:
     - { name: "docker", reason: "Not required for ordinary Codespaces development." }
   pending_capabilities: []
 notes:
-  - "Codespaces and local Dev Containers use ghcr.io/nabhold/baobab-dev:1.3.0-frontend."
+  - "Codespaces and local Dev Containers use ghcr.io/nabhold/baobab-dev:1.4.0-frontend."
   - "Browser-dependent CI uses the separately published frontend-e2e profile."
