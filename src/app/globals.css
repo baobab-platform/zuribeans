@@ -3,22 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --color-ink: #172219;
-  --color-ink-soft: #26372a;
-  --color-canvas: #faf7f0;
-  --color-leaf: #526a4f;
-  --color-leaf-dark: #3e533c;
-  --color-clay: #9f4829;
-  --color-clay-inverse: #d37a57;
-  --color-sand: #e8ddc8;
+  /* Brand & neutral — evolved toward deep forest + gold + cream */
+  --color-ink: #0f2c24;
+  --color-ink-soft: #1a3d32;
+  --color-canvas: #f7f2e9;
+  --color-leaf: #2e5a4c;
+  --color-leaf-dark: #0f2c24;
+  --color-clay: #c9a227;          /* now warm gold */
+  --color-clay-inverse: #d4af37;
+  --color-sand: #e8dfd0;
   --color-surface: #fffdf8;
   --color-surface-raised: #ffffff;
-  --color-surface-muted: #f0eadf;
-  --color-line: rgb(23 34 25 / 0.12);
-  --color-line-strong: rgb(23 34 25 / 0.24);
-  --color-muted: #5e675f;
-  --color-muted-strong: #3d493f;
-  --color-focus: #d56a3f;
+  --color-surface-muted: #f0ebe0;
+  --color-line: rgb(15 44 36 / 0.12);
+  --color-line-strong: rgb(15 44 36 / 0.24);
+  --color-muted: #5c4e45;
+  --color-muted-strong: #4a3428;
+  --color-focus: #c9a227;
+
+  /* Semantic (kept for accessibility & meaning) */
   --color-success: #26734d;
   --color-success-soft: #e6f4ec;
   --color-success-strong: #155c39;
@@ -31,12 +34,14 @@
   --color-info: #356e8d;
   --color-info-soft: #e8f2f7;
   --color-info-strong: #25546d;
+
+  /* Typography & shape (unchanged) */
   --font-sans: Arial, Helvetica, sans-serif;
   --font-display: Georgia, "Times New Roman", serif;
   --radius-control: 0.75rem;
   --radius-panel: 1.5rem;
-  --shadow-control: 0 1px 2px rgb(23 34 25 / 0.06);
-  --shadow-panel: 0 18px 50px -38px rgb(23 34 25 / 0.4);
+  --shadow-control: 0 1px 2px rgb(15 44 36 / 0.06);
+  --shadow-panel: 0 18px 50px -38px rgb(15 44 36 / 0.4);
   --shadow-overlay: 0 32px 90px -24px rgb(0 0 0 / 0.55);
   --container-page: 80rem;
   --container-reading: 48rem;
