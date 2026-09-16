@@ -30,11 +30,13 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* ── Hero ── */}
       <section className="page-container grid items-center gap-10 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:py-20">
         <div className="relative z-10 lg:py-10">
           <p className="eyebrow">African origin. Trade rigour.</p>
           <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[0.98] tracking-tight text-balance sm:text-6xl lg:text-7xl">
-            Quality products. Clear provenance. Serious trade.
+            Quality products. Clear provenance.{" "}
+            <span className="text-clay">Serious trade.</span>
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-muted">
             ZuriBeans connects professional buyers and qualified suppliers through disciplined
@@ -42,11 +44,15 @@ export default async function HomePage() {
             business.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <ButtonLink href="/products" size="lg">
-              Explore products
+            <ButtonLink
+              href="/contact"
+              size="lg"
+              className="bg-clay text-ink hover:bg-clay-inverse"
+            >
+              Request a Quote
             </ButtonLink>
-            <ButtonLink href="/contact" variant="outline" size="lg">
-              Discuss a requirement
+            <ButtonLink href="/products" variant="outline" size="lg">
+              Explore products
             </ButtonLink>
           </div>
           <div className="mt-8 flex items-center gap-3 text-sm text-muted">
@@ -75,20 +81,24 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── Assurances / Trust strip ── */}
       <section className="border-y border-line bg-surface-raised">
         <div className="page-container grid divide-y divide-line md:grid-cols-3 md:divide-x md:divide-y-0">
           {assurances.map(([title, description], index) => (
-            <div key={title} className="py-7 md:px-7 md:first:pl-0 md:last:pr-0">
+            <div key={title} className="py-8 md:px-8 md:first:pl-0 md:last:pr-0">
               <p className="flex items-center gap-3 font-display text-xl">
-                <span className="text-clay">0{index + 1}</span>
+                <span className="flex size-8 items-center justify-center rounded-full bg-ink text-sm font-bold text-clay">
+                  0{index + 1}
+                </span>
                 {title}
               </p>
-              <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
+              <p className="mt-3 text-sm leading-6 text-muted">{description}</p>
             </div>
           ))}
         </div>
       </section>
 
+      {/* ── Product classes ── */}
       <section className="page-container py-20 lg:py-28">
         <SectionHeading
           eyebrow="Product classes"
@@ -98,27 +108,34 @@ export default async function HomePage() {
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {PUBLIC_PRODUCT_CLASSES.map((productClass, index) => (
             <Link key={productClass.name} href={productClass.href} className="group">
-              <Card className="relative h-full overflow-hidden p-8 transition-transform group-hover:-translate-y-1 md:p-10">
-                <span
-                  className="absolute right-6 top-4 font-display text-7xl text-sand"
-                  aria-hidden="true"
-                >
-                  0{index + 1}
-                </span>
-                <p className="eyebrow relative">{productClass.eyebrow}</p>
-                <h3 className="relative mt-6 font-display text-4xl">{productClass.name}</h3>
-                <p className="relative mt-4 max-w-lg leading-7 text-muted">
-                  {productClass.description}
-                </p>
-                <p className="relative mt-8 font-semibold text-clay">
-                  {productClass.actionLabel} <span aria-hidden="true">→</span>
-                </p>
+              <Card className="relative h-full overflow-hidden transition-all group-hover:-translate-y-1 group-hover:shadow-panel">
+                <div className="h-2 bg-leaf" aria-hidden="true" />
+                <div className="relative p-8 md:p-10">
+                  <span
+                    className="absolute right-6 top-6 font-display text-6xl text-sand/80"
+                    aria-hidden="true"
+                  >
+                    0{index + 1}
+                  </span>
+                  <p className="eyebrow relative">{productClass.eyebrow}</p>
+                  <h3 className="relative mt-5 font-display text-3xl md:text-4xl">
+                    {productClass.name}
+                  </h3>
+                  <p className="relative mt-4 max-w-lg leading-7 text-muted">
+                    {productClass.description}
+                  </p>
+                  <p className="relative mt-8 inline-flex items-center gap-1 font-semibold text-clay transition-colors group-hover:text-clay-inverse">
+                    {productClass.actionLabel}
+                    <span aria-hidden="true">→</span>
+                  </p>
+                </div>
               </Card>
             </Link>
           ))}
         </div>
       </section>
 
+      {/* ── Origins & Markets ── */}
       <section className="bg-ink py-20 text-white lg:py-28">
         <div className="page-container">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
@@ -134,27 +151,34 @@ export default async function HomePage() {
               them.
             </p>
           </div>
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
             {PUBLIC_MARKET_SUMMARIES.map((summary) => {
               const item = getMarket(summary.marketKey)
               return (
                 <article
                   key={summary.marketKey}
-                  className="rounded-panel border border-white/15 bg-white/5 p-7 md:p-9"
+                  className="rounded-panel border border-white/15 bg-white/5 p-8 transition-colors hover:bg-white/8 md:p-9"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <p className="text-sm font-semibold text-clay-inverse">{summary.role}</p>
-                      <h3 className="mt-2 font-display text-4xl">{item.displayName}</h3>
+                      <p className="text-sm font-semibold tracking-wide text-clay-inverse">
+                        {summary.role}
+                      </p>
+                      <h3 className="mt-2 font-display text-3xl md:text-4xl">
+                        {item.displayName}
+                      </h3>
                     </div>
-                    <p className="text-sm font-semibold text-white/60">{item.currency}</p>
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/70">
+                      {item.currency}
+                    </span>
                   </div>
-                  <p className="mt-5 max-w-xl leading-7 text-white/65">{summary.summary}</p>
+                  <p className="mt-5 max-w-xl leading-7 text-white/70">{summary.summary}</p>
                   <Link
-                    href="/about"
-                    className="mt-7 inline-block font-semibold text-white underline decoration-clay underline-offset-4"
+                    href="/origins-markets"
+                    className="mt-7 inline-flex items-center gap-1 font-semibold text-clay-inverse transition-colors hover:text-clay"
                   >
-                    About ZuriBeans
+                    View markets
+                    <span aria-hidden="true">→</span>
                   </Link>
                 </article>
               )
@@ -163,6 +187,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── How ZuriBeans trades ── */}
       <section className="page-container py-20 lg:py-28">
         <SectionHeading
           eyebrow="How ZuriBeans trades"
@@ -171,7 +196,9 @@ export default async function HomePage() {
         <ol className="mt-12 grid gap-px overflow-hidden rounded-panel border border-line bg-line md:grid-cols-2 lg:grid-cols-4">
           {TRADE_STEPS.map((step) => (
             <li key={step.number} className="bg-surface-raised p-7">
-              <p className="font-display text-3xl text-clay">{step.number}</p>
+              <div className="flex size-12 items-center justify-center rounded-full bg-ink font-display text-lg text-clay">
+                {step.number}
+              </div>
               <h3 className="mt-8 text-lg font-semibold">{step.title}</h3>
               <p className="mt-3 text-sm leading-6 text-muted">{step.description}</p>
             </li>
@@ -179,6 +206,7 @@ export default async function HomePage() {
         </ol>
       </section>
 
+      {/* ── Quality & Traceability ── */}
       <section className="border-y border-line bg-sand/40 py-20 lg:py-28">
         <div className="page-container grid gap-12 lg:grid-cols-2 lg:items-center">
           <div>
@@ -187,8 +215,8 @@ export default async function HomePage() {
               title="Confidence is built from evidence."
               description="Procurement teams need useful specifications, provenance and verification status—not vague claims. ZuriBeans presents what is known, distinguishes declarations from verification, and keeps sensitive terms behind authorization."
             />
-            <ButtonLink href="/about" variant="outline" className="mt-8">
-              Our operating principles
+            <ButtonLink href="/quality-traceability" variant="outline" className="mt-8">
+              Quality & Traceability
             </ButtonLink>
           </div>
           <dl className="grid gap-px overflow-hidden rounded-panel border border-line bg-line sm:grid-cols-2">
@@ -205,6 +233,56 @@ export default async function HomePage() {
               [
                 "Access control",
                 "Buyer-specific prices and terms are never treated as public catalogue content.",
+              ],
+            ].map(([term, detail]) => (
+              <div key={term} className="bg-surface-raised p-6 transition-colors hover:bg-surface">
+                <dt className="font-semibold text-ink">{term}</dt>
+                <dd className="mt-2 text-sm leading-6 text-muted">{detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      {/* ── Final dual CTA ── */}
+      <section className="page-container grid gap-6 py-20 md:grid-cols-2 lg:py-28">
+        <Card className="bg-ink p-8 text-white md:p-10">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-clay-inverse">
+            For professional buyers
+          </p>
+          <h2 className="mt-5 font-display text-3xl md:text-4xl">
+            Bring us a real requirement.
+          </h2>
+          <p className="mt-4 max-w-lg leading-7 text-white/75">
+            Tell the trade desk what you need to source, where it must arrive and when. We will not
+            manufacture an instant price where the commercial context is incomplete.
+          </p>
+          <ButtonLink
+            href="/contact"
+            className="mt-8 bg-clay text-ink hover:bg-clay-inverse"
+          >
+            Request a Quote
+          </ButtonLink>
+        </Card>
+
+        <Card className="bg-surface-raised p-8 md:p-10">
+          <p className="eyebrow">For suppliers</p>
+          <h2 className="mt-5 font-display text-3xl md:text-4xl">
+            Build a qualified supply relationship.
+          </h2>
+          <p className="mt-4 max-w-lg leading-7 text-muted">
+            Growers, cooperatives and exporters can declare product, origin, capacity and
+            certification information for review. Submission is the start of qualification, not
+            automatic approval.
+          </p>
+          <ButtonLink href="/sourcing/become-a-supplier" variant="outline" className="mt-8">
+            Supplier requirements
+          </ButtonLink>
+        </Card>
+      </section>
+    </>
+  )
+} and terms are never treated as public catalogue content.",
               ],
             ].map(([term, detail]) => (
               <div key={term} className="bg-surface-raised p-6">
@@ -248,5 +326,6 @@ export default async function HomePage() {
         </Card>
       </section>
     </>
-  )
-}
+ )
+} 
+  
