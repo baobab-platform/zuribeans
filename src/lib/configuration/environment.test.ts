@@ -1,5 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { getMarketEnvironment, getPublicEnvironment } from "./environment"
+import {
+  getMarketEnvironment,
+  getPublicEnvironment,
+  getSupplierAdminEnvironment,
+} from "./environment"
 
 const baseEnv = {
   NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: "pk_test",
@@ -61,5 +65,24 @@ describe("getPublicEnvironment", () => {
     const env = getPublicEnvironment()
     expect(env.NEXT_PUBLIC_ENABLED_MARKETS).toEqual(["zuribeans_ug", "zuribeans_za"])
     expect(env.NEXT_PUBLIC_DEFAULT_MARKET).toBe("zuribeans_za")
+  })
+})
+
+describe("getSupplierAdminEnvironment", () => {
+  it("does not require Medusa credentials or market configuration", () => {
+    delete process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+    delete process.env.NEXT_PUBLIC_SITE_URL
+    process.env.SUPPLIER_ADMIN_API_KEY = "a".repeat(32)
+    expect(() => getSupplierAdminEnvironment()).not.toThrow()
+  })
+
+  it("rejects a missing key", () => {
+    delete process.env.SUPPLIER_ADMIN_API_KEY
+    expect(() => getSupplierAdminEnvironment()).toThrow()
+  })
+
+  it("rejects a key shorter than 32 characters", () => {
+    process.env.SUPPLIER_ADMIN_API_KEY = "too-short"
+    expect(() => getSupplierAdminEnvironment()).toThrow()
   })
 })

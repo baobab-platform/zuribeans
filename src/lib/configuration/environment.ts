@@ -73,6 +73,20 @@ const serverSchema = z
   })
   .and(publicSchema)
 
+/**
+ * Gates the supplier canonical-link admin route only (src/app/api/admin/
+ * suppliers/[id]/canonical-link/route.ts, ADR-0009) -- deliberately
+ * independent of serverSchema above, the same reasoning marketSchema's own
+ * doc comment gives: every other route/page must not fail merely because
+ * this interim internal-API-key secret isn't configured in an environment
+ * that never calls that route (e.g. the Foundation image-build gate, which
+ * builds with no environment variables at all).
+ */
+const supplierAdminSchema = z.object({
+  SUPPLIER_ADMIN_API_KEY: z.string().min(32),
+})
+
 export const getMarketEnvironment = () => marketSchema.parse(process.env)
 export const getPublicEnvironment = () => publicSchema.parse(process.env)
 export const getServerEnvironment = () => serverSchema.parse(process.env)
+export const getSupplierAdminEnvironment = () => supplierAdminSchema.parse(process.env)

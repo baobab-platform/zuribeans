@@ -109,3 +109,26 @@ export const submitSupplierApplication = async (
     return organisation
   })
 }
+
+/**
+ * Sets supplier_organisations.canonical_organisation_id (ADR-0006's
+ * reserved reconciliation column, ADR-0009's linkage route) -- the
+ * counterpart to baobab-trade's b2b_organisation.canonical_organisation_id
+ * write path from Gate ZB-03.3. Never called by application code directly;
+ * only by the admin-authenticated route (src/app/api/admin/suppliers/[id]/
+ * canonical-link/route.ts). Returns null when supplierOrganisationId does
+ * not name an existing row, so the route can answer 404 rather than a
+ * silent no-op update.
+ */
+export const setSupplierCanonicalOrganisationId = async (
+  supplierOrganisationId: string,
+  canonicalOrganisationId: string,
+) => {
+  const db = getDb()
+  const [organisation] = await db
+    .update(supplierOrganisations)
+    .set({ canonicalOrganisationId, updatedAt: new Date() })
+    .where(eq(supplierOrganisations.id, supplierOrganisationId))
+    .returning()
+  return organisation ?? null
+}
