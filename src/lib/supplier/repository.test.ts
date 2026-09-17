@@ -2,7 +2,11 @@ import { sql } from "drizzle-orm"
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { getDb } from "@/lib/db/client"
 import { supplierOrganisations } from "@/lib/db/schema"
-import { getSupplierApplicationForCustomer, submitSupplierApplication } from "./repository"
+import {
+  getSupplierApplicationForCustomer,
+  setSupplierCanonicalOrganisationId,
+  submitSupplierApplication,
+} from "./repository"
 
 /**
  * Integration test against a real Postgres database — schema/migration
@@ -80,5 +84,24 @@ describe.runIf(hasDatabase)("supplier repository", () => {
   it("rejects a second application for the same customer (one per customer)", async () => {
     await submitSupplierApplication("cus_test_dup", validInput)
     await expect(submitSupplierApplication("cus_test_dup", validInput)).rejects.toThrow()
+  })
+
+  it("sets canonical_organisation_id on an existing supplier organisation", async () => {
+    const created = await submitSupplierApplication("cus_test_canonical", validInput)
+    expect(created.canonicalOrganisationId).toBeNull()
+
+    const updated = await setSupplierCanonicalOrganisationId(created.id, "canon-org-123")
+    expect(updated?.canonicalOrganisationId).toBe("canon-org-123")
+
+    const fetched = await getSupplierApplicationForCustomer("cus_test_canonical")
+    expect(fetched?.organisation.canonicalOrganisationId).toBe("canon-org-123")
+  })
+
+  it("returns null for an unknown supplier organisation id", async () => {
+    const updated = await setSupplierCanonicalOrganisationId(
+      "00000000-0000-0000-0000-000000000000",
+      "canon-org-123",
+    )
+    expect(updated).toBeNull()
   })
 })
