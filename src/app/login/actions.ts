@@ -1,11 +1,13 @@
 "use server"
 
+import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { createMedusaClient } from "@/lib/medusa/client"
 import { toSafeRelativePath } from "@/lib/auth/safe-redirect"
+import { POST_SSO_REDIRECT_COOKIE_NAME, POST_SSO_REDIRECT_MAX_AGE_SECONDS } from "@/lib/auth/sso"
 import { loginSchema } from "@/lib/validation/login"
 
-export type LoginErrorCode = "invalid_input" | "invalid_credentials"
+export type LoginErrorCode = "invalid_input" | "invalid_credentials" | "sso_unavailable"
 
 export async function loginAction(formData: FormData): Promise<void> {
   const next = toSafeRelativePath(formData.get("next")?.toString()) ?? "/account"
@@ -38,4 +40,48 @@ export async function loginAction(formData: FormData): Promise<void> {
   }
 
   redirect(next)
+}
+
+/**
+ * Initiates the ZuriBeans buyer SSO flow (ADR-BCP-016 /
+ * docs/governance/zuribeans-customer-oidc.md, baobab-trade's
+ * `zuribeans-oidc` Auth Module provider). Authentication establishes who
+ * the buyer is; it never itself grants B2B organisation membership or
+ * purchasing authority -- Trade remains authoritative for that, unchanged
+ * by this action.
+ */
+export async function loginWithSsoAction(formData: FormData): Promise<void> {
+  const next = toSafeRelativePath(formData.get("next")?.toString()) ?? "/account"
+  const nextParam = `next=${encodeURIComponent(next)}`
+
+  const sdk = createMedusaClient()
+
+  // `redirect()` throws internally to interrupt rendering (see loginAction's
+  // identical note), so both success paths below redirect outside this
+  // try/catch.
+  let location: string | null = null
+  try {
+    const result = await sdk.auth.login("customer", "zuribeans-oidc", {})
+    location = typeof result === "string" ? null : result.location
+  } catch {
+    location = null
+  }
+
+  if (!location) {
+    redirect(`/login?error=sso_unavailable&${nextParam}`)
+  }
+
+  // Stashed here, not carried through the provider's own `state` parameter
+  // (which baobab-trade's auth-oidc provider generates and owns for CSRF
+  // protection) -- see src/lib/auth/sso.ts's doc comment.
+  const store = await cookies()
+  store.set(POST_SSO_REDIRECT_COOKIE_NAME, next, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: POST_SSO_REDIRECT_MAX_AGE_SECONDS,
+  })
+
+  redirect(location)
 }

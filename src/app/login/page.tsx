@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/form-controls"
 import { toSafeRelativePath } from "@/lib/auth/safe-redirect"
 import { loginSchema } from "@/lib/validation/login"
-import { loginAction, type LoginErrorCode } from "./actions"
+import { loginAction, loginWithSsoAction, type LoginErrorCode } from "./actions"
 
 export const metadata: Metadata = {
   title: "Buyer login",
@@ -16,6 +16,7 @@ export const metadata: Metadata = {
 const errorMessages: Record<LoginErrorCode, string> = {
   invalid_input: "Enter a valid business email and password.",
   invalid_credentials: "That email and password combination is not recognised.",
+  sso_unavailable: "ZuriBeans SSO is not available right now. Sign in with email instead.",
 }
 
 const isLoginErrorCode = (value: string): value is LoginErrorCode => value in errorMessages
@@ -62,6 +63,17 @@ export default async function LoginPage({
         </label>
         <Button type="submit" size="lg" className="w-full">
           Sign in
+        </Button>
+      </form>
+      <div className="mt-6 flex items-center gap-3 text-sm text-muted" role="separator">
+        <span className="h-px flex-1 bg-line-strong" aria-hidden />
+        or
+        <span className="h-px flex-1 bg-line-strong" aria-hidden />
+      </div>
+      <form action={loginWithSsoAction} className="mt-6">
+        <input type="hidden" name="next" value={next} />
+        <Button type="submit" variant="outline" size="lg" className="w-full">
+          Continue with ZuriBeans SSO
         </Button>
       </form>
       <p className="mt-6 text-sm text-muted">
