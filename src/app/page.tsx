@@ -35,8 +35,7 @@ export default async function HomePage() {
         <div className="relative z-10 lg:py-10">
           <p className="eyebrow">African origin. Trade rigour.</p>
           <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[0.98] tracking-tight text-balance sm:text-6xl lg:text-7xl">
-            Quality products. Clear provenance.{" "}
-            <span className="text-clay">Serious trade.</span>
+            Quality products. Clear provenance. <span className="text-clay">Serious trade.</span>
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-muted">
             ZuriBeans connects professional buyers and qualified suppliers through disciplined
@@ -164,9 +163,7 @@ export default async function HomePage() {
                       <p className="text-sm font-semibold tracking-wide text-clay-inverse">
                         {summary.role}
                       </p>
-                      <h3 className="mt-2 font-display text-3xl md:text-4xl">
-                        {item.displayName}
-                      </h3>
+                      <h3 className="mt-2 font-display text-3xl md:text-4xl">{item.displayName}</h3>
                     </div>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/70">
                       {item.currency}
@@ -250,17 +247,12 @@ export default async function HomePage() {
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-clay-inverse">
             For professional buyers
           </p>
-          <h2 className="mt-5 font-display text-3xl md:text-4xl">
-            Bring us a real requirement.
-          </h2>
+          <h2 className="mt-5 font-display text-3xl md:text-4xl">Bring us a real requirement.</h2>
           <p className="mt-4 max-w-lg leading-7 text-white/75">
             Tell the trade desk what you need to source, where it must arrive and when. We will not
             manufacture an instant price where the commercial context is incomplete.
           </p>
-          <ButtonLink
-            href="/contact"
-            className="mt-8 bg-clay text-ink hover:bg-clay-inverse"
-          >
+          <ButtonLink href="/contact" className="mt-8 bg-clay text-ink hover:bg-clay-inverse">
             Request a Quote
           </ButtonLink>
         </Card>
@@ -282,50 +274,4 @@ export default async function HomePage() {
       </section>
     </>
   )
-} and terms are never treated as public catalogue content.",
-              ],
-            ].map(([term, detail]) => (
-              <div key={term} className="bg-surface-raised p-6">
-                <dt className="font-semibold">{term}</dt>
-                <dd className="mt-2 text-sm leading-6 text-muted">{detail}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
-      <section className="page-container grid gap-6 py-20 md:grid-cols-2 lg:py-28">
-        <Card className="bg-leaf p-8 text-white md:p-10">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/70">
-            For professional buyers
-          </p>
-          <h2 className="mt-5 font-display text-4xl">Bring us a real requirement.</h2>
-          <p className="mt-4 max-w-lg leading-7 text-white/75">
-            Tell the trade desk what you need to source, where it must arrive and when. We will not
-            manufacture an instant price where the commercial context is incomplete.
-          </p>
-          <ButtonLink
-            href="/contact"
-            variant="outline"
-            className="mt-8 border-white/35 text-white hover:bg-white/10"
-          >
-            Discuss a requirement
-          </ButtonLink>
-        </Card>
-        <Card className="bg-surface-raised p-8 md:p-10">
-          <p className="eyebrow">For suppliers</p>
-          <h2 className="mt-5 font-display text-4xl">Build a qualified supply relationship.</h2>
-          <p className="mt-4 max-w-lg leading-7 text-muted">
-            Growers, cooperatives and exporters can declare product, origin, capacity and
-            certification information for review. Submission is the start of qualification, not
-            automatic approval.
-          </p>
-          <ButtonLink href="/sourcing/become-a-supplier" variant="outline" className="mt-8">
-            Supplier requirements
-          </ButtonLink>
-        </Card>
-      </section>
-    </>
- )
-} 
-  
+}
