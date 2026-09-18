@@ -1,7 +1,7 @@
 {
   "name": "Zuribeans",
-  "image": "ghcr.io/nabhold/baobab-dev:1.4.0-frontend",
-  "updateContentCommand": "corepack enable && pnpm install --frozen-lockfile",
+  "image": "ghcr.io/nabhold/baobab-dev:1.4.2-frontend",
+  "updateContentCommand": "pnpm install --frozen-lockfile",
   "postCreateCommand": "baobab-verify --contract && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
   "waitFor": "postCreateCommand",
   "forwardPorts": [3000],
