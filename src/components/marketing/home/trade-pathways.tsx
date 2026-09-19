@@ -79,7 +79,7 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
               <p
                 className={classNames(
                   "relative mt-7 border-t pt-4 text-xs leading-5",
-                  inverse ? "border-white/10 text-white/45" : "border-line text-muted",
+                  inverse ? "border-white/10 text-white/65" : "border-line text-muted",
                 )}
               >
                 {pathway.note}
