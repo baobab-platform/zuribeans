@@ -57,19 +57,28 @@ export async function loginWithSsoAction(formData: FormData): Promise<void> {
   const sdk = createMedusaClient()
 
   // `redirect()` throws internally to interrupt rendering (see loginAction's
-  // identical note), so both success paths below redirect outside this
-  // try/catch.
-  let location: string | null = null
-  try {
-    const result = await sdk.auth.login("customer", "zuribeans-oidc", {})
-    location = typeof result === "string" ? null : result.location
-  } catch {
+// identical note), so both success paths below redirect outside this
+// try/catch.
+let location: string | null = null
+try {
+  const result = await sdk.auth.login("customer", "zuribeans-oidc", {})
+
+  if (typeof result === "string") {
+    // Already authenticated — no SSO redirect URL
+    location = null
+  } else if ("location" in result && typeof result.location === "string") {
+    location = result.location
+  } else {
+    // MFA / verification (or other) — not an OIDC redirect
     location = null
   }
+} catch {
+  location = null
+}
 
-  if (!location) {
-    redirect(`/login?error=sso_unavailable&${nextParam}`)
-  }
+if (!location) {
+  redirect(`/login?error=sso_unavailable&${nextParam}`)
+}
 
   // Stashed here, not carried through the provider's own `state` parameter
   // (which baobab-trade's auth-oidc provider generates and owns for CSRF

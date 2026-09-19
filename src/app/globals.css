@@ -1,11 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* -----   Plugins ------------------------------------- */
+@plugin "@tailwindcss/forms" {
+  strategy: "class";
+}
+@plugin "@tailwindcss/typography";
+@plugin "tailwindcss-animate";
+@plugin "tailwind-scrollbar" {
+  nocompatible: true;
+}
 
 /* =============================================================================
-   ZuriBeans design tokens
-   Contrast targets: WCAG 2.2 AA (4.5:1 normal text, 3:1 large text & UI)
-   Gold (clay) is an accent — not body text on light surfaces.
+   Design tokens (source of truth)
+   WCAG-oriented roles: clay is accent, not small body text on light surfaces
    ============================================================================= */
 
 :root {
@@ -15,10 +22,8 @@
   --color-canvas: #f7f2e9;
   --color-leaf: #2e5a4c;
   --color-leaf-dark: #0f2c24;
-  /* Gold accent — CTAs, icons, large labels on dark; not small text on light */
   --color-clay: #c9a227;
   --color-clay-inverse: #d4af37;
-  /* Darker gold for small labels on light (eyebrow AA) */
   --color-clay-on-light: #8a6f12;
   --color-sand: #e8dfd0;
   --color-surface: #fffdf8;
@@ -26,7 +31,6 @@
   --color-surface-muted: #f0ebe0;
   --color-line: rgb(15 44 36 / 0.12);
   --color-line-strong: rgb(15 44 36 / 0.24);
-  /* Muted text — verified ≥4.5:1 on canvas */
   --color-muted: #5c4e45;
   --color-muted-strong: #4a3428;
   --color-focus: #c9a227;
@@ -54,6 +58,8 @@
   --shadow-control: 0 1px 2px rgb(15 44 36 / 0.06);
   --shadow-panel: 0 18px 50px -38px rgb(15 44 36 / 0.4);
   --shadow-overlay: 0 32px 90px -24px rgb(0 0 0 / 0.55);
+
+  /* Layout tokens (non-Tailwind utilities) */
   --container-page: 80rem;
   --container-reading: 48rem;
   --layer-header: 40;
@@ -61,15 +67,70 @@
   --transition-fast: 150ms;
   --transition-standard: 240ms;
 
-  /* Focus system */
+  /* Focus */
   --focus-ring-width: 3px;
   --focus-ring-offset: 3px;
+
+  color-scheme: light;
 }
 
-/* Dark-surface context (header, ink sections) */
+/* Dark-surface context (header, ink sections, footer) */
 .bg-ink,
 [data-tone="inverse"] {
   --color-focus-offset: #0f2c24;
+}
+
+/* -----------------------------------------------------------------------------
+   Tailwind v4 theme — generates utilities:
+   bg-ink, text-clay, font-display, rounded-control, shadow-panel, etc.
+   ----------------------------------------------------------------------------- */
+
+@theme inline {
+  /* Colors */
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-canvas: var(--color-canvas);
+  --color-leaf: var(--color-leaf);
+  --color-leaf-dark: var(--color-leaf-dark);
+  --color-clay: var(--color-clay);
+  --color-clay-inverse: var(--color-clay-inverse);
+  --color-clay-on-light: var(--color-clay-on-light);
+  --color-sand: var(--color-sand);
+  --color-surface: var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-line: var(--color-line);
+  --color-line-strong: var(--color-line-strong);
+  --color-muted: var(--color-muted);
+  --color-muted-strong: var(--color-muted-strong);
+  --color-focus: var(--color-focus);
+  --color-focus-offset: var(--color-focus-offset);
+
+  --color-success: var(--color-success);
+  --color-success-soft: var(--color-success-soft);
+  --color-success-strong: var(--color-success-strong);
+  --color-warning: var(--color-warning);
+  --color-warning-soft: var(--color-warning-soft);
+  --color-warning-strong: var(--color-warning-strong);
+  --color-danger: var(--color-danger);
+  --color-danger-soft: var(--color-danger-soft);
+  --color-danger-strong: var(--color-danger-strong);
+  --color-info: var(--color-info);
+  --color-info-soft: var(--color-info-soft);
+  --color-info-strong: var(--color-info-strong);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+
+  /* Radius */
+  --radius-control: var(--radius-control);
+  --radius-panel: var(--radius-panel);
+
+  /* Shadows */
+  --shadow-control: var(--shadow-control);
+  --shadow-panel: var(--shadow-panel);
+  --shadow-overlay: var(--shadow-overlay);
 }
 
 /* -----------------------------------------------------------------------------
@@ -86,7 +147,6 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  color-scheme: light;
 }
 
 body {
@@ -100,7 +160,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Remove tap flash on interactive controls (keep focus rings) */
 a,
 button,
 input,
@@ -126,11 +185,7 @@ canvas {
   max-width: 100%;
 }
 
-/* -----------------------------------------------------------------------------
-   Focus — WCAG 2.2 visible focus (non-text contrast ≥ 3:1)
-   Prefer :focus-visible; keep a sensible :focus fallback.
-   ----------------------------------------------------------------------------- */
-
+/* Focus — WCAG 2.2 visible focus */
 :focus {
   outline: var(--focus-ring-width) solid var(--color-focus);
   outline-offset: var(--focus-ring-offset);
@@ -143,11 +198,6 @@ canvas {
 :focus-visible {
   outline: var(--focus-ring-width) solid var(--color-focus);
   outline-offset: var(--focus-ring-offset);
-}
-
-/* Buttons / controls that opt into ring utilities still need offset on dark */
-.ring-focus {
-  --tw-ring-color: var(--color-focus);
 }
 
 ::selection {
@@ -170,11 +220,7 @@ canvas {
     margin-inline: auto;
   }
 
-  /**
-   * Eyebrow / overline
-   * Uses darker gold on light for AA at ~12px bold uppercase.
-   * On inverse surfaces, pair with text-clay-inverse in components.
-   */
+  /* AA-safe small label on light surfaces */
   .eyebrow {
     color: var(--color-clay-on-light);
     font-size: 0.75rem;
@@ -184,7 +230,7 @@ canvas {
     text-transform: uppercase;
   }
 
-  /* Inverse eyebrow for dark sections (home markets, header contexts) */
+  /* Labels on dark / ink surfaces */
   .eyebrow-inverse {
     color: var(--color-clay-inverse);
     font-size: 0.75rem;
@@ -196,7 +242,7 @@ canvas {
 }
 
 /* -----------------------------------------------------------------------------
-   Reduced motion (WCAG 2.3.3 / user preference)
+   Reduced motion
    ----------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -215,7 +261,7 @@ canvas {
 }
 
 /* -----------------------------------------------------------------------------
-   High contrast / forced colors (Windows, etc.)
+   Forced colors (Windows high contrast, etc.)
    ----------------------------------------------------------------------------- */
 
 @media (forced-colors: active) {

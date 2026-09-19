@@ -1,4 +1,8 @@
 import type { Config } from "tailwindcss"
+import forms from "@tailwindcss/forms"
+import typography from "@tailwindcss/typography" 
+import animate from "tailwindcss-animate"
+import scrollbar from "tailwind-scrollbar"
 
 export default {
   content: ["./src/**/*.{ts,tsx}"],
@@ -70,5 +74,10 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    forms({ strategy: "class" }), // only style elements with form-* classes
+    typography, 
+    animate,
+    scrollbar({ nocompatible: true }),
+  ],
 } satisfies Config
