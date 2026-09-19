@@ -12,7 +12,7 @@ test("visitor can enter the multi-product catalogue from the home page", async (
 test("featured commodities expose truthful catalogue routes", async ({ page }) => {
   await page.goto("/")
 
-  const section = page.getByRole("region", { name: "Specified for decisions, not dressed for a shelf." })
+  const section = page.getByRole("region", { name: "Featured commodities" })
   await expect(section.getByRole("heading", { name: "Green coffee" })).toBeVisible()
   await expect(section.getByRole("heading", { name: "Vanilla pods" })).toBeVisible()
   await expect(section.getByRole("link", { name: "View coffee: Green coffee" })).toHaveAttribute(
