@@ -46,7 +46,7 @@ const defaultMarketSchema = z
  * Market resolution (the root layout, on every page, via
  * src/lib/market/request.ts) must not require Medusa credentials to be
  * configured — a marketing page has no Medusa dependency, and the Foundation
- * image-build gate (nabhold/shared's reusable workflow) builds this
+ * image-build gate (baobab-platform/shared's reusable workflow) builds this
  * Dockerfile with no build-args at all, relying on ARG defaults only. Keep
  * this schema independent of `publicSchema` below rather than folding it in.
  */

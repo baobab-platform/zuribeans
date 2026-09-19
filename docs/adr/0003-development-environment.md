@@ -7,7 +7,7 @@ baseline.
 
 ## Decision
 
-Use the published `ghcr.io/nabhold/baobab-dev:1.2.6-frontend` image for Codespaces
+Use the published `ghcr.io/baobab-platform/baobab-dev:1.2.6-frontend` image for Codespaces
 and compatible local Dev Containers. Use `1.2.6-frontend-e2e` only for browser-dependent
 CI jobs.
 

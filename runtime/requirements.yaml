@@ -1,5 +1,5 @@
 schema:
-  name: "nabhold-digital-estate-runtime-requirements"
+  name: "baobab-platform-digital-estate-runtime-requirements"
   version: "1.0"
 application:
   name: "zuribeans"
@@ -7,9 +7,9 @@ application:
   kind: "b2b-digital-estate"
   container_port: 3000
 ownership:
-  application: "nabhold/zuribeans"
-  commerce: "nabhold/baobab-trade"
-  production_infrastructure: "nabhold/infrastructure"
+  application: "baobab-platform/zuribeans"
+  commerce: "baobab-platform/baobab-trade"
+  production_infrastructure: "baobab-platform/infrastructure"
 dependencies:
   baobab_trade:
     required: true
@@ -34,4 +34,4 @@ constraints:
   - "The publishable key is storefront-visible; administrative credentials are prohibited."
   - "No Baobab (Trade/ERP/CMS/Control Plane) database may be accessed directly."
   - "The estate-owned Postgres above is the one exception, and only for state this repo alone is authoritative for; it must never duplicate a Baobab engine's domain data."
-  - "Cloud resources, DNS, certificates and secret injection belong to nabhold/infrastructure."
+  - "Cloud resources, DNS, certificates and secret injection belong to baobab-platform/infrastructure."

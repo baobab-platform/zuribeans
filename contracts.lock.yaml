@@ -1,17 +1,17 @@
 schema:
-  name: "nabhold-contract-consumption-lock"
+  name: "baobab-platform-contract-consumption-lock"
   version: "1.0"
 consumer:
-  repository: "nabhold/zuribeans"
+  repository: "baobab-platform/zuribeans"
   entity_id: "ZURIBEANS"
 sources:
   shared:
-    repository: "nabhold/shared"
+    repository: "baobab-platform/shared"
     commit: "6e0059989a45ee189b98df6ce1a430c83829049c"
     legal_entity_registry: "contracts/legal-entity/registry.yaml"
     development_environment: "contracts/development-environment/schema.yaml"
   trade:
-    repository: "nabhold/baobab-trade"
+    repository: "baobab-platform/baobab-trade"
     commit: "bd4074c050183cdca4f3831d9e47524c26a4677e"
     api: "Medusa v2 Store API"
 gaps:

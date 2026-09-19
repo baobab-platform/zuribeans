@@ -96,7 +96,7 @@ dashboard; `src/lib/auth/require-customer.ts` reads the actual requested path fr
   them once Control Plane's `market.market` table is implemented.
 - Control Plane's Digital Estate representation is a stub (tenant/name/domain/status only);
   richer estate registration (business model, markets, capability bindings) needs an ADR in
-  `nabhold/baobab-cp` before this repository can consume it.
+  `baobab-platform/baobab-cp` before this repository can consume it.
 - No ERP Business Partner mapping, no event publishing (no broker exists in this ecosystem yet),
   no document/object storage for certifications, and no staff qualification review UI — see
   ADR 0006 for why each is deferred rather than faked.
