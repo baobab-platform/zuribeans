@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   foundation:
-    uses: baobab-platform/shared/.github/workflows/foundation-repository-gates.yml@f7466cc89a17c0b6e02b5a1e5fce3ce76073a718
+    uses: baobab-platform/shared/.github/workflows/foundation-repository-gates.yml@bf72e379047a5c3f8017d36a51b19cbb880feebb
     with:
       dockerfile: "Dockerfile"
       build_context: "."
