@@ -2,40 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =============================================================================
+   ZuriBeans design tokens
+   Contrast targets: WCAG 2.2 AA (4.5:1 normal text, 3:1 large text & UI)
+   Gold (clay) is an accent — not body text on light surfaces.
+   ============================================================================= */
+
 :root {
-  /* Brand & neutral — evolved toward deep forest + gold + cream */
+  /* Brand & neutral */
   --color-ink: #0f2c24;
   --color-ink-soft: #1a3d32;
   --color-canvas: #f7f2e9;
   --color-leaf: #2e5a4c;
   --color-leaf-dark: #0f2c24;
-  --color-clay: #c9a227; /* now warm gold */
+  /* Gold accent — CTAs, icons, large labels on dark; not small text on light */
+  --color-clay: #c9a227;
   --color-clay-inverse: #d4af37;
+  /* Darker gold for small labels on light (eyebrow AA) */
+  --color-clay-on-light: #8a6f12;
   --color-sand: #e8dfd0;
   --color-surface: #fffdf8;
   --color-surface-raised: #ffffff;
   --color-surface-muted: #f0ebe0;
   --color-line: rgb(15 44 36 / 0.12);
   --color-line-strong: rgb(15 44 36 / 0.24);
+  /* Muted text — verified ≥4.5:1 on canvas */
   --color-muted: #5c4e45;
   --color-muted-strong: #4a3428;
   --color-focus: #c9a227;
+  --color-focus-offset: #f7f2e9;
 
-  /* Semantic (kept for accessibility & meaning) */
-  --color-success: #26734d;
+  /* Semantic */
+  --color-success: #1f6b45;
   --color-success-soft: #e6f4ec;
   --color-success-strong: #155c39;
-  --color-warning: #a26313;
+  --color-warning: #8a5410;
   --color-warning-soft: #fff3d9;
   --color-warning-strong: #754408;
-  --color-danger: #b33a32;
+  --color-danger: #a3322c;
   --color-danger-soft: #fbe9e7;
   --color-danger-strong: #8d2924;
-  --color-info: #356e8d;
+  --color-info: #2f6280;
   --color-info-soft: #e8f2f7;
   --color-info-strong: #25546d;
 
-  /* Typography & shape (unchanged) */
+  /* Typography & shape */
   --font-sans: Arial, Helvetica, sans-serif;
   --font-display: Georgia, "Times New Roman", serif;
   --radius-control: 0.75rem;
@@ -49,38 +60,104 @@
   --layer-overlay: 60;
   --transition-fast: 150ms;
   --transition-standard: 240ms;
+
+  /* Focus system */
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 3px;
 }
 
-* {
+/* Dark-surface context (header, ink sections) */
+.bg-ink,
+[data-tone="inverse"] {
+  --color-focus-offset: #0f2c24;
+}
+
+/* -----------------------------------------------------------------------------
+   Base
+   ----------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
+
 html {
   scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  color-scheme: light;
 }
+
 body {
   margin: 0;
+  min-height: 100%;
   background: var(--color-canvas);
   color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Remove tap flash on interactive controls (keep focus rings) */
 a,
 button,
 input,
 select,
-textarea {
+textarea,
+summary {
   transition-duration: var(--transition-fast);
+  transition-property: color, background-color, border-color, outline-color, box-shadow,
+    opacity, transform;
+  -webkit-tap-highlight-color: transparent;
 }
+
 a {
+  color: inherit;
   text-underline-offset: 0.2em;
 }
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* -----------------------------------------------------------------------------
+   Focus — WCAG 2.2 visible focus (non-text contrast ≥ 3:1)
+   Prefer :focus-visible; keep a sensible :focus fallback.
+   ----------------------------------------------------------------------------- */
+
+:focus {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 :focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: 4px;
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Buttons / controls that opt into ring utilities still need offset on dark */
+.ring-focus {
+  --tw-ring-color: var(--color-focus);
 }
 
 ::selection {
   background: var(--color-sand);
   color: var(--color-ink);
 }
+
+/* -----------------------------------------------------------------------------
+   Components
+   ----------------------------------------------------------------------------- */
 
 @layer components {
   .page-container {
@@ -93,8 +170,23 @@ a {
     margin-inline: auto;
   }
 
+  /**
+   * Eyebrow / overline
+   * Uses darker gold on light for AA at ~12px bold uppercase.
+   * On inverse surfaces, pair with text-clay-inverse in components.
+   */
   .eyebrow {
-    color: var(--color-clay);
+    color: var(--color-clay-on-light);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    line-height: 1rem;
+    text-transform: uppercase;
+  }
+
+  /* Inverse eyebrow for dark sections (home markets, header contexts) */
+  .eyebrow-inverse {
+    color: var(--color-clay-inverse);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -102,6 +194,10 @@ a {
     text-transform: uppercase;
   }
 }
+
+/* -----------------------------------------------------------------------------
+   Reduced motion (WCAG 2.3.3 / user preference)
+   ----------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -115,5 +211,21 @@ a {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   High contrast / forced colors (Windows, etc.)
+   ----------------------------------------------------------------------------- */
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: 3px solid CanvasText;
+    outline-offset: 3px;
+  }
+
+  .eyebrow,
+  .eyebrow-inverse {
+    color: CanvasText;
   }
 }
