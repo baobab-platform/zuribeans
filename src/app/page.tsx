@@ -2,11 +2,13 @@ import Link from "next/link"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { HomeHero } from "@/components/marketing/home/home-hero"
+import { TrustEvidenceStrip } from "@/components/marketing/home/trust-evidence-strip"
 import { SectionHeading } from "@/components/marketing/section-heading"
 import { getMarketContext } from "@/lib/market/request"
 import { getMarket } from "@/lib/market/markets"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
-import { HOME_HERO } from "@/lib/content/homepage"
+import { HOME_HERO, TRUST_EVIDENCE } from "@/lib/content/homepage"
+import { getVisibleEvidence } from "@/lib/content/evidence"
 import {
   PUBLIC_MARKET_SUMMARIES,
   PUBLIC_PRODUCT_CLASSES,
@@ -20,35 +22,15 @@ export const metadata = getPublicPageMetadata({
   path: "/",
 })
 
-const assurances = [
-  ["Origin", "Product information connected to where and how supply begins."],
-  ["Quality", "Specifications and verification presented for professional decisions."],
-  ["Trade", "Commercial and operational steps handled as one accountable journey."],
-] as const
-
 export default async function HomePage() {
   const { active: market } = await getMarketContext()
+  const visibleEvidence = getVisibleEvidence(TRUST_EVIDENCE)
 
   return (
     <>
       <HomeHero content={HOME_HERO} market={market} />
 
-      {/* ── Assurances / Trust strip ── */}
-      <section className="border-y border-line bg-surface-raised">
-        <div className="page-container grid divide-y divide-line md:grid-cols-3 md:divide-x md:divide-y-0">
-          {assurances.map(([title, description], index) => (
-            <div key={title} className="py-8 md:px-8 md:first:pl-0 md:last:pr-0">
-              <p className="flex items-center gap-3 font-display text-xl">
-                <span className="flex size-8 items-center justify-center rounded-full bg-ink text-sm font-bold text-clay">
-                  0{index + 1}
-                </span>
-                {title}
-              </p>
-              <p className="mt-3 text-sm leading-6 text-muted">{description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <TrustEvidenceStrip items={visibleEvidence} />
 
       {/* ── Product classes ── */}
       <section className="page-container py-20 lg:py-28">
