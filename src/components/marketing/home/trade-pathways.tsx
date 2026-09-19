@@ -36,7 +36,7 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
             <article
               key={pathway.tone}
               className={classNames(
-                "group relative flex min-h-[420px] flex-col overflow-hidden rounded-panel border p-8 shadow-panel md:p-10",
+                "group relative flex min-h-[360px] flex-col overflow-hidden rounded-panel border p-6 shadow-panel sm:min-h-[420px] sm:p-8 md:p-10",
                 inverse ? "border-ink bg-ink text-white" : "border-line bg-surface-raised text-ink",
               )}
             >
@@ -49,28 +49,28 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
               />
               <div
                 className={classNames(
-                  "relative flex size-14 items-center justify-center rounded-full border",
+                  "relative flex size-12 items-center justify-center rounded-full border sm:size-14",
                   inverse
                     ? "border-white/15 bg-white/10 text-clay-inverse"
                     : "border-clay/30 bg-clay/10 text-clay-on-light",
                 )}
               >
-                <Icon className="size-6" strokeWidth={1.6} aria-hidden="true" />
+                <Icon className="size-5 sm:size-6" strokeWidth={1.6} aria-hidden="true" />
               </div>
               <p
                 className={classNames(
-                  "relative mt-9 text-xs font-bold uppercase tracking-[0.18em]",
+                  "relative mt-6 text-xs font-bold uppercase tracking-[0.18em] sm:mt-9",
                   inverse ? "text-clay-inverse" : "text-clay-on-light",
                 )}
               >
                 {pathway.audience}
               </p>
-              <h3 className="relative mt-4 max-w-lg font-display text-4xl leading-tight md:text-5xl">
+              <h3 className="relative mt-3 max-w-lg font-display text-3xl leading-tight sm:mt-4 sm:text-4xl md:text-5xl">
                 {pathway.title}
               </h3>
               <p
                 className={classNames(
-                  "relative mt-5 max-w-xl leading-7",
+                  "relative mt-4 max-w-xl leading-6 sm:mt-5 sm:leading-7",
                   inverse ? "text-white/75" : "text-muted",
                 )}
               >
@@ -78,7 +78,7 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
               </p>
               <p
                 className={classNames(
-                  "relative mt-7 border-t pt-4 text-xs leading-5",
+                  "relative mt-5 border-t pt-3 text-xs leading-5 sm:mt-7 sm:pt-4",
                   inverse ? "border-white/10 text-white/65" : "border-line text-muted",
                 )}
               >
