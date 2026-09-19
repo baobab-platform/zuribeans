@@ -1,10 +1,4 @@
-import {
-  ClipboardList,
-  Handshake,
-  SearchCheck,
-  Truck,
-  type LucideIcon,
-} from "lucide-react"
+import { ClipboardList, Handshake, SearchCheck, Truck, type LucideIcon } from "lucide-react"
 import { SectionHeading } from "@/components/marketing/section-heading"
 import type { TradeStepIcon, TradeStepPresentation } from "@/lib/content/trade"
 
