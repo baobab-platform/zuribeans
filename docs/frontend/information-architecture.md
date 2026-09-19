@@ -45,6 +45,7 @@ published and verified.
 | `/quality-traceability`       | Quality & Traceability | Now                     | Standards, lots, certifications, chain-of-custody intent and verification language.                                                                      |
 | `/about`                      | About                  | Now                     | Company, operating model, governance and Baobab-enabled capability in buyer language.                                                                    |
 | `/contact`                    | Contact                | Now                     | Current mail route until an authoritative enquiry destination exists.                                                                                    |
+| `/help`                       | Help                   | Now                     | Routes a buyer, supplier or account question to the existing channel that answers it; not a support ticketing system.                                    |
 | `/login`                      | Portal sign-in         | Now                     | Neutral customer identity language; route may lead to buyer or supplier destination.                                                                     |
 | `/register`                   | Create login           | Now                     | Personal identity only, never organisation approval.                                                                                                     |
 
@@ -94,25 +95,33 @@ current state; they never receive controls for staff-owned qualification transit
 
 ## Primary navigation
 
-Desktop order:
+Grouped into six labels rather than seven flat links, so related routes disclose together instead
+of competing for header width. Desktop order and grouping (`docs/frontend/site-header.md` has the
+full anatomy):
 
-1. Products
-2. Origins & Markets
-3. Sourcing
-4. Trade
-5. Quality & Traceability
-6. About
-7. Contact
+1. Commodities (disclosure: view all, then each supported product class)
+2. Markets (disclosure: Origins & Markets, then each enabled market)
+3. Trade (disclosure: How We Trade, Sourcing)
+4. About Us
+5. Resources (disclosure: Quality & Traceability, Become a Supplier, Supplier Portal, Help)
+6. Contact
 
-Utility actions:
+Disclosure content is built from the same authoritative sources as the rest of the estate —
+`PUBLIC_PRODUCT_CLASSES` for Commodities, `MarketContext.enabled` for Markets — never a hardcoded
+product or market list in the navigation component itself.
 
-- Market selector, always available when more than one market is enabled.
-- Portal sign-in for anonymous visitors.
-- Buyer account or supplier context for authenticated visitors only when it can be resolved safely.
-- Primary `Explore products` action on wide layouts; this must not crowd out navigation on tablet.
+Utility bar (tier 1 of the header, desktop only):
 
-The header is server-rendered. Only the mobile disclosure control and any accessible dropdown/sheet
-behaviour may be a client island.
+- Market context, always available when more than one market is enabled.
+- `Become a Supplier` and `Help` (routes to the public `/help` page).
+- Portal sign-in for anonymous visitors, or an account link for authenticated visitors only when it
+  can be resolved safely.
+
+Primary commercial action: `Request a Quote`, linking to `/contact`, on wide layouts; this must not
+crowd out navigation on tablet — see the header's own responsive rules for the exact breakpoint.
+
+The header is server-rendered. Only the mobile disclosure control and each accessible
+dropdown/disclosure may be a client island.
 
 ## Mobile navigation
 

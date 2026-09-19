@@ -29,7 +29,10 @@ Tokens live in `src/app/globals.css` and are exposed to Tailwind through
 - reading and page containers;
 - focus colour;
 - motion timing and reduced-motion behaviour;
-- header/overlay layer intent.
+- header/overlay layer intent;
+- header tier heights (`--header-utility-height`, `--header-main-height`,
+  `--header-sticky-height`) and the utility-tier background (`--color-ink-utility`) — see
+  `docs/frontend/site-header.md`.
 
 Raw brand colours and arbitrary shadows/radii must not proliferate in route components.
 
