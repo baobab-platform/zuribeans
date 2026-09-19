@@ -24,6 +24,21 @@ test.describe("responsive shell", () => {
     expect(hasOverflow).toBe(false)
   })
 
+  test("smallest supported phone width shows brand and menu without horizontal overflow", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 640 })
+    await page.goto("/")
+
+    await expect(page.getByRole("link", { name: "ZuriBeans home" }).first()).toBeVisible()
+    await expect(page.getByRole("button", { name: "Menu" })).toBeVisible()
+
+    const hasOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    )
+    expect(hasOverflow).toBe(false)
+  })
+
   test("tablet navigation and supplier call to action remain usable", async ({ page }) => {
     await page.setViewportSize({ width: 820, height: 1180 })
     await page.goto("/sourcing/become-a-supplier")

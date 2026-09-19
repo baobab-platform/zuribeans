@@ -69,6 +69,11 @@ test.describe("two-tier trade-desk header", () => {
     const header = page.getByRole("banner")
 
     const utilityBar = page.getByTestId("utility-bar")
+    // Let the scroll-state island hydrate and run its first observer
+    // callback before asserting the pre-scroll state, otherwise a transient
+    // pre-hydration read could pass even if the observer collapses the
+    // header immediately (the exact bug this test guards against).
+    await page.waitForTimeout(300)
     await expect(utilityBar).toHaveJSProperty("offsetHeight", 32)
 
     await page.mouse.wheel(0, 400)
