@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { FeaturedCommodities } from "@/components/marketing/home/featured-commodities"
 import { HomeHero } from "@/components/marketing/home/home-hero"
 import { TrustEvidenceStrip } from "@/components/marketing/home/trust-evidence-strip"
 import { SectionHeading } from "@/components/marketing/section-heading"
@@ -32,42 +33,7 @@ export default async function HomePage() {
 
       <TrustEvidenceStrip items={visibleEvidence} />
 
-      {/* ── Product classes ── */}
-      <section className="page-container py-20 lg:py-28">
-        <SectionHeading
-          eyebrow="Product classes"
-          title="Specified for decisions, not dressed for a shelf."
-          description="The catalogue is designed for professional evaluation across current and future agricultural product classes. Commercially sensitive terms remain available only to authorized buyers."
-        />
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {PUBLIC_PRODUCT_CLASSES.map((productClass, index) => (
-            <Link key={productClass.name} href={productClass.href} className="group">
-              <Card className="relative h-full overflow-hidden transition-all group-hover:-translate-y-1 group-hover:shadow-panel">
-                <div className="h-2 bg-leaf" aria-hidden="true" />
-                <div className="relative p-8 md:p-10">
-                  <span
-                    className="absolute right-6 top-6 font-display text-6xl text-sand/80"
-                    aria-hidden="true"
-                  >
-                    0{index + 1}
-                  </span>
-                  <p className="eyebrow relative">{productClass.eyebrow}</p>
-                  <h3 className="relative mt-5 font-display text-3xl md:text-4xl">
-                    {productClass.name}
-                  </h3>
-                  <p className="relative mt-4 max-w-lg leading-7 text-muted">
-                    {productClass.description}
-                  </p>
-                  <p className="relative mt-8 inline-flex items-center gap-1 font-semibold text-clay transition-colors group-hover:text-clay-inverse">
-                    {productClass.actionLabel}
-                    <span aria-hidden="true">→</span>
-                  </p>
-                </div>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </section>
+      <FeaturedCommodities commodities={PUBLIC_PRODUCT_CLASSES} />
 
       {/* ── Origins & Markets ── */}
       <section className="bg-ink py-20 text-white lg:min-h-[900px] lg:py-28">
