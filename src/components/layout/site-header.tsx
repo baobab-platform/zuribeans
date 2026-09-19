@@ -22,11 +22,11 @@ export function SiteHeader({
   hasSession: boolean
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-canvas/95 backdrop-blur supports-[backdrop-filter]:bg-canvas/85">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/95 text-white backdrop-blur supports-[backdrop-filter]:bg-ink/85">
       <div className="page-container flex min-h-20 items-center gap-5">
         <Link
           href="/"
-          className="shrink-0 font-display text-2xl font-semibold tracking-tight"
+          className="shrink-0 font-display text-2xl font-semibold tracking-tight text-white"
           aria-label="ZuriBeans home"
         >
           ZURIBEANS
@@ -42,7 +42,7 @@ export function SiteHeader({
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap py-2 text-muted-strong hover:text-clay"
+              className="whitespace-nowrap py-2 text-white/75 transition-colors hover:text-clay-inverse"
             >
               {item.label}
             </Link>
@@ -52,11 +52,15 @@ export function SiteHeader({
           <MarketSwitcher marketContext={marketContext} className="max-w-64 justify-end" />
           <Link
             href={hasSession ? "/account" : "/login"}
-            className="whitespace-nowrap py-2 text-sm font-semibold hover:text-clay"
+            className="whitespace-nowrap py-2 text-sm font-semibold text-white/85 transition-colors hover:text-clay-inverse"
           >
             {hasSession ? "Account" : "Portal sign in"}
           </Link>
-          <ButtonLink href="/products" size="sm">
+          <ButtonLink
+            href="/products"
+            size="sm"
+            className="bg-clay text-ink hover:bg-clay-inverse"
+          >
             Explore products
           </ButtonLink>
         </div>
