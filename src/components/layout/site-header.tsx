@@ -20,10 +20,10 @@ export function SiteHeader({
   hasSession: boolean
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/95 text-white backdrop-blur supports-[backdrop-filter]:bg-ink/85">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/95 text-white backdrop-blur supports-backdrop-filter:bg-ink/85">
       <UtilityBar marketContext={marketContext} hasSession={hasSession} />
 
-      <div className="page-container flex h-[var(--header-main-height)] items-center gap-4 transition-[height] duration-200 lg:gap-6 [.is-header-scrolled_&]:h-[var(--header-sticky-height)]">
+      <div className="page-container flex h-(--header-main-height) items-center gap-4 transition-[height] duration-200 lg:gap-6 [.is-header-scrolled]:h-(--header-sticky-height)">
         <BrandLockup />
 
         <DesktopNavigation marketContext={marketContext} />
@@ -32,10 +32,10 @@ export function SiteHeader({
           <ButtonLink
             href="/contact"
             size="md"
-            className="min-w-[175px] justify-center rounded-[11px] bg-clay font-bold text-ink hover:bg-clay-inverse"
+            className="min-w-43.75] justify-center rounded-[11px] bg-clay font-bold text-ink hover:bg-clay-inverse"
           >
             Request a Quote
-            <ArrowRight aria-hidden="true" strokeWidth={1.75} className="size-[18px]" />
+            <ArrowRight aria-hidden="true" strokeWidth={1.75} className="size-4.5" />
           </ButtonLink>
         </div>
 
