@@ -1,28 +1,33 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import type { MarketContext } from "@/lib/market/request"
-import { classNames } from "@/lib/ui/classnames"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { MarketContext } from "@/lib/market/request";
+import { classNames } from "@/lib/ui/classnames";
 
 export function MarketSwitcher({
   marketContext,
   className,
   tone = "default",
 }: {
-  marketContext: MarketContext
-  className?: string
-  tone?: "default" | "inverse"
+  marketContext: MarketContext;
+  className?: string;
+  tone?: "default" | "inverse";
 }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
   const otherMarkets = marketContext.enabled.filter(
     (market) => market.marketKey !== marketContext.active.marketKey,
-  )
+  );
 
-  const isInverse = tone === "inverse"
+  const isInverse = tone === "inverse";
 
   return (
-    <div className={classNames("flex flex-wrap items-center gap-2 text-sm", className)}>
+    <div
+      className={classNames(
+        "flex flex-wrap items-center gap-2 text-sm",
+        className,
+      )}
+    >
       <span
         className={classNames(
           "font-semibold",
@@ -48,5 +53,5 @@ export function MarketSwitcher({
         </Link>
       ))}
     </div>
-  )
+  );
 }
