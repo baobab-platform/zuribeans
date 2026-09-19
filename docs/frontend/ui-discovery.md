@@ -40,7 +40,7 @@ commercial capability.
 | Accounting and ERP projections                                 | Baobab ERP / iDempiere                                   | No browser-to-ERP integration.                                                                 |
 | Content                                                        | Current repository; future Baobab CMS / Payload          | Keep marketing composition CMS-ready without inventing a CMS contract.                         |
 | Intelligence                                                   | Baobab Pulse                                             | No direct browser integration until an application contract exists.                            |
-| Infrastructure and secrets                                     | `nabhold/infrastructure`                                 | Declare runtime needs; do not provision infrastructure here.                                   |
+| Infrastructure and secrets                                     | `baobab-platform/infrastructure`                         | Declare runtime needs; do not provision infrastructure here.                                   |
 
 ## Current route inventory
 

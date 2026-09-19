@@ -7,7 +7,7 @@ Accepted
 ## Context
 
 ADR-0003 pinned the ordinary and browser-capable development environments to the 1.2.6 release.
-The repository's authoritative `.nabhold/environment.yaml` now requires the `1.3.0-frontend`
+The repository's authoritative `.baobab/environment.yaml` now requires the `1.3.0-frontend`
 profile for Codespaces and compatible local environments. Browser and security workflows still use
 the separately governed `1.2.6-frontend-e2e` and `1.2.6-frontend` images available to those jobs.
 
@@ -17,8 +17,8 @@ validation.
 
 ## Decision
 
-Supersede ADR-0003. Use `ghcr.io/nabhold/baobab-dev:1.3.0-frontend` for Codespaces and compatible
-local development, exactly as declared by `.nabhold/environment.yaml`. Keep workflow-specific 1.2.6
+Supersede ADR-0003. Use `ghcr.io/baobab-platform/baobab-dev:1.3.0-frontend` for Codespaces and compatible
+local development, exactly as declared by `.baobab/environment.yaml`. Keep workflow-specific 1.2.6
 images pinned until the corresponding governed replacement profiles are published and adopted in a
 dedicated environment update.
 

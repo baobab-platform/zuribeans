@@ -47,7 +47,7 @@ Before even the narrower public/supplier release, the release owner must record:
 
 - immutable release SHA and successful CI, Security and Foundation runs for that SHA;
 - production `NEXT_PUBLIC_SITE_URL`, exact Medusa URL/publishable key, enabled/default markets and
-  supplier database secret supplied by `nabhold/infrastructure`;
+  supplier database secret supplied by `baobab-platform/infrastructure`;
 - database migration execution, backup/restore evidence and rollback owner;
 - TLS, DNS, CDN/image behavior, CSP and security-header verification at the public origin;
 - live Trade catalogue/PDP, login/logout and protected-route smoke tests in both enabled markets;
@@ -74,7 +74,7 @@ completed production-readiness gate.
 
 ## Rollback and incident posture
 
-Deployment and rollback are owned by `nabhold/infrastructure`. The application exposes
+Deployment and rollback are owned by `baobab-platform/infrastructure`. The application exposes
 `/api/health` as process liveness only; it must not be treated as proof that Trade or the supplier
 database is ready. A failed action must never be assumed successful: the global failure UI explicitly
 requires confirmation from the relevant journey, and does not display error internals. Upstream

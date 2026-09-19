@@ -2,9 +2,9 @@
  * Candidate Baobab Market catalogue for the Zuribeans estate.
  *
  * These `marketKey` values mirror the candidate `canonical_key`s that
- * nabhold/baobab-trade's market bootstrap (`src/baobab/market/market-config.ts`)
+ * baobab-platform/baobab-trade's market bootstrap (`src/baobab/market/market-config.ts`)
  * uses to provision its own Medusa-side projection ahead of Control Plane
- * approval. `nabhold/shared`'s `contracts/legal-entity/registry.yaml` still
+ * approval. `baobab-platform/shared`'s `contracts/legal-entity/registry.yaml` still
  * lists the ZURIBEANS entity's `markets` as empty pending that approval, so
  * these are candidates, not activated canonical Markets. Once Control Plane
  * registers and activates the real Markets, resolve this list against the

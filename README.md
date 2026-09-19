@@ -2,15 +2,15 @@
 
 Zuribeans is the independently deployable B2B digital estate of the Zuribeans operating
 company. It owns the customer experience and consumes commerce from
-`nabhold/baobab-trade` through Medusa's Store API.
+`baobab-platform/baobab-trade` through Medusa's Store API.
 
 ## Boundaries
 
 - Baobab Trade owns products, prices, customers, carts, orders, inventory and fulfilment.
 - Baobab ERP and Pulse are reached through backend engine integrations, not from browsers.
 - Baobab Control Plane remains authoritative for platform governance.
-- `nabhold/shared` owns canonical contracts and standards.
-- `nabhold/infrastructure` owns production deployment and secret injection.
+- `baobab-platform/shared` owns canonical contracts and standards.
+- `baobab-platform/infrastructure` owns production deployment and secret injection.
 
 ## First vertical slice
 
@@ -35,6 +35,6 @@ release decision in `docs/frontend/production-readiness.md`.
 
 ## Foundation 4
 
-Codespaces uses `ghcr.io/nabhold/baobab-dev:1.3.0-frontend`. The SHA-pinned
+Codespaces uses `ghcr.io/baobab-platform/baobab-dev:1.3.0-frontend`. The SHA-pinned
 Foundation gate validates contract compatibility and reproducibility and scans
 source, dependencies, secrets, configuration, and the deployable image.

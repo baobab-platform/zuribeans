@@ -21,7 +21,7 @@ native install), then run `pnpm db:migrate` to apply `drizzle/`. After changing
 `src/lib/db/schema.ts`, run `pnpm db:generate` to create a new migration file and commit it
 alongside the schema change — never hand-edit a file under `drizzle/`.
 
-The repository consumes `ghcr.io/nabhold/baobab-dev:1.3.0-frontend` for GitHub
+The repository consumes `ghcr.io/baobab-platform/baobab-dev:1.3.0-frontend` for GitHub
 Codespaces and compatible local Dev Containers. Browser-dependent CI uses the
 separately published `1.2.6-frontend-e2e` profile.
 

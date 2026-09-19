@@ -8,10 +8,10 @@ Accepted
 
 Zuribeans needs real buyer authentication now: an authenticated `/account` shell is the
 foundation the rest of Increment 2 and Increment 5 (organisation onboarding, RFQ, contract
-pricing) build on. `nabhold/baobab-trade` has not published any custom B2B identity contract
+pricing) build on. `baobab-platform/baobab-trade` has not published any custom B2B identity contract
 (no company, approval-flow, or customer-auth API of its own — see `contracts.lock.yaml`), but
 it runs stock Medusa v2 (`@medusajs/medusa` 2.20.1, confirmed by inspecting
-`nabhold/baobab-trade/package.json`), which already provides customer registration and
+`baobab-platform/baobab-trade/package.json`), which already provides customer registration and
 email/password authentication as a framework feature. Using it is not inventing a shortcut
 around Trade: Medusa's customer identity _is_ Trade's authoritative representation of a buyer,
 per this repository's own B2B capability ownership rule ("Medusa-native … customers … must be

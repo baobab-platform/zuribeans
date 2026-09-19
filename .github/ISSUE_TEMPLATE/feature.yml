@@ -17,8 +17,8 @@ body:
       options:
         - Zuribeans presentation or journey
         - Baobab Trade API dependency
-        - Nabhold shared contract
-        - Nabhold infrastructure dependency
+        - Baobab-Platform shared contract
+        - Baobab-Platform infrastructure dependency
     validations:
       required: true
   - type: textarea

@@ -5,9 +5,9 @@ Describe the customer or engineering outcome.
 ## Architectural boundary
 
 - [ ] The change belongs in the Zuribeans digital estate.
-- [ ] Commerce authority remains in `nabhold/baobab-trade`.
+- [ ] Commerce authority remains in `baobab-platform/baobab-trade`.
 - [ ] No Baobab database, administrative credential or frontend-owned commerce rule was added.
-- [ ] Contract changes were proposed in `nabhold/shared` first.
+- [ ] Contract changes were proposed in `baobab-platform/shared` first.
 
 ## Verification
 

@@ -113,7 +113,9 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
       {/* Legal bar */}
       <div className="border-t border-white/10">
         <div className="page-container flex flex-col gap-3 py-6 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getUTCFullYear()} ZuriBeans. A subsidiary of Nabhold Group Africa.</p>
+          <p>
+            © {new Date().getUTCFullYear()} ZuriBeans. A subsidiary of Baobab-Platform Group Africa.
+          </p>
           <div className="flex flex-col gap-2 sm:items-end">
             <nav aria-label="Legal">
               <ul className="flex flex-wrap gap-x-5 gap-y-1">

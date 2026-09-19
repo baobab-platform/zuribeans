@@ -32,7 +32,7 @@ export function SiteHeader({
           <ButtonLink
             href="/contact"
             size="md"
-            className="min-w-43.75] justify-center rounded-[11px] bg-clay font-bold text-ink hover:bg-clay-inverse"
+            className="min-w-[11rem] justify-center rounded-[11px] bg-clay font-bold text-ink hover:bg-clay-inverse"
           >
             Request a Quote
             <ArrowRight aria-hidden="true" strokeWidth={1.75} className="size-4.5" />

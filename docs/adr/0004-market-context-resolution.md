@@ -7,11 +7,11 @@ Accepted
 ## Context
 
 Zuribeans must support Uganda and South Africa from the outset, and must not assume a single
-global market or hardcode a default country/currency into components. `nabhold/baobab-trade`
+global market or hardcode a default country/currency into components. `baobab-platform/baobab-trade`
 already bootstraps candidate Baobab Market configuration for both
 (`src/baobab/market/market-config.ts`: `zuribeans_ug`/UGX, `zuribeans_za`/ZAR), tagged as
-candidates because `nabhold/shared`'s legal-entity registry still lists Zuribeans' `markets` as
-empty pending Control Plane approval. `nabhold/baobab-cp`'s `market.market` table exists but is
+candidates because `baobab-platform/shared`'s legal-entity registry still lists Zuribeans' `markets` as
+empty pending Control Plane approval. `baobab-platform/baobab-cp`'s `market.market` table exists but is
 unimplemented (no Go type, no API), so there is no canonical `market_id` to resolve against yet.
 
 Zuribeans still needs explicit, testable market behaviour today, without inventing a

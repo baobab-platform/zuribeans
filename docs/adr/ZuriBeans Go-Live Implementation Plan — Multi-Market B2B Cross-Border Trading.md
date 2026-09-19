@@ -233,7 +233,7 @@ Future markets may enable only subsets.
 # 4. ZURIBEANS HIGH-LEVEL BUSINESS ARCHITECTURE
 
 ```text
-                              NABHOLD GROUP AFRICA
+                              BAOBAB-PLATFORM GROUP AFRICA
                                       │
                                       │ ownership
                                       ▼
@@ -4024,15 +4024,15 @@ Advanced supplier analytics
 
 | Repository | Priority | Primary responsibility |
 |---|---:|---|
-| `nabhold/shared` | P0 | Contracts |
-| `nabhold/baobab-cp` | P0 | Context/provisioning/readiness |
-| `nabhold/baobab-iam` | P0 | Identity/isolation |
-| `nabhold/baobab-trade` | P0 | Commercial/trade orchestration |
-| `nabhold/baobab-erp` | P0 | Procurement/accounting |
-| `nabhold/infrastructure` | P0 | Production runtime |
-| `nabhold/zuribeans` | P1 | User-facing B2B estates |
-| `nabhold/baobab-cms` | P1 | Content/documents |
-| `nabhold/baobab-pulse` | P2 | Intelligence |
+| `baobab-platform/shared` | P0 | Contracts |
+| `baobab-platform/baobab-cp` | P0 | Context/provisioning/readiness |
+| `baobab-platform/baobab-iam` | P0 | Identity/isolation |
+| `baobab-platform/baobab-trade` | P0 | Commercial/trade orchestration |
+| `baobab-platform/baobab-erp` | P0 | Procurement/accounting |
+| `baobab-platform/infrastructure` | P0 | Production runtime |
+| `baobab-platform/zuribeans` | P1 | User-facing B2B estates |
+| `baobab-platform/baobab-cms` | P1 | Content/documents |
+| `baobab-platform/baobab-pulse` | P2 | Intelligence |
 
 This priority is about **implementation dependency**, not business importance.
 
