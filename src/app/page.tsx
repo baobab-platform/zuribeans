@@ -3,6 +3,7 @@ import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { FeaturedCommodities } from "@/components/marketing/home/featured-commodities"
 import { HomeHero } from "@/components/marketing/home/home-hero"
+import { TradeProcess } from "@/components/marketing/home/trade-process"
 import { TrustEvidenceStrip } from "@/components/marketing/home/trust-evidence-strip"
 import { SectionHeading } from "@/components/marketing/section-heading"
 import { getMarketContext } from "@/lib/market/request"
@@ -107,24 +108,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── How ZuriBeans trades ── */}
-      <section className="page-container py-20 lg:py-28">
-        <SectionHeading
-          eyebrow="How ZuriBeans trades"
-          title="A clear commercial path from requirement to record."
-        />
-        <ol className="mt-12 grid gap-px overflow-hidden rounded-panel border border-line bg-line md:grid-cols-2 lg:grid-cols-4">
-          {TRADE_STEPS.map((step) => (
-            <li key={step.number} className="bg-surface-raised p-7">
-              <div className="flex size-12 items-center justify-center rounded-full bg-ink font-display text-lg text-clay">
-                {step.number}
-              </div>
-              <h3 className="mt-8 text-lg font-semibold">{step.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-muted">{step.description}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <TradeProcess steps={TRADE_STEPS} />
 
       {/* ── Quality & Traceability ── */}
       <section className="border-y border-line bg-sand/40 py-20 lg:py-28">
