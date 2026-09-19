@@ -1,10 +1,4 @@
-import {
-  BadgeCheck,
-  FileCheck2,
-  Route,
-  ShieldCheck,
-  type LucideIcon,
-} from "lucide-react"
+import { BadgeCheck, FileCheck2, Route, ShieldCheck, type LucideIcon } from "lucide-react"
 import type { EvidenceIcon, EvidenceItem } from "@/lib/content/evidence"
 
 const EVIDENCE_ICONS: Record<EvidenceIcon, LucideIcon> = {
@@ -24,10 +18,7 @@ export function TrustEvidenceStrip({ items }: TrustEvidenceStripProps) {
   }
 
   return (
-    <section
-      aria-label="Trade assurance"
-      className="border-y border-line bg-surface-raised"
-    >
+    <section aria-label="Trade assurance" className="border-y border-line bg-surface-raised">
       <ul className="page-container grid divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
         {items.map((item) => {
           const Icon = EVIDENCE_ICONS[item.icon]
