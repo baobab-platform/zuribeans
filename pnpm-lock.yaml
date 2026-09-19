@@ -117,8 +117,8 @@ importers:
         specifier: latest
         version: 1.63.0
       postcss:
-        specifier: 8.5.28
-        version: 8.5.28
+        specifier: 8.5.26
+        version: 8.5.26
       prettier:
         specifier: 3.9.8
         version: 3.9.8
