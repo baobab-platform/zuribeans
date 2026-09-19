@@ -1,21 +1,19 @@
-import Image from "next/image"
-import { ArrowRight } from "lucide-react"
-import { MarketContextBadge } from "@/components/context/market-context-badge"
-import { ButtonLink } from "@/components/ui/button"
-import type { HomeHeroContent } from "@/lib/content/homepage"
-import type { ZuribeansMarket } from "@/lib/market/markets"
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import { MarketContextBadge } from "@/components/context/market-context-badge";
+import { ButtonLink } from "@/components/ui/button";
+import type { HomeHeroContent } from "@/lib/content/homepage";
+import type { ZuribeansMarket } from "@/lib/market/markets";
 
 type HomeHeroProps = {
-  content: HomeHeroContent
-  market: ZuribeansMarket
-}
+  content: HomeHeroContent;
+  market: ZuribeansMarket;
+};
 
 export function HomeHero({ content, market }: HomeHeroProps) {
   return (
     <section className="relative overflow-hidden bg-ink text-white">
-      <div
-        className="page-container grid min-h-[calc(100svh-var(--header-utility-height)-var(--header-main-height))] items-center gap-10 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:py-20"
-      >
+      <div className="page-container grid min-h-[calc(100svh-var(--header-utility-height)-var(--header-main-height))] items-center gap-10 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:py-20">
         <div className="relative z-10 lg:py-10">
           <p className="eyebrow-inverse">{content.eyebrow}</p>
           <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[0.98] tracking-tight text-balance sm:text-6xl lg:text-7xl">
@@ -69,5 +67,5 @@ export function HomeHero({ content, market }: HomeHeroProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }
