@@ -18,7 +18,7 @@ export function UtilityBar({
 }) {
   return (
     <div
-      className="hidden h-[var(--header-utility-height)] overflow-hidden border-b border-white/10 bg-ink-utility text-xs font-medium text-white/85 transition-[height,opacity] duration-200 xl:block [.is-header-scrolled_&]:h-0 [.is-header-scrolled_&]:border-b-0 [.is-header-scrolled_&]:opacity-0"
+      className="header-utility-bar hidden h-[var(--header-utility-height)] overflow-hidden border-b border-white/10 bg-ink-utility text-xs font-medium text-white/85 transition-[height,opacity] duration-200 xl:block [.is-header-scrolled_&]:h-0 [.is-header-scrolled_&]:border-b-0 [.is-header-scrolled_&]:opacity-0"
       data-testid="utility-bar"
     >
       <div className="page-container flex h-full items-center justify-between gap-6">

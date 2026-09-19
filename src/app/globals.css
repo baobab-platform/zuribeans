@@ -246,6 +246,15 @@ canvas {
     line-height: 1rem;
     text-transform: uppercase;
   }
+
+  /* Keep collapsed utility links discoverable for keyboard users. */
+  @media (min-width: 80rem) {
+    html.is-header-scrolled .header-utility-bar:focus-within {
+      height: var(--header-utility-height) !important;
+      border-bottom-width: 1px !important;
+      opacity: 1 !important;
+    }
+  }
 }
 
 /* -----------------------------------------------------------------------------

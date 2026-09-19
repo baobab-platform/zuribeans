@@ -87,4 +87,25 @@ test.describe("two-tier trade-desk header", () => {
       "/contact",
     )
   })
+
+  test("utility links remain keyboard-reachable after the tier collapses", async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1000 })
+    await page.goto("/")
+
+    const header = page.getByRole("banner")
+    const utilityBar = page.getByTestId("utility-bar")
+    await page.waitForTimeout(300)
+    await page.mouse.wheel(0, 400)
+
+    await expect(async () => {
+      expect(await utilityBar.evaluate((el) => el.getBoundingClientRect().height)).toBe(0)
+    }).toPass()
+
+    const helpLink = header.getByRole("link", { name: "Help" })
+    await helpLink.focus()
+    await expect(async () => {
+      expect(await utilityBar.evaluate((el) => el.getBoundingClientRect().height)).toBe(32)
+    }).toPass()
+    await expect(helpLink).toBeFocused()
+  })
 })
