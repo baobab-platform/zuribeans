@@ -22,8 +22,12 @@ export function UtilityBar({
       data-testid="utility-bar"
     >
       <div className="page-container flex h-full items-center justify-between gap-6">
-        <div className="flex min-w-0 items-center gap-3">
-          <Globe2 aria-hidden="true" strokeWidth={1.75} className="size-4 shrink-0 text-white/70" />
+        <div className="flex min-w-0 items-center gap-3 border-r border-white/20 pr-6">
+          <Globe2
+            aria-hidden="true"
+            strokeWidth={1.75}
+            className="size-4 shrink-0 text-clay-inverse"
+          />
           <MarketSwitcher marketContext={marketContext} tone="inverse" className="min-w-0" />
         </div>
 
@@ -36,21 +40,33 @@ export function UtilityBar({
             href="/sourcing/become-a-supplier"
             className="flex items-center gap-1.5 whitespace-nowrap transition-colors hover:text-clay-inverse"
           >
-            <Handshake aria-hidden="true" strokeWidth={1.75} className="size-4" />
+            <Handshake
+              aria-hidden="true"
+              strokeWidth={1.75}
+              className="size-4 shrink-0 text-clay-inverse"
+            />
             Become a Supplier
           </Link>
           <Link
             href="/help"
-            className="flex items-center gap-1.5 whitespace-nowrap transition-colors hover:text-clay-inverse"
+            className="flex items-center gap-1.5 whitespace-nowrap border-l border-white/20 pl-5 transition-colors hover:text-clay-inverse"
           >
-            <CircleHelp aria-hidden="true" strokeWidth={1.75} className="size-4" />
+            <CircleHelp
+              aria-hidden="true"
+              strokeWidth={1.75}
+              className="size-4 shrink-0 text-clay-inverse"
+            />
             Help
           </Link>
           <Link
             href={hasSession ? "/account" : "/login"}
-            className="flex items-center gap-1.5 whitespace-nowrap transition-colors hover:text-clay-inverse"
+            className="flex items-center gap-1.5 whitespace-nowrap border-l border-white/20 pl-5 transition-colors hover:text-clay-inverse"
           >
-            <UserRound aria-hidden="true" strokeWidth={1.75} className="size-4" />
+            <UserRound
+              aria-hidden="true"
+              strokeWidth={1.75}
+              className="size-4 shrink-0 text-clay-inverse"
+            />
             {hasSession ? "Account" : "Sign in"}
           </Link>
         </div>
