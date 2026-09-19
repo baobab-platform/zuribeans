@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/quality-traceability",
     "/about",
     "/contact",
+    "/help",
   ].map((path) => ({
     url: `${base}${path}`,
     changeFrequency: "weekly",
