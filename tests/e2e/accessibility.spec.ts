@@ -23,6 +23,7 @@ test("public pages expose a single named primary heading and main landmark", asy
     "/sourcing",
     "/sourcing/become-a-supplier",
     "/trade",
+    "/help",
   ]
 
   for (const route of routes) {

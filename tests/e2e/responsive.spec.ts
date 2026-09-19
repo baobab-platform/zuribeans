@@ -15,7 +15,7 @@ test.describe("responsive shell", () => {
     await page.getByRole("button", { name: "Menu" }).click()
     const menu = page.getByRole("dialog", { name: "Explore ZuriBeans" })
     await expect(menu).toBeVisible()
-    await expect(menu.getByRole("link", { name: "Products", exact: true })).toBeVisible()
+    await expect(menu.getByRole("link", { name: "Commodities", exact: true })).toBeVisible()
     await expect(menu.getByRole("link", { name: /market$/ })).toBeVisible()
 
     const hasOverflow = await page.evaluate(
