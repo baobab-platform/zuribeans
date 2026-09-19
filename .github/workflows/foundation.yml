@@ -10,10 +10,11 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   foundation:
-    uses: baobab-platform/shared/.github/workflows/foundation-repository-gates.yml@d6c751ad9e5b85ed854c4ad3270bff4b7ac3c8cc
+    uses: baobab-platform/shared/.github/workflows/foundation-repository-gates.yml@f7466cc89a17c0b6e02b5a1e5fce3ce76073a718
     with:
       dockerfile: "Dockerfile"
       build_context: "."
