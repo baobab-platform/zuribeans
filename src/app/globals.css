@@ -19,6 +19,7 @@
   /* Brand & neutral */
   --color-ink: #0f2c24;
   --color-ink-soft: #1a3d32;
+  --color-ink-utility: #08241d;
   --color-canvas: #f7f2e9;
   --color-leaf: #2e5a4c;
   --color-leaf-dark: #0f2c24;
@@ -67,6 +68,11 @@
   --transition-fast: 150ms;
   --transition-standard: 240ms;
 
+  /* Global shell — two-tier header */
+  --header-utility-height: 2rem; /* 32px, tier 1 */
+  --header-main-height: 4.5rem; /* 72px, tier 2 initial */
+  --header-sticky-height: 4rem; /* 64px, tier 2 scrolled */
+
   /* Focus */
   --focus-ring-width: 3px;
   --focus-ring-offset: 3px;
@@ -89,6 +95,7 @@
   /* Colors */
   --color-ink: var(--color-ink);
   --color-ink-soft: var(--color-ink-soft);
+  --color-ink-utility: var(--color-ink-utility);
   --color-canvas: var(--color-canvas);
   --color-leaf: var(--color-leaf);
   --color-leaf-dark: var(--color-leaf-dark);
@@ -167,8 +174,8 @@ select,
 textarea,
 summary {
   transition-duration: var(--transition-fast);
-  transition-property: color, background-color, border-color, outline-color, box-shadow,
-    opacity, transform;
+  transition-property:
+    color, background-color, border-color, outline-color, box-shadow, opacity, transform;
   -webkit-tap-highlight-color: transparent;
 }
 

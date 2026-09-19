@@ -15,8 +15,23 @@ test.describe("responsive shell", () => {
     await page.getByRole("button", { name: "Menu" }).click()
     const menu = page.getByRole("dialog", { name: "Explore ZuriBeans" })
     await expect(menu).toBeVisible()
-    await expect(menu.getByRole("link", { name: "Products", exact: true })).toBeVisible()
+    await expect(menu.getByRole("link", { name: "Commodities", exact: true })).toBeVisible()
     await expect(menu.getByRole("link", { name: /market$/ })).toBeVisible()
+
+    const hasOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    )
+    expect(hasOverflow).toBe(false)
+  })
+
+  test("smallest supported phone width shows brand and menu without horizontal overflow", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 640 })
+    await page.goto("/")
+
+    await expect(page.getByRole("link", { name: "ZuriBeans home" }).first()).toBeVisible()
+    await expect(page.getByRole("button", { name: "Menu" })).toBeVisible()
 
     const hasOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth > document.documentElement.clientWidth,

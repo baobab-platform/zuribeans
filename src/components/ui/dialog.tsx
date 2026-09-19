@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useId, useRef, type ReactNode } from "react"
+import { X } from "lucide-react"
 import { Button } from "./button"
 
 export function Dialog({
@@ -49,6 +50,7 @@ export function Dialog({
             ) : null}
           </div>
           <Button variant="ghost" size="sm" onClick={onClose} aria-label={`Close ${title}`}>
+            <X aria-hidden="true" strokeWidth={1.75} className="size-5" />
             Close
           </Button>
         </div>

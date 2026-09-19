@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { SiteHeader } from "@/components/layout/site-header"
+import { HeaderScrollState } from "@/components/layout/header-scroll-state"
 import { getMarketContext } from "@/lib/market/request"
 import { hasCustomerSession } from "@/lib/auth/session-storage"
 import { StructuredData } from "@/components/seo/structured-data"
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         >
           Skip to content
         </a>
+        <HeaderScrollState />
         <SiteHeader marketContext={marketContext} hasSession={hasSession} />
         <main id="main" tabIndex={-1}>
           {children}
