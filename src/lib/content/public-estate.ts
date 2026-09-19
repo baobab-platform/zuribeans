@@ -1,4 +1,5 @@
 import type { CommodityPresentation } from "@/lib/content/commodity"
+import type { TradeStepPresentation } from "@/lib/content/trade"
 import type { ZuribeansMarketKey } from "@/lib/market/markets"
 
 export type PublicProductClass = CommodityPresentation
@@ -61,23 +62,27 @@ export const TRADE_STEPS = [
     title: "Define the requirement",
     description:
       "Product, specification, volume, destination and timing are established before terms are proposed.",
+    icon: "requirement",
   },
   {
     number: "02",
     title: "Confirm the commercial basis",
     description:
       "Availability, eligibility and terms come from the authoritative trading systems—not a browser estimate.",
+    icon: "verification",
   },
   {
     number: "03",
     title: "Prepare and move the goods",
     description:
       "Quality, documentation and logistics are coordinated against the agreed transaction and trade lane.",
+    icon: "agreement",
   },
   {
     number: "04",
     title: "Preserve the record",
     description:
       "Order, shipment and financial state remain connected for accountable repeat trade.",
+    icon: "delivery",
   },
-] as const
+] as const satisfies readonly TradeStepPresentation[]
