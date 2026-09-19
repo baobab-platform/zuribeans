@@ -1,10 +1,7 @@
 export type EvidenceStatus = "verified" | "development" | "planned"
 
 export type EvidenceIcon =
-  | "supplier-verification"
-  | "traceability"
-  | "quality-assurance"
-  | "trade-documentation"
+  "supplier-verification" | "traceability" | "quality-assurance" | "trade-documentation"
 
 export type EvidenceItem = {
   id: string
