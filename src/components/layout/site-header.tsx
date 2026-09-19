@@ -23,7 +23,7 @@ export function SiteHeader({
 }) {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/95 text-white backdrop-blur supports-[backdrop-filter]:bg-ink/85">
-      <div className="page-container flex min-h-20 items-center gap-5">
+      <div className="page-container flex min-h-20 items-center gap-4 lg:gap-6">
         <Link
           href="/"
           className="shrink-0 font-display text-2xl font-semibold tracking-tight text-white"
@@ -34,22 +34,28 @@ export function SiteHeader({
             .
           </span>
         </Link>
+
         <nav
           aria-label="Primary navigation"
-          className="ml-auto hidden items-center gap-5 text-sm font-semibold xl:flex"
+          className="hidden items-center gap-1 text-sm font-semibold xl:flex"
         >
           {primaryNavigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap py-2 text-white/75 transition-colors hover:text-clay-inverse"
+              className="whitespace-nowrap rounded-control px-3 py-2 text-white/75 transition-colors hover:bg-white/5 hover:text-clay-inverse"
             >
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="ml-auto hidden items-center gap-5 xl:flex">
-          <MarketSwitcher marketContext={marketContext} className="max-w-64 justify-end" />
+
+        <div className="ml-auto hidden items-center gap-4 xl:flex">
+          <MarketSwitcher
+            marketContext={marketContext}
+            tone="inverse"
+            className="max-w-56 justify-end"
+          />
           <Link
             href={hasSession ? "/account" : "/login"}
             className="whitespace-nowrap py-2 text-sm font-semibold text-white/85 transition-colors hover:text-clay-inverse"
@@ -64,6 +70,7 @@ export function SiteHeader({
             Explore products
           </ButtonLink>
         </div>
+
         <div className="ml-auto xl:hidden">
           <MobileNavigation
             items={primaryNavigation}

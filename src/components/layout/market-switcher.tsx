@@ -8,18 +8,27 @@ import { classNames } from "@/lib/ui/classnames"
 export function MarketSwitcher({
   marketContext,
   className,
+  tone = "default",
 }: {
   marketContext: MarketContext
   className?: string
+  tone?: "default" | "inverse"
 }) {
   const pathname = usePathname()
   const otherMarkets = marketContext.enabled.filter(
     (market) => market.marketKey !== marketContext.active.marketKey,
   )
 
+  const isInverse = tone === "inverse"
+
   return (
     <div className={classNames("flex flex-wrap items-center gap-2 text-sm", className)}>
-      <span className="font-semibold text-muted-strong">
+      <span
+        className={classNames(
+          "font-semibold",
+          isInverse ? "text-white/70" : "text-muted-strong",
+        )}
+      >
         {marketContext.active.displayName} <span aria-hidden="true">·</span>{" "}
         {marketContext.active.currency}
       </span>
@@ -27,7 +36,12 @@ export function MarketSwitcher({
         <Link
           key={market.marketKey}
           href={`${pathname}?market=${market.marketKey}`}
-          className="py-1 font-semibold text-clay underline decoration-dotted underline-offset-4 hover:text-ink"
+          className={classNames(
+            "py-1 font-semibold underline decoration-dotted underline-offset-4",
+            isInverse
+              ? "text-clay-inverse hover:text-clay"
+              : "text-clay hover:text-ink",
+          )}
         >
           {market.displayName}
           <span className="sr-only"> market</span>

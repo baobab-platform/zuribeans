@@ -22,7 +22,13 @@ export function MobileNavigation({
 
   return (
     <div className="xl:hidden">
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)} aria-haspopup="dialog">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        className="border border-white/25 text-white hover:bg-white/10 hover:text-white"
+      >
         <svg
           aria-hidden="true"
           viewBox="0 0 24 24"
@@ -48,7 +54,7 @@ export function MobileNavigation({
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block py-3.5 text-base font-semibold hover:text-clay"
+                  className="block py-3.5 text-base font-semibold transition-colors hover:text-clay"
                 >
                   {item.label}
                 </Link>
@@ -61,7 +67,11 @@ export function MobileNavigation({
           <MarketSwitcher marketContext={marketContext} className="mt-3" />
         </div>
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          <ButtonLink href={hasSession ? "/account" : "/login"} className="w-full" size="lg">
+          <ButtonLink
+            href={hasSession ? "/account" : "/login"}
+            className="w-full bg-clay text-ink hover:bg-clay-inverse"
+            size="lg"
+          >
             {hasSession ? "Open account" : "Portal sign in"}
           </ButtonLink>
           <ButtonLink href="/supplier" className="w-full" size="lg" variant="outline">
