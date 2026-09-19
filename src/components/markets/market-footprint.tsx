@@ -27,6 +27,7 @@ export function MarketFootprint({ detailed = false }: { detailed?: boolean }) {
 
         <TradeMap locations={TRADE_MAP_LOCATIONS} />
 
+        {detailed ? <h2 className="sr-only">Market capabilities</h2> : null}
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {MARKET_SUMMARY_PRESENTATIONS.map((market) => (
             <MarketSummaryCard key={market.marketKey} market={market} showFocus={detailed} />

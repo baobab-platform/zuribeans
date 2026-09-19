@@ -21,7 +21,7 @@ export function TradeMap({ locations }: { locations: readonly TradeMapLocation[]
         <MapLegend roles={locations.map(({ role }) => role)} />
       </div>
 
-      <div className="relative aspect-[2/1] min-h-[310px] overflow-hidden sm:min-h-[430px] lg:min-h-[520px]">
+      <div className="relative min-h-[310px] overflow-hidden sm:min-h-[430px] lg:min-h-[520px]">
         <div
           className="absolute inset-0 opacity-35"
           style={{
@@ -31,44 +31,46 @@ export function TradeMap({ locations }: { locations: readonly TradeMapLocation[]
           }}
           aria-hidden="true"
         />
-        <Image
-          src="/maps/world-natural-earth.svg"
-          alt=""
-          fill
-          sizes="(max-width: 1280px) 100vw, 1200px"
-          className="object-contain p-3 sm:p-6"
-          aria-hidden="true"
-        />
+        <div className="absolute inset-x-0 top-1/2 aspect-[2/1] -translate-y-1/2">
+          <Image
+            src="/maps/world-natural-earth.svg"
+            alt=""
+            fill
+            sizes="(max-width: 1280px) 100vw, 1200px"
+            className="object-contain p-3 sm:p-6"
+            aria-hidden="true"
+          />
 
-        {locations.map((location) => (
-          <div
-            key={location.marketKey}
-            className="absolute z-10"
-            style={{
-              left: `${location.position.left}%`,
-              top: `${location.position.top}%`,
-            }}
-          >
-            <span
-              className={`absolute top-1/2 h-px w-7 -translate-y-1/2 bg-clay-inverse/60 ${location.labelSide === "left" ? "right-3" : "left-3"}`}
-              aria-hidden="true"
-            />
-            <span
-              className={`absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 ring-4 ring-clay/20 ${location.role === "origin" ? "rounded-full bg-clay" : "rotate-45 border-2 border-clay-inverse bg-ink"}`}
-              aria-hidden="true"
-            />
-            <span
-              className={`absolute top-1/2 w-max max-w-36 -translate-y-1/2 rounded-control border border-white/15 bg-ink/90 px-3 py-2 shadow-panel backdrop-blur-sm ${location.labelSide === "left" ? "right-10 text-right" : "left-10"}`}
+          {locations.map((location) => (
+            <div
+              key={location.marketKey}
+              className="absolute z-10"
+              style={{
+                left: `${location.position.left}%`,
+                top: `${location.position.top}%`,
+              }}
             >
-              <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-clay-inverse">
-                {location.countryCode} · {location.roleLabel}
+              <span
+                className={`absolute top-1/2 hidden h-px w-7 -translate-y-1/2 bg-clay-inverse/60 sm:block ${location.labelSide === "left" ? "right-3" : "left-3"}`}
+                aria-hidden="true"
+              />
+              <span
+                className={`absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 ring-4 ring-clay/20 ${location.role === "origin" ? "rounded-full bg-clay" : "rotate-45 border-2 border-clay-inverse bg-ink"}`}
+                aria-hidden="true"
+              />
+              <span
+                className={`absolute left-1/2 w-max max-w-36 -translate-x-1/2 rounded-control border border-white/15 bg-ink/90 px-3 py-2 text-center shadow-panel backdrop-blur-sm sm:top-1/2 sm:-translate-y-1/2 ${location.labelSide === "left" ? "top-5 sm:left-auto sm:right-10 sm:translate-x-0 sm:text-right" : "bottom-5 sm:bottom-auto sm:left-10 sm:translate-x-0 sm:text-left"}`}
+              >
+                <span className="block text-[10px] font-bold uppercase tracking-[0.14em] text-clay-inverse">
+                  {location.countryCode} · {location.roleLabel}
+                </span>
+                <span className="mt-0.5 block font-display text-sm text-white sm:text-base">
+                  {location.name}
+                </span>
               </span>
-              <span className="mt-0.5 block font-display text-sm text-white sm:text-base">
-                {location.name}
-              </span>
-            </span>
-          </div>
-        ))}
+            </div>
+          ))}
+        </div>
       </div>
 
       <figcaption className="border-t border-white/10 px-5 py-3 text-xs leading-5 text-white/45">
