@@ -1,31 +1,40 @@
+import type { CommodityPresentation } from "@/lib/content/commodity"
 import type { ZuribeansMarketKey } from "@/lib/market/markets"
 
-export type PublicProductClass = {
-  name: string
-  description: string
-  href: string
-  eyebrow: string
-  actionLabel: string
-}
+export type PublicProductClass = CommodityPresentation
 
-export const PUBLIC_PRODUCT_CLASSES: readonly PublicProductClass[] = [
+export const PUBLIC_PRODUCT_CLASSES = [
   {
+    id: "green-coffee",
     name: "Green coffee",
     description:
       "Arabica, Robusta and specialty lots presented with origin and trade specifications.",
     href: "/products?category=coffee",
     eyebrow: "Core product class",
-    actionLabel: "View the catalogue",
+    actionLabel: "View coffee",
+    contextLabel: "African origins",
+    image: {
+      src: "/images/zuribeans-origin-trade-hero-v1.webp",
+      alt: "Green coffee beans prepared for professional commodity evaluation",
+      position: "72% center",
+    },
   },
   {
+    id: "vanilla-pods",
     name: "Vanilla pods",
     description:
       "Commercial vanilla supply with origin, grade and capacity information where published.",
     href: "/products?category=vanilla",
     eyebrow: "Growing product class",
-    actionLabel: "View the catalogue",
+    actionLabel: "View vanilla",
+    contextLabel: "Origin-led supply",
+    image: {
+      src: "/images/zuribeans-origin-trade-hero-v1.webp",
+      alt: "Vanilla pods alongside export-ready agricultural commodities",
+      position: "42% center",
+    },
   },
-]
+] as const satisfies readonly PublicProductClass[]
 
 export type PublicMarketSummary = {
   marketKey: ZuribeansMarketKey
