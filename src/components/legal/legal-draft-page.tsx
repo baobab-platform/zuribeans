@@ -23,7 +23,7 @@ export function LegalDraftPage({
         <h1 className="mt-4 font-display text-5xl text-balance">{title}</h1>
         <p className="mt-5 text-lg leading-8 text-muted">{summary}</p>
       </header>
-      <div className="prose prose-lg mt-12 max-w-3xl text-muted">{children}</div>
+      <div className="legal-draft-copy mt-12 max-w-3xl text-muted">{children}</div>
     </article>
   )
 }
