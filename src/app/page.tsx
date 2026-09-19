@@ -1,11 +1,12 @@
-import Image from "next/image"
 import Link from "next/link"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { HomeHero } from "@/components/marketing/home/home-hero"
 import { SectionHeading } from "@/components/marketing/section-heading"
 import { getMarketContext } from "@/lib/market/request"
 import { getMarket } from "@/lib/market/markets"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
+import { HOME_HERO } from "@/lib/content/homepage"
 import {
   PUBLIC_MARKET_SUMMARIES,
   PUBLIC_PRODUCT_CLASSES,
@@ -30,65 +31,7 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ── Hero ── */}
-      <section className="relative min-h-[100svh] bg-ink text-white">
-  <div className="page-container grid min-h-[100svh] items-center gap-10 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:py-20">
-    <div className="relative z-10 lg:py-10">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-clay-inverse">
-        African origin. Trade rigour.
-      </p>
-      <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[0.98] tracking-tight text-balance sm:text-6xl lg:text-7xl">
-        Quality products. Clear provenance.{" "}
-        <span className="text-clay">Serious trade.</span>
-      </h1>
-      <p className="mt-7 max-w-2xl text-lg leading-8 text-white/75">
-        ZuriBeans connects professional buyers and qualified suppliers through disciplined
-        sourcing, useful product information and cross-border capability built for repeat
-        business.
-      </p>
-      <div className="mt-9 flex flex-wrap gap-3">
-        <ButtonLink
-          href="/contact"
-          size="lg"
-          className="bg-clay text-ink hover:bg-clay-inverse"
-        >
-          Request a Quote
-        </ButtonLink>
-        <ButtonLink
-          href="/products"
-          variant="outline"
-          size="lg"
-          className="border-white/30 text-white hover:bg-white/10"
-        >
-          Explore products
-        </ButtonLink>
-      </div>
-      <div className="mt-8 flex items-center gap-3 text-sm text-white/60">
-        <span className="size-2 rounded-full bg-success" aria-hidden="true" />
-        Viewing the {market.displayName} market in {market.currency}
-      </div>
-    </div>
-    <div className="relative min-h-[28rem] overflow-hidden rounded-[2rem] bg-ink-soft shadow-panel sm:min-h-[34rem]">
-      <Image
-        src="/images/zuribeans-origin-trade-hero-v1.webp"
-        alt="Green coffee beans, vanilla pods and export-ready sacks at an East African processing facility"
-        fill
-        priority
-        sizes="(min-width: 1024px) 55vw, 100vw"
-        className="object-cover"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-transparent" />
-      <div className="absolute inset-x-5 bottom-5 rounded-panel border border-white/20 bg-ink/70 p-5 text-white backdrop-blur-sm sm:inset-x-7 sm:bottom-7 sm:p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/70">
-          Built for procurement
-        </p>
-        <p className="mt-2 max-w-xl font-display text-2xl sm:text-3xl">
-          From a defined requirement to accountable delivery.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
+      <HomeHero content={HOME_HERO} market={market} />
 
       {/* ── Assurances / Trust strip ── */}
       <section className="border-y border-line bg-surface-raised">
