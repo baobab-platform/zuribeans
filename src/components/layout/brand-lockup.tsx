@@ -11,6 +11,7 @@ import Link from "next/link"
 export function BrandLockup() {
   return (
     <Link href="/" aria-label="ZuriBeans home" className="flex shrink-0 items-center gap-3">
+      {/* eslint-disable-next-line @next/next/no-img-element -- local SVG, next/image needs dangerouslyAllowSVG */}
       <img
         src="/brand/zuribeans-mark.svg"
         alt=""
