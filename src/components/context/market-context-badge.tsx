@@ -1,9 +1,9 @@
-import type { ZuribeansMarket } from "@/lib/market/markets"
+import type { ZuribeansMarket } from "@/lib/market/markets";
 
 type MarketContextBadgeProps = {
-  market: ZuribeansMarket
-  tone?: "default" | "inverse"
-}
+  market: ZuribeansMarket;
+  tone?: "default" | "inverse";
+};
 
 export function MarketContextBadge({
   market,
@@ -19,9 +19,12 @@ export function MarketContextBadge({
     >
       <span className="size-2 rounded-full bg-success" aria-hidden="true" />
       <span>
-        Viewing the <strong className="font-semibold text-current">{market.displayName}</strong>{" "}
+        Viewing the{" "}
+        <strong className="font-semibold text-current">
+          {market.displayName}
+        </strong>{" "}
         market in {market.currency}
       </span>
     </p>
-  )
+  );
 }
