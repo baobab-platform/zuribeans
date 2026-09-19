@@ -1,14 +1,14 @@
-import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import { MarketContextBadge } from "@/components/context/market-context-badge";
-import { ButtonLink } from "@/components/ui/button";
-import type { HomeHeroContent } from "@/lib/content/homepage";
-import type { ZuribeansMarket } from "@/lib/market/markets";
+import Image from "next/image"
+import { ArrowRight } from "lucide-react"
+import { MarketContextBadge } from "@/components/context/market-context-badge"
+import { ButtonLink } from "@/components/ui/button"
+import type { HomeHeroContent } from "@/lib/content/homepage"
+import type { ZuribeansMarket } from "@/lib/market/markets"
 
 type HomeHeroProps = {
-  content: HomeHeroContent;
-  market: ZuribeansMarket;
-};
+  content: HomeHeroContent
+  market: ZuribeansMarket
+}
 
 export function HomeHero({ content, market }: HomeHeroProps) {
   return (
@@ -19,9 +19,7 @@ export function HomeHero({ content, market }: HomeHeroProps) {
           <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[0.98] tracking-tight text-balance sm:text-6xl lg:text-7xl">
             {content.title} <span className="text-clay">{content.accent}</span>
           </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-white/75">
-            {content.description}
-          </p>
+          <p className="mt-7 max-w-2xl text-lg leading-8 text-white/75">{content.description}</p>
           <div className="mt-9 flex flex-wrap gap-3">
             <ButtonLink
               href={content.primaryCta.href}
@@ -67,5 +65,5 @@ export function HomeHero({ content, market }: HomeHeroProps) {
         </div>
       </div>
     </section>
-  );
+  )
 }
