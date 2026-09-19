@@ -1,14 +1,15 @@
 import { FeaturedCommodities } from "@/components/marketing/home/featured-commodities"
 import { HomeHero } from "@/components/marketing/home/home-hero"
+import { QualityEvidence } from "@/components/marketing/home/quality-evidence"
 import { TradeProcess } from "@/components/marketing/home/trade-process"
 import { TrustEvidenceStrip } from "@/components/marketing/home/trust-evidence-strip"
-import { SectionHeading } from "@/components/marketing/section-heading"
 import { MarketFootprint } from "@/components/markets/market-footprint"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { getVisibleEvidence } from "@/lib/content/evidence"
 import { HOME_HERO, TRUST_EVIDENCE } from "@/lib/content/homepage"
 import { PUBLIC_PRODUCT_CLASSES, TRADE_STEPS } from "@/lib/content/public-estate"
+import { QUALITY_EVIDENCE_ITEMS } from "@/lib/content/quality"
 import { getMarketContext } from "@/lib/market/request"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
@@ -31,42 +32,7 @@ export default async function HomePage() {
       <MarketFootprint />
       <TradeProcess steps={TRADE_STEPS} />
 
-      <section className="border-y border-line bg-sand/40 py-20 lg:py-28">
-        <div className="page-container grid gap-12 lg:grid-cols-2 lg:items-center">
-          <div>
-            <SectionHeading
-              eyebrow="Quality & traceability"
-              title="Confidence is built from evidence."
-              description="Procurement teams need useful specifications, provenance and verification status—not vague claims. ZuriBeans presents what is known, distinguishes declarations from verification, and keeps sensitive terms behind authorization."
-            />
-            <ButtonLink href="/quality-traceability" variant="outline" className="mt-8">
-              Quality & Traceability
-            </ButtonLink>
-          </div>
-          <dl className="grid gap-px overflow-hidden rounded-panel border border-line bg-line sm:grid-cols-2">
-            {[
-              ["Lot context", "Origin, grade, processing and packaging where authoritative."],
-              [
-                "Verification",
-                "Declared information remains visibly distinct from verified information.",
-              ],
-              [
-                "Documentation",
-                "Commercial and trade records follow the transaction, not an isolated webpage.",
-              ],
-              [
-                "Access control",
-                "Buyer-specific prices and terms are never treated as public catalogue content.",
-              ],
-            ].map(([term, detail]) => (
-              <div key={term} className="bg-surface-raised p-6 transition-colors hover:bg-surface">
-                <dt className="font-semibold text-ink">{term}</dt>
-                <dd className="mt-2 text-sm leading-6 text-muted">{detail}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
+      <QualityEvidence items={QUALITY_EVIDENCE_ITEMS} />
 
       <section className="page-container grid gap-6 py-20 md:grid-cols-2 lg:py-28">
         <Card className="bg-ink p-8 text-white md:p-10">
