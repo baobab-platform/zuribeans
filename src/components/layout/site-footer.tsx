@@ -66,19 +66,15 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2.2fr)] lg:gap-16">
           {/* Brand column */}
           <div>
-            <Link
-              href="/"
-              className="font-display text-3xl text-white"
-              aria-label="ZuriBeans home"
-            >
+            <Link href="/" className="font-display text-3xl text-white" aria-label="ZuriBeans home">
               ZuriBeans
               <span className="text-clay-inverse" aria-hidden="true">
                 .
               </span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-6 text-white/70">
-              A B2B sourcing and trading company connecting verified products, origin
-              capability and professional buyers across African markets.
+              A B2B sourcing and trading company connecting verified products, origin capability and
+              professional buyers across African markets.
             </p>
             <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-white/60">
               {marketContext.active.displayName} · {marketContext.active.currency}
@@ -123,17 +119,13 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
               <ul className="flex flex-wrap gap-x-5 gap-y-1">
                 {legalLinks.map((link) => (
                   <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="transition-colors hover:text-clay-inverse"
-                    >
+                    <Link href={link.href} className="transition-colors hover:text-clay-inverse">
                       {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
             </nav>
-            
           </div>
         </div>
       </div>

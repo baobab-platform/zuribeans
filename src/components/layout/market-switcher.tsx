@@ -24,10 +24,7 @@ export function MarketSwitcher({
   return (
     <div className={classNames("flex flex-wrap items-center gap-2 text-sm", className)}>
       <span
-        className={classNames(
-          "font-semibold",
-          isInverse ? "text-white/70" : "text-muted-strong",
-        )}
+        className={classNames("font-semibold", isInverse ? "text-white/70" : "text-muted-strong")}
       >
         {marketContext.active.displayName} <span aria-hidden="true">·</span>{" "}
         {marketContext.active.currency}
@@ -38,9 +35,7 @@ export function MarketSwitcher({
           href={`${pathname}?market=${market.marketKey}`}
           className={classNames(
             "py-1 font-semibold underline decoration-dotted underline-offset-4",
-            isInverse
-              ? "text-clay-inverse hover:text-clay"
-              : "text-clay hover:text-ink",
+            isInverse ? "text-clay-inverse hover:text-clay" : "text-clay hover:text-ink",
           )}
         >
           {market.displayName}
