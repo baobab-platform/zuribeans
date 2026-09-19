@@ -12,7 +12,7 @@ export function FeaturedCommodities({ commodities }: FeaturedCommoditiesProps) {
   }
 
   return (
-    <section className="page-container py-24 lg:py-32" aria-labelledby="featured-commodities">
+    <section className="page-container py-24 lg:py-32" aria-label="Featured commodities">
       <div className="grid gap-8 lg:grid-cols-[0.65fr_1.35fr] lg:items-end">
         <SectionHeading
           eyebrow="Featured commodities"
