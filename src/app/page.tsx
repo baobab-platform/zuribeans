@@ -1,39 +1,33 @@
-import Link from "next/link";
-import { ButtonLink } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { HomeHero } from "@/components/marketing/home/home-hero";
-import { SectionHeading } from "@/components/marketing/section-heading";
-import { getMarketContext } from "@/lib/market/request";
-import { getMarket } from "@/lib/market/markets";
-import { getPublicPageMetadata } from "@/lib/seo/metadata";
-import { HOME_HERO } from "@/lib/content/homepage";
+import Link from "next/link"
+import { ButtonLink } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { HomeHero } from "@/components/marketing/home/home-hero"
+import { SectionHeading } from "@/components/marketing/section-heading"
+import { getMarketContext } from "@/lib/market/request"
+import { getMarket } from "@/lib/market/markets"
+import { getPublicPageMetadata } from "@/lib/seo/metadata"
+import { HOME_HERO } from "@/lib/content/homepage"
 import {
   PUBLIC_MARKET_SUMMARIES,
   PUBLIC_PRODUCT_CLASSES,
   TRADE_STEPS,
-} from "@/lib/content/public-estate";
+} from "@/lib/content/public-estate"
 
 export const metadata = getPublicPageMetadata({
   title: "African products, traded with rigour",
   description:
     "ZuriBeans connects professional buyers and qualified suppliers through disciplined sourcing, quality information and cross-border trade capability.",
   path: "/",
-});
+})
 
 const assurances = [
   ["Origin", "Product information connected to where and how supply begins."],
-  [
-    "Quality",
-    "Specifications and verification presented for professional decisions.",
-  ],
-  [
-    "Trade",
-    "Commercial and operational steps handled as one accountable journey.",
-  ],
-] as const;
+  ["Quality", "Specifications and verification presented for professional decisions."],
+  ["Trade", "Commercial and operational steps handled as one accountable journey."],
+] as const
 
 export default async function HomePage() {
-  const { active: market } = await getMarketContext();
+  const { active: market } = await getMarketContext()
 
   return (
     <>
@@ -43,10 +37,7 @@ export default async function HomePage() {
       <section className="border-y border-line bg-surface-raised">
         <div className="page-container grid divide-y divide-line md:grid-cols-3 md:divide-x md:divide-y-0">
           {assurances.map(([title, description], index) => (
-            <div
-              key={title}
-              className="py-8 md:px-8 md:first:pl-0 md:last:pr-0"
-            >
+            <div key={title} className="py-8 md:px-8 md:first:pl-0 md:last:pr-0">
               <p className="flex items-center gap-3 font-display text-xl">
                 <span className="flex size-8 items-center justify-center rounded-full bg-ink text-sm font-bold text-clay">
                   0{index + 1}
@@ -68,11 +59,7 @@ export default async function HomePage() {
         />
         <div className="mt-12 grid gap-6 md:grid-cols-2">
           {PUBLIC_PRODUCT_CLASSES.map((productClass, index) => (
-            <Link
-              key={productClass.name}
-              href={productClass.href}
-              className="group"
-            >
+            <Link key={productClass.name} href={productClass.href} className="group">
               <Card className="relative h-full overflow-hidden transition-all group-hover:-translate-y-1 group-hover:shadow-panel">
                 <div className="h-2 bg-leaf" aria-hidden="true" />
                 <div className="relative p-8 md:p-10">
@@ -111,9 +98,9 @@ export default async function HomePage() {
               tone="inverse"
             />
             <p className="max-w-xl justify-self-end text-base leading-7 text-white/65">
-              A market is more than a currency selector. Eligibility, pricing,
-              inventory, tax, logistics and authorization remain the
-              responsibility of the Baobab services that own them.
+              A market is more than a currency selector. Eligibility, pricing, inventory, tax,
+              logistics and authorization remain the responsibility of the Baobab services that own
+              them.
             </p>
           </div>
 
@@ -121,34 +108,26 @@ export default async function HomePage() {
           <div className="relative mt-12 min-h-[320px] overflow-hidden rounded-panel border border-white/15 bg-ink-soft lg:min-h-[520px]">
             <div className="absolute left-5 top-5 z-10 flex items-center gap-4 rounded-control bg-ink/70 px-4 py-2 text-xs font-semibold backdrop-blur">
               <span className="flex items-center gap-2">
-                <span
-                  className="size-2.5 rounded-full bg-clay"
-                  aria-hidden="true"
-                />
+                <span className="size-2.5 rounded-full bg-clay" aria-hidden="true" />
                 Origin
               </span>
               <span className="flex items-center gap-2">
-                <span
-                  className="size-2.5 rounded-full bg-clay-inverse"
-                  aria-hidden="true"
-                />
+                <span className="size-2.5 rounded-full bg-clay-inverse" aria-hidden="true" />
                 Destination
               </span>
             </div>
             <div className="flex h-full min-h-[320px] flex-col items-center justify-center gap-3 p-8 text-center lg:min-h-[520px]">
-              <p className="text-sm font-semibold text-clay-inverse">
-                Interactive map
-              </p>
+              <p className="text-sm font-semibold text-clay-inverse">Interactive map</p>
               <p className="max-w-md text-sm leading-6 text-white/50">
-                Origin and destination markets with trade-lane context. Click
-                markers for market detail.
+                Origin and destination markets with trade-lane context. Click markers for market
+                detail.
               </p>
             </div>
           </div>
 
           <div className="mt-8 grid gap-6 md:grid-cols-2">
             {PUBLIC_MARKET_SUMMARIES.map((summary) => {
-              const item = getMarket(summary.marketKey);
+              const item = getMarket(summary.marketKey)
               return (
                 <article
                   key={summary.marketKey}
@@ -159,17 +138,13 @@ export default async function HomePage() {
                       <p className="text-sm font-semibold tracking-wide text-clay-inverse">
                         {summary.role}
                       </p>
-                      <h3 className="mt-2 font-display text-3xl md:text-4xl">
-                        {item.displayName}
-                      </h3>
+                      <h3 className="mt-2 font-display text-3xl md:text-4xl">{item.displayName}</h3>
                     </div>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/70">
                       {item.currency}
                     </span>
                   </div>
-                  <p className="mt-5 max-w-xl leading-7 text-white/70">
-                    {summary.summary}
-                  </p>
+                  <p className="mt-5 max-w-xl leading-7 text-white/70">{summary.summary}</p>
                   <Link
                     href="/origins-markets"
                     className="mt-7 inline-flex items-center gap-1 font-semibold text-clay-inverse transition-colors hover:text-clay"
@@ -178,7 +153,7 @@ export default async function HomePage() {
                     <span aria-hidden="true">→</span>
                   </Link>
                 </article>
-              );
+              )
             })}
           </div>
         </div>
@@ -197,9 +172,7 @@ export default async function HomePage() {
                 {step.number}
               </div>
               <h3 className="mt-8 text-lg font-semibold">{step.title}</h3>
-              <p className="mt-3 text-sm leading-6 text-muted">
-                {step.description}
-              </p>
+              <p className="mt-3 text-sm leading-6 text-muted">{step.description}</p>
             </li>
           ))}
         </ol>
@@ -214,20 +187,13 @@ export default async function HomePage() {
               title="Confidence is built from evidence."
               description="Procurement teams need useful specifications, provenance and verification status—not vague claims. ZuriBeans presents what is known, distinguishes declarations from verification, and keeps sensitive terms behind authorization."
             />
-            <ButtonLink
-              href="/quality-traceability"
-              variant="outline"
-              className="mt-8"
-            >
+            <ButtonLink href="/quality-traceability" variant="outline" className="mt-8">
               Quality & Traceability
             </ButtonLink>
           </div>
           <dl className="grid gap-px overflow-hidden rounded-panel border border-line bg-line sm:grid-cols-2">
             {[
-              [
-                "Lot context",
-                "Origin, grade, processing and packaging where authoritative.",
-              ],
+              ["Lot context", "Origin, grade, processing and packaging where authoritative."],
               [
                 "Verification",
                 "Declared information remains visibly distinct from verified information.",
@@ -241,10 +207,7 @@ export default async function HomePage() {
                 "Buyer-specific prices and terms are never treated as public catalogue content.",
               ],
             ].map(([term, detail]) => (
-              <div
-                key={term}
-                className="bg-surface-raised p-6 transition-colors hover:bg-surface"
-              >
+              <div key={term} className="bg-surface-raised p-6 transition-colors hover:bg-surface">
                 <dt className="font-semibold text-ink">{term}</dt>
                 <dd className="mt-2 text-sm leading-6 text-muted">{detail}</dd>
               </div>
@@ -259,18 +222,12 @@ export default async function HomePage() {
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-clay-inverse">
             For professional buyers
           </p>
-          <h2 className="mt-5 font-display text-3xl md:text-4xl">
-            Bring us a real requirement.
-          </h2>
+          <h2 className="mt-5 font-display text-3xl md:text-4xl">Bring us a real requirement.</h2>
           <p className="mt-4 max-w-lg leading-7 text-white/75">
-            Tell the trade desk what you need to source, where it must arrive
-            and when. We will not manufacture an instant price where the
-            commercial context is incomplete.
+            Tell the trade desk what you need to source, where it must arrive and when. We will not
+            manufacture an instant price where the commercial context is incomplete.
           </p>
-          <ButtonLink
-            href="/contact"
-            className="mt-8 bg-clay text-ink hover:bg-clay-inverse"
-          >
+          <ButtonLink href="/contact" className="mt-8 bg-clay text-ink hover:bg-clay-inverse">
             Request a Quote
           </ButtonLink>
         </Card>
@@ -281,19 +238,15 @@ export default async function HomePage() {
             Build a qualified supply relationship.
           </h2>
           <p className="mt-4 max-w-lg leading-7 text-muted">
-            Growers, cooperatives and exporters can declare product, origin,
-            capacity and certification information for review. Submission is the
-            start of qualification, not automatic approval.
+            Growers, cooperatives and exporters can declare product, origin, capacity and
+            certification information for review. Submission is the start of qualification, not
+            automatic approval.
           </p>
-          <ButtonLink
-            href="/sourcing/become-a-supplier"
-            variant="outline"
-            className="mt-8"
-          >
+          <ButtonLink href="/sourcing/become-a-supplier" variant="outline" className="mt-8">
             Supplier requirements
           </ButtonLink>
         </Card>
       </section>
     </>
-  );
+  )
 }
