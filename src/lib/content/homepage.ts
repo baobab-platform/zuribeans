@@ -1,3 +1,5 @@
+import type { EvidenceItem } from "@/lib/content/evidence"
+
 export type HomepageCta = {
   label: string
   href: string
@@ -43,3 +45,38 @@ export const HOME_HERO = {
     statement: "From a defined requirement to accountable delivery.",
   },
 } as const satisfies HomeHeroContent
+
+export const TRUST_EVIDENCE = [
+  {
+    id: "supplier-verification",
+    label: "Supplier verification",
+    description: "Supply relationships enter a defined qualification and review process.",
+    status: "verified",
+    productionVisible: true,
+    icon: "supplier-verification",
+  },
+  {
+    id: "traceability",
+    label: "Traceability",
+    description: "Origin, product and lot context are carried as evidence becomes authoritative.",
+    status: "verified",
+    productionVisible: true,
+    icon: "traceability",
+  },
+  {
+    id: "quality-assurance",
+    label: "Quality assurance",
+    description: "Declarations and verified information remain visibly distinct.",
+    status: "verified",
+    productionVisible: true,
+    icon: "quality-assurance",
+  },
+  {
+    id: "trade-documentation",
+    label: "Trade documentation",
+    description: "Commercial and cross-border records follow the accountable trade journey.",
+    status: "verified",
+    productionVisible: true,
+    icon: "trade-documentation",
+  },
+] as const satisfies readonly EvidenceItem[]
