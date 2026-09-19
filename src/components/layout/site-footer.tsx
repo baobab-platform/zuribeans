@@ -1,5 +1,5 @@
-import Link from "next/link";
-import type { MarketContext } from "@/lib/market/request";
+import Link from "next/link"
+import type { MarketContext } from "@/lib/market/request"
 
 const footerGroups = [
   {
@@ -50,19 +50,15 @@ const footerGroups = [
       { href: "/register", label: "Register" },
     ],
   },
-] as const;
+] as const
 
 const legalLinks = [
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "/cookies", label: "Cookies" },
-] as const;
+] as const
 
-export function SiteFooter({
-  marketContext,
-}: {
-  marketContext: MarketContext;
-}) {
+export function SiteFooter({ marketContext }: { marketContext: MarketContext }) {
   return (
     <footer className="bg-ink text-white" data-tone="inverse">
       <div className="page-container py-14 lg:py-16">
@@ -70,27 +66,22 @@ export function SiteFooter({
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2.2fr)] lg:gap-16">
           {/* Brand column */}
           <div>
-            <Link
-              href="/"
-              className="font-display text-3xl text-white"
-              aria-label="ZuriBeans home"
-            >
+            <Link href="/" className="font-display text-3xl text-white" aria-label="ZuriBeans home">
               ZuriBeans
               <span className="text-clay-inverse" aria-hidden="true">
                 .
               </span>
             </Link>
             <p className="mt-4 max-w-sm text-sm leading-6 text-white/70">
-              A B2B sourcing and trading company connecting verified products,
-              origin capability and professional buyers across African markets.
+              A B2B sourcing and trading company connecting verified products, origin capability and
+              professional buyers across African markets.
             </p>
             <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-white/60">
-              {marketContext.active.displayName} ·{" "}
-              {marketContext.active.currency}
+              {marketContext.active.displayName} · {marketContext.active.currency}
             </p>
             <p className="mt-4 max-w-sm text-sm leading-6 text-white/70">
-              Availability and commercial terms are authoritative only when
-              supplied by Baobab Trade.
+              Availability and commercial terms are authoritative only when supplied by Baobab
+              Trade.
             </p>
           </div>
 
@@ -122,19 +113,13 @@ export function SiteFooter({
       {/* Legal bar */}
       <div className="border-t border-white/10">
         <div className="page-container flex flex-col gap-3 py-6 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getUTCFullYear()} ZuriBeans. A subsidiary of Nabhold
-            Group Africa.
-          </p>
+          <p>© {new Date().getUTCFullYear()} ZuriBeans. A subsidiary of Nabhold Group Africa.</p>
           <div className="flex flex-col gap-2 sm:items-end">
             <nav aria-label="Legal">
               <ul className="flex flex-wrap gap-x-5 gap-y-1">
                 {legalLinks.map((link) => (
                   <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="transition-colors hover:text-clay-inverse"
-                    >
+                    <Link href={link.href} className="transition-colors hover:text-clay-inverse">
                       {link.label}
                     </Link>
                   </li>
@@ -145,5 +130,5 @@ export function SiteFooter({
         </div>
       </div>
     </footer>
-  );
+  )
 }
