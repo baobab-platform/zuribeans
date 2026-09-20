@@ -8,7 +8,13 @@ import { isOpsAuthenticated } from "@/lib/auth/ops-session"
 import { getSupplierApplicationById } from "@/lib/supplier/repository"
 import { getSupplierStatusPresentation } from "@/lib/supplier/presentation"
 import type { SupplierStatus } from "@/lib/supplier/lifecycle"
-import { opsDocumentRefAction, opsErpReadyAction, opsTransitionAction } from "../actions"
+import {
+  opsDocumentRefAction,
+  opsErpReadyAction,
+  opsTransitionAction,
+  opsVerifyCapabilityAction,
+  opsVerifyCertificationAction,
+} from "../actions"
 
 const NEXT: Partial<Record<SupplierStatus, SupplierStatus[]>> = {
   submitted: ["under_review"],
@@ -55,7 +61,9 @@ export default async function OpsSupplierDetailPage({
             ? "Illegal status transition."
             : error === "erp"
               ? "ERP READY only when approved or active."
-              : "Invalid input."}
+              : error === "not_found"
+                ? "Capability or certification not found."
+                : "Invalid input."}
         </Alert>
       ) : null}
 
@@ -89,15 +97,74 @@ export default async function OpsSupplierDetailPage({
         )}
       </Card>
 
-      <Card className="space-y-3 p-6">
+      <Card className="space-y-4 p-6">
         <h2 className="font-display text-xl">Capabilities</h2>
-        <ul className="space-y-2 text-sm">
+        <ul className="space-y-4 text-sm">
           {detail.capabilities.map((c) => (
-            <li key={c.id}>
-              {c.productCategory} · {c.verificationStatus}
+            <li key={c.id} className="rounded-control border border-line p-3">
+              <p className="font-semibold">
+                {c.productCategory} · {c.verificationStatus}
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <form action={opsVerifyCapabilityAction}>
+                  <input type="hidden" name="id" value={id} />
+                  <input type="hidden" name="capabilityId" value={c.id} />
+                  <input type="hidden" name="outcome" value="verified" />
+                  <input type="hidden" name="actor" value="ops" />
+                  <Button type="submit" size="sm" variant="secondary">
+                    Verify
+                  </Button>
+                </form>
+                <form action={opsVerifyCapabilityAction}>
+                  <input type="hidden" name="id" value={id} />
+                  <input type="hidden" name="capabilityId" value={c.id} />
+                  <input type="hidden" name="outcome" value="rejected" />
+                  <input type="hidden" name="actor" value="ops" />
+                  <Button type="submit" size="sm" variant="danger">
+                    Reject
+                  </Button>
+                </form>
+              </div>
             </li>
           ))}
         </ul>
+      </Card>
+
+      <Card className="space-y-4 p-6">
+        <h2 className="font-display text-xl">Certifications</h2>
+        {detail.certifications.length === 0 ? (
+          <p className="text-sm text-muted">None declared.</p>
+        ) : (
+          <ul className="space-y-4 text-sm">
+            {detail.certifications.map((c) => (
+              <li key={c.id} className="rounded-control border border-line p-3">
+                <p className="font-semibold">
+                  {c.certificationType} · {c.verificationStatus}
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <form action={opsVerifyCertificationAction}>
+                    <input type="hidden" name="id" value={id} />
+                    <input type="hidden" name="certificationId" value={c.id} />
+                    <input type="hidden" name="outcome" value="verified" />
+                    <input type="hidden" name="actor" value="ops" />
+                    <Button type="submit" size="sm" variant="secondary">
+                      Verify
+                    </Button>
+                  </form>
+                  <form action={opsVerifyCertificationAction}>
+                    <input type="hidden" name="id" value={id} />
+                    <input type="hidden" name="certificationId" value={c.id} />
+                    <input type="hidden" name="outcome" value="rejected" />
+                    <input type="hidden" name="actor" value="ops" />
+                    <Button type="submit" size="sm" variant="danger">
+                      Reject
+                    </Button>
+                  </form>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </Card>
 
       <Card className="space-y-4 p-6">

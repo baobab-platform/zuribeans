@@ -5,6 +5,8 @@ import { timingSafeEqual } from "node:crypto"
 import { getSupplierAdminEnvironment } from "@/lib/configuration/environment"
 import {
   addSupplierDocumentReference,
+  setCapabilityVerification,
+  setCertificationVerification,
   setErpProjectionStatus,
   transitionSupplierStatus,
 } from "@/lib/supplier/repository"
@@ -88,5 +90,49 @@ export async function opsErpReadyAction(formData: FormData): Promise<void> {
   } catch {
     redirect(`/ops/suppliers/${id}?error=erp`)
   }
+  redirect(`/ops/suppliers/${id}`)
+}
+
+export async function opsVerifyCapabilityAction(formData: FormData): Promise<void> {
+  if (!(await isOpsAuthenticated())) redirect("/ops/suppliers?error=unauthorized")
+
+  const id = formData.get("id")?.toString()
+  const capabilityId = formData.get("capabilityId")?.toString()
+  const outcome = formData.get("outcome")?.toString()
+  const actor = formData.get("actor")?.toString() || "ops"
+
+  if (!id || !capabilityId || (outcome !== "verified" && outcome !== "rejected")) {
+    redirect(`/ops/suppliers/${id}?error=invalid`)
+  }
+
+  const row = await setCapabilityVerification({
+    supplierOrganisationId: id,
+    capabilityId,
+    status: outcome,
+    verifiedBy: `staff:${actor}`,
+  })
+  if (!row) redirect(`/ops/suppliers/${id}?error=not_found`)
+  redirect(`/ops/suppliers/${id}`)
+}
+
+export async function opsVerifyCertificationAction(formData: FormData): Promise<void> {
+  if (!(await isOpsAuthenticated())) redirect("/ops/suppliers?error=unauthorized")
+
+  const id = formData.get("id")?.toString()
+  const certificationId = formData.get("certificationId")?.toString()
+  const outcome = formData.get("outcome")?.toString()
+  const actor = formData.get("actor")?.toString() || "ops"
+
+  if (!id || !certificationId || (outcome !== "verified" && outcome !== "rejected")) {
+    redirect(`/ops/suppliers/${id}?error=invalid`)
+  }
+
+  const row = await setCertificationVerification({
+    supplierOrganisationId: id,
+    certificationId,
+    status: outcome,
+    verifiedBy: `staff:${actor}`,
+  })
+  if (!row) redirect(`/ops/suppliers/${id}?error=not_found`)
   redirect(`/ops/suppliers/${id}`)
 }

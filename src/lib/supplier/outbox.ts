@@ -1,17 +1,7 @@
 import "server-only"
 import { randomUUID } from "node:crypto"
-import type { ExtractTablesWithRelations } from "drizzle-orm"
-import type { PgTransaction } from "drizzle-orm/pg-core"
-import type { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js"
 import { getDb } from "@/lib/db/client"
-import * as schema from "@/lib/db/schema"
 import { supplierEventOutbox } from "@/lib/db/schema"
-
-type Tx = PgTransaction<
-  PostgresJsQueryResultHKT,
-  typeof schema,
-  ExtractTablesWithRelations<typeof schema>
->
 
 /**
  * Shared supplier-onboarding event names (contracts/supplier-onboarding/v1).
@@ -27,15 +17,11 @@ export const SUPPLIER_EVENT_TYPES = {
 export const estateApplicationId = (organisationUuid: string): string =>
   `sup_${organisationUuid.replace(/-/g, "").slice(0, 24)}`
 
-export const enqueueSupplierOutboxEvent = async (
-  input: {
-    eventType: string
-    subject: string
-    data: Record<string, unknown>
-  },
-  tx?: Tx,
-) => {
-  const db = tx ?? getDb()
+export const enqueueSupplierOutboxEvent = async (input: {
+  eventType: string
+  subject: string
+  data: Record<string, unknown>
+}) => {
   const envelope = {
     specversion: "1.0",
     id: randomUUID(),
@@ -44,14 +30,14 @@ export const enqueueSupplierOutboxEvent = async (
     subject: input.subject,
     time: new Date().toISOString(),
     datacontenttype: "application/json",
-    dataschema: `https://contracts.baobab-platform.com/supplier-onboarding/v1/${input.eventType.split(".").slice(-2).join(".")}`,
-    baobabscope: "tenant",
+    dataschema: "https://contracts.baobab-platform.com/supplier-onboarding/v1",
+    baobabscope: "tenant" as const,
     correlationid: randomUUID(),
     tenantid: "ZURIBEANS",
     data: input.data,
   }
 
-  const [row] = await db
+  const [row] = await getDb()
     .insert(supplierEventOutbox)
     .values({
       eventType: input.eventType,
