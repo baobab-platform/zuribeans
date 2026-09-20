@@ -13,12 +13,19 @@ import {
   assertSupplierStatusTransition,
   type SupplierStatus,
 } from "./lifecycle"
+import {
+  estateApplicationId,
+  enqueueSupplierOutboxEvent,
+  SUPPLIER_EVENT_TYPES,
+} from "./outbox"
 import type { SupplierApplicationInput } from "@/lib/validation/supplier-application"
 
 const APPLICANT_EDITABLE: readonly SupplierStatus[] = [
   "more_information_required",
   "sample_required",
 ]
+
+const DECISION_STATUSES: readonly SupplierStatus[] = ["approved", "rejected"]
 
 export const getSupplierApplicationForCustomer = async (medusaCustomerId: string) => {
   const db = getDb()
@@ -65,10 +72,10 @@ export const submitSupplierApplication = async (
 ) => {
   const db = getDb()
 
-  return db.transaction(async (tx) => {
+  const organisation = await db.transaction(async (tx) => {
     assertSupplierStatusTransition("draft", "submitted")
 
-    const [organisation] = await tx
+    const [created] = await tx
       .insert(supplierOrganisations)
       .values({
         medusaCustomerId,
@@ -82,7 +89,7 @@ export const submitSupplierApplication = async (
       .returning()
 
     await tx.insert(supplierContacts).values({
-      supplierOrganisationId: organisation.id,
+      supplierOrganisationId: created.id,
       name: input.contactName,
       email: input.contactEmail,
       role: input.contactRole,
@@ -92,7 +99,7 @@ export const submitSupplierApplication = async (
     if (input.capabilities.length > 0) {
       await tx.insert(supplierCapabilities).values(
         input.capabilities.map((capability) => ({
-          supplierOrganisationId: organisation.id,
+          supplierOrganisationId: created.id,
           productCategory: capability.category,
           variety: capability.variety,
           grade: capability.grade,
@@ -107,7 +114,7 @@ export const submitSupplierApplication = async (
     if (input.certifications.length > 0) {
       await tx.insert(supplierCertifications).values(
         input.certifications.map((certification) => ({
-          supplierOrganisationId: organisation.id,
+          supplierOrganisationId: created.id,
           certificationType: certification.certificationType,
           issuer: certification.issuer,
           referenceNumber: certification.referenceNumber,
@@ -118,21 +125,35 @@ export const submitSupplierApplication = async (
     }
 
     await tx.insert(supplierStatusEvents).values({
-      supplierOrganisationId: organisation.id,
+      supplierOrganisationId: created.id,
       fromStatus: "draft",
       toStatus: "submitted",
       actor: `customer:${medusaCustomerId}`,
       reason: "Application submitted by applicant.",
     })
 
-    return organisation
+    return created
   })
+
+  await enqueueSupplierOutboxEvent({
+    eventType: SUPPLIER_EVENT_TYPES.applicationSubmitted,
+    subject: estateApplicationId(organisation.id),
+    data: {
+      estate_id: "ZURIBEANS",
+      legal_entity_id: "ZURIBEANS",
+      application_id: estateApplicationId(organisation.id),
+      canonical_organisation_id: organisation.canonicalOrganisationId,
+      legal_name: organisation.legalName,
+      country_code: organisation.countryCode,
+      product_categories: input.capabilities.map((c) => c.category),
+      submitted_at: organisation.submittedAt?.toISOString() ?? new Date().toISOString(),
+      revision: 1,
+    },
+  })
+
+  return organisation
 }
 
-/**
- * Applicant updates after staff requested more information or a sample (ADR-0012).
- * Replaces contacts/capabilities/certs and transitions to under_review.
- */
 export const resubmitSupplierApplication = async (
   medusaCustomerId: string,
   input: SupplierApplicationInput,
@@ -140,7 +161,7 @@ export const resubmitSupplierApplication = async (
 ) => {
   const db = getDb()
 
-  return db.transaction(async (tx) => {
+  const updated = await db.transaction(async (tx) => {
     const [organisation] = await tx
       .select()
       .from(supplierOrganisations)
@@ -158,7 +179,7 @@ export const resubmitSupplierApplication = async (
 
     assertSupplierStatusTransition(fromStatus, "under_review")
 
-    const [updated] = await tx
+    const [row] = await tx
       .update(supplierOrganisations)
       .set({
         legalName: input.legalName,
@@ -171,9 +192,7 @@ export const resubmitSupplierApplication = async (
       .where(eq(supplierOrganisations.id, organisation.id))
       .returning()
 
-    await tx
-      .delete(supplierContacts)
-      .where(eq(supplierContacts.supplierOrganisationId, organisation.id))
+    await tx.delete(supplierContacts).where(eq(supplierContacts.supplierOrganisationId, organisation.id))
     await tx
       .delete(supplierCapabilities)
       .where(eq(supplierCapabilities.supplierOrganisationId, organisation.id))
@@ -225,8 +244,22 @@ export const resubmitSupplierApplication = async (
       reason: note?.trim() || "Applicant resubmitted updated information.",
     })
 
-    return updated
+    return row
   })
+
+  if (updated) {
+    await enqueueSupplierOutboxEvent({
+      eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
+      subject: estateApplicationId(updated.id),
+      data: {
+        application_id: estateApplicationId(updated.id),
+        status: "under_review",
+        reason: note?.trim() || "Applicant resubmitted updated information.",
+      },
+    })
+  }
+
+  return updated
 }
 
 export const setSupplierCanonicalOrganisationId = async (
@@ -309,7 +342,7 @@ export const transitionSupplierStatus = async (input: {
 }) => {
   const db = getDb()
 
-  return db.transaction(async (tx) => {
+  const updated = await db.transaction(async (tx) => {
     const [organisation] = await tx
       .select()
       .from(supplierOrganisations)
@@ -321,7 +354,7 @@ export const transitionSupplierStatus = async (input: {
     const fromStatus = organisation.status as SupplierStatus
     assertSupplierStatusTransition(fromStatus, input.toStatus)
 
-    const [updated] = await tx
+    const [row] = await tx
       .update(supplierOrganisations)
       .set({ status: input.toStatus, updatedAt: new Date() })
       .where(eq(supplierOrganisations.id, organisation.id))
@@ -335,8 +368,34 @@ export const transitionSupplierStatus = async (input: {
       reason: input.reason ?? null,
     })
 
-    return updated
+    return row
   })
+
+  if (updated && DECISION_STATUSES.includes(input.toStatus)) {
+    await enqueueSupplierOutboxEvent({
+      eventType: SUPPLIER_EVENT_TYPES.applicationDecided,
+      subject: estateApplicationId(updated.id),
+      data: {
+        application_id: estateApplicationId(updated.id),
+        decision: input.toStatus,
+        actor: input.actor,
+        reason: input.reason ?? null,
+      },
+    })
+  } else if (updated) {
+    await enqueueSupplierOutboxEvent({
+      eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
+      subject: estateApplicationId(updated.id),
+      data: {
+        application_id: estateApplicationId(updated.id),
+        status: input.toStatus,
+        actor: input.actor,
+        reason: input.reason ?? null,
+      },
+    })
+  }
+
+  return updated
 }
 
 type VerificationOutcome = "verified" | "rejected"
@@ -362,6 +421,21 @@ export const setCapabilityVerification = async (input: {
       ),
     )
     .returning()
+
+  if (row) {
+    await enqueueSupplierOutboxEvent({
+      eventType: SUPPLIER_EVENT_TYPES.capabilityVerified,
+      subject: estateApplicationId(input.supplierOrganisationId),
+      data: {
+        application_id: estateApplicationId(input.supplierOrganisationId),
+        capability_id: row.id,
+        product_category: row.productCategory,
+        verification_status: input.status,
+        verified_by: input.verifiedBy,
+      },
+    })
+  }
+
   return row ?? null
 }
 
@@ -412,9 +486,6 @@ export const addSupplierDocumentReference = async (input: {
   return row
 }
 
-/**
- * Marks ERP projection readiness only — does not create a Business Partner (ADR-0012).
- */
 export const setErpProjectionStatus = async (input: {
   supplierOrganisationId: string
   status: "NOT_REQUESTED" | "READY" | "PENDING" | "FAILED" | "PROJECTED"
