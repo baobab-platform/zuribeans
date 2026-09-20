@@ -13,7 +13,10 @@ permissions:
   packages: read
 
 jobs:
+  # CodeQL upload requires GitHub Advanced Security on private repositories.
+  # Set the repository variable CODEQL_ENABLED=true when GHAS is licensed.
   codeql:
+    if: github.event.repository.visibility != 'private' || vars.CODEQL_ENABLED == 'true'
     permissions:
       contents: read
       security-events: write
