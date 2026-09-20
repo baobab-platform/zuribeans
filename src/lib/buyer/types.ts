@@ -40,3 +40,14 @@ export type BuyerTeamMember = {
   invitation_accepted_at: string | null
   roles: string[]
 }
+
+export type BuyerTaxRegistration = {
+  id: string
+  market_key: string
+  country_code: string
+  registration_type: string
+  registration_number: string
+  status: string
+  verified_at?: string | null
+  expires_at?: string | null
+}

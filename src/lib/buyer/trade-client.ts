@@ -8,6 +8,7 @@ import type {
   BuyerOrganisationSummary,
   BuyerMembershipSummary,
   BuyerTeamMember,
+  BuyerTaxRegistration,
 } from "./types"
 
 export class BuyerTradeError extends Error {
@@ -19,7 +20,8 @@ export class BuyerTradeError extends Error {
       | "invalid_input"
       | "failed"
       | "forbidden"
-      | "duplicate",
+      | "duplicate"
+      | "not_found",
     readonly status?: number,
   ) {
     super(message)
@@ -148,7 +150,7 @@ export const listOrganisationMembers = async (
 export const inviteOrganisationMember = async (
   organisationId: string,
   input: { email: string; role?: string },
-): Promise<void> => {
+): Promise<{ invitationToken: string }> => {
   const response = await fetch(tradeUrl(`/store/b2b/organisations/${organisationId}/members`), {
     method: "POST",
     headers: await authHeaders(),
@@ -173,5 +175,100 @@ export const inviteOrganisationMember = async (
   }
   if (!response.ok) {
     throw new BuyerTradeError("Invite failed", "failed", response.status)
+  }
+
+  const body = (await response.json()) as { invitation_token?: string }
+  return { invitationToken: body.invitation_token ?? "" }
+}
+
+export const acceptInvitation = async (invitationToken: string): Promise<void> => {
+  const response = await fetch(tradeUrl("/store/b2b/invitations/accept"), {
+    method: "POST",
+    headers: await authHeaders(),
+    body: JSON.stringify({ invitation_token: invitationToken }),
+    cache: "no-store",
+  })
+
+  if (response.status === 401) {
+    throw new BuyerTradeError("Session expired", "unauthorized", 401)
+  }
+  if (response.status === 404) {
+    throw new BuyerTradeError("Invitation not found", "not_found", 404)
+  }
+  if (response.status === 400) {
+    throw new BuyerTradeError("Invalid invitation", "invalid_input", 400)
+  }
+  if (response.status === 403 || response.status === 409) {
+    throw new BuyerTradeError("Cannot accept invitation", "forbidden", response.status)
+  }
+  if (!response.ok) {
+    throw new BuyerTradeError("Accept failed", "failed", response.status)
+  }
+}
+
+export const listTaxRegistrations = async (
+  organisationId: string,
+): Promise<BuyerTaxRegistration[]> => {
+  const response = await fetch(
+    tradeUrl(`/store/b2b/organisations/${organisationId}/tax-registrations`),
+    {
+      method: "GET",
+      headers: await authHeaders(),
+      cache: "no-store",
+    },
+  )
+
+  if (response.status === 401) {
+    throw new BuyerTradeError("Session expired", "unauthorized", 401)
+  }
+  if (response.status === 403) {
+    throw new BuyerTradeError("Forbidden", "forbidden", 403)
+  }
+  if (!response.ok) {
+    throw new BuyerTradeError("Could not load tax registrations", "failed", response.status)
+  }
+
+  const body = (await response.json()) as { tax_registrations?: BuyerTaxRegistration[] }
+  return body.tax_registrations ?? []
+}
+
+export const createTaxRegistration = async (
+  organisationId: string,
+  input: {
+    marketKey: string
+    countryCode: string
+    registrationType: string
+    registrationNumber: string
+  },
+): Promise<void> => {
+  const response = await fetch(
+    tradeUrl(`/store/b2b/organisations/${organisationId}/tax-registrations`),
+    {
+      method: "POST",
+      headers: await authHeaders(),
+      body: JSON.stringify({
+        market_key: input.marketKey,
+        country_code: input.countryCode,
+        registration_type: input.registrationType,
+        registration_number: input.registrationNumber,
+      }),
+      cache: "no-store",
+    },
+  )
+
+  if (response.status === 401) {
+    throw new BuyerTradeError("Session expired", "unauthorized", 401)
+  }
+  if (response.status === 403) {
+    throw new BuyerTradeError("Only ACCOUNT_ADMIN can update tax profile", "forbidden", 403)
+  }
+  if (response.status === 400) {
+    throw new BuyerTradeError("Invalid tax registration", "invalid_input", 400)
+  }
+  if (response.status === 409 || response.status === 422) {
+    throw new BuyerTradeError("Duplicate tax registration", "duplicate", response.status)
+  }
+  if (!response.ok) {
+    throw new BuyerTradeError("Could not save tax registration", "failed", response.status)
   }
 }

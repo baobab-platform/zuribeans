@@ -1,13 +1,13 @@
 # Buyer portal
 
-Status: Gate ZB-04 apply, approve, capabilities, Company, Team + invite; Gates 11–12 contract-blocked
+Status: Gate ZB-04 apply, approve, capabilities, Company, Team, invite/accept, tax registrations
 Reviewed: 2026-09-20
 
-## Implemented boundary
+## Implemented
 
-- `/account/apply` — PENDING org + membership + ACCOUNT_ADMIN.
-- `/account/company` — read-only when capability `organisation`.
-- `/account/team` — roster + invite (ACCOUNT_ADMIN) when capability `team`.
-- Invite creates INVITED membership; accept/login linkage is not in this gate.
-- Capability snapshot from Trade; catalogue/orders/documents remain false.
-- Staff: list/detail/status on Trade admin B2B organisation routes.
+- Apply → PENDING org + ACCOUNT_ADMIN membership
+- Staff approve via Trade admin status API
+- Capability snapshot opens Company + Team when ACTIVE
+- Team invite + accept (`/account/invitations/accept`)
+- Tax registrations on Company (PENDING until staff verification)
+- Catalogue / orders / documents remain closed

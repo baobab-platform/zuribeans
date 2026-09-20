@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
@@ -33,7 +34,7 @@ const errorMessages: Record<string, string> = {
 export default async function BuyerTeamPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; invited?: string }>
+  searchParams: Promise<{ error?: string; invited?: string; token?: string }>
 }) {
   const customer = await getCurrentCustomer()
   if (!customer) redirect("/login?next=/account/team")
@@ -58,7 +59,7 @@ export default async function BuyerTeamPage({
   const caller = members.find((m) => m.customer_id === customer.id)
   const canInvite = caller?.roles.includes("ACCOUNT_ADMIN") === true
 
-  const { error, invited } = await searchParams
+  const { error, invited, token } = await searchParams
   const errorMessage = error ? errorMessages[error] : null
 
   return (
@@ -67,14 +68,26 @@ export default async function BuyerTeamPage({
         <p className="eyebrow">Team</p>
         <h2 className="mt-3 font-display text-3xl">Members</h2>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
-          Roster for {organisation.legal_name}. Invited members stay pending until they accept
-          (accept flow ships in a later increment).
+          Roster for {organisation.legal_name}. Share the accept link until email delivery is wired.
         </p>
       </div>
 
       {invited ? (
         <Alert title="Invitation created" tone="success">
-          The member is listed as INVITED. Email delivery is not wired in this gate.
+          {token ? (
+            <>
+              Share this accept link with the invitee:{" "}
+              <Link
+                className="font-semibold underline-offset-2 hover:underline"
+                href={`/account/invitations/accept?token=${encodeURIComponent(token)}`}
+              >
+                Accept invitation
+              </Link>
+              . Token is shown once; email delivery is not enabled yet.
+            </>
+          ) : (
+            "Member listed as INVITED."
+          )}
         </Alert>
       ) : null}
       {errorMessage ? (
@@ -86,7 +99,10 @@ export default async function BuyerTeamPage({
       {canInvite ? (
         <Card className="p-6">
           <h3 className="font-display text-xl">Invite a member</h3>
-          <form action={inviteTeamMemberAction} className="mt-4 grid gap-4 sm:grid-cols-[1fr_auto_auto] sm:items-end">
+          <form
+            action={inviteTeamMemberAction}
+            className="mt-4 grid gap-4 sm:grid-cols-[1fr_auto_auto] sm:items-end"
+          >
             <label className="block text-sm font-semibold">
               Email
               <Input name="email" type="email" required autoComplete="email" />
@@ -106,7 +122,11 @@ export default async function BuyerTeamPage({
       ) : (
         <Card className="p-6">
           <p className="text-sm text-muted">
-            Only account admins can invite members. Contact your organisation admin to add buyers.
+            Only account admins can invite members.{" "}
+            <Link href="/account/invitations/accept" className="font-semibold underline-offset-2 hover:underline">
+              Accept an invitation
+            </Link>
+            .
           </p>
         </Card>
       )}

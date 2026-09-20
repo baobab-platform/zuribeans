@@ -22,8 +22,10 @@ export async function inviteTeamMemberAction(formData: FormData): Promise<void> 
   }
 
   let outcome: "ok" | "invalid_input" | "forbidden" | "duplicate" | "failed" = "failed"
+  let invitationToken = ""
   try {
-    await inviteOrganisationMember(organisation.id, { email, role })
+    const result = await inviteOrganisationMember(organisation.id, { email, role })
+    invitationToken = result.invitationToken
     outcome = "ok"
   } catch (error) {
     if (error instanceof BuyerTradeError) {
@@ -38,5 +40,9 @@ export async function inviteTeamMemberAction(formData: FormData): Promise<void> 
     redirect(`/account/team?error=${outcome}`)
   }
 
-  redirect("/account/team?invited=1")
+  // Token is shown once so admins can share an accept link until email delivery exists.
+  const tokenParam = invitationToken
+    ? `&token=${encodeURIComponent(invitationToken)}`
+    : ""
+  redirect(`/account/team?invited=1${tokenParam}`)
 }
