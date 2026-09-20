@@ -27,3 +27,12 @@ Reviewed: 2026-09-20
 - ERP projection and end-to-end certification
 
 No ZB-04 work is mergeable while required CI workflows cannot start because of Actions billing.
+
+
+### Secure member invitations
+
+Account admins invite a permitted buyer role through the Trade-owned members API. The estate
+generates an idempotency key but never receives, renders, logs, or stores the bearer token.
+Trade queues email delivery and returns only membership and delivery status. INVITED members
+have nullable customer and Principal identifiers until acceptance; the one-time token expires
+after 48 hours.
