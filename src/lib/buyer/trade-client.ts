@@ -9,6 +9,7 @@ import type {
   BuyerTeamMember,
   BuyerTaxRegistration,
   BuyerDeliverySite,
+  BuyerInvitationReceipt,
 } from "./types"
 
 export class BuyerTradeError extends Error {
@@ -146,11 +147,12 @@ export const listOrganisationMembers = async (
 
 export const inviteOrganisationMember = async (
   organisationId: string,
-  input: { email: string; role?: string },
-): Promise<{ invitationToken: string }> => {
+  input: { email: string; role: string; idempotencyKey: string },
+): Promise<BuyerInvitationReceipt> => {
+  const headers = await authHeaders()
   const response = await fetch(tradeUrl(`/store/b2b/organisations/${organisationId}/members`), {
     method: "POST",
-    headers: await authHeaders(),
+    headers: { ...headers, "Idempotency-Key": input.idempotencyKey },
     body: JSON.stringify({
       email: input.email,
       role: input.role,
@@ -174,8 +176,7 @@ export const inviteOrganisationMember = async (
     throw new BuyerTradeError("Invite failed", "failed", response.status)
   }
 
-  const body = (await response.json()) as { invitation_token?: string }
-  return { invitationToken: body.invitation_token ?? "" }
+  return (await response.json()) as BuyerInvitationReceipt
 }
 
 export const acceptInvitation = async (invitationToken: string): Promise<void> => {
