@@ -106,7 +106,7 @@ export default async function BuyerTeamPage({
                 Send secure invitation
               </Button>
             </div>
-            <FieldDescription id="invitation-delivery" >
+            <FieldDescription id="invitation-delivery">
               The invitation is delivered by Trade using a one-time token that expires after 48
               hours. ZuriBeans never displays or stores the token.
             </FieldDescription>
