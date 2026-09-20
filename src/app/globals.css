@@ -247,6 +247,23 @@ canvas {
     text-transform: uppercase;
   }
 
+  .legal-draft-copy {
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+
+  .legal-draft-copy h2 {
+    margin-top: 2.5rem;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 1.875rem;
+    line-height: 1.2;
+  }
+
+  .legal-draft-copy p {
+    margin-top: 1rem;
+  }
+
   /* Keep collapsed utility links discoverable for keyboard users. */
   @media (min-width: 80rem) {
     html.is-header-scrolled .header-utility-bar:focus-within {

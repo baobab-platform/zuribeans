@@ -34,7 +34,7 @@ export function MarketSwitcher({
           key={market.marketKey}
           href={`${pathname}?market=${market.marketKey}`}
           className={classNames(
-            "py-1 font-semibold underline decoration-dotted underline-offset-4",
+            "inline-flex min-h-11 items-center py-2 font-semibold underline decoration-dotted underline-offset-4",
             isInverse ? "text-clay-inverse hover:text-clay" : "text-clay hover:text-ink",
           )}
         >

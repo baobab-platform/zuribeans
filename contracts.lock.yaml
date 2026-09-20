@@ -7,7 +7,7 @@ consumer:
 sources:
   shared:
     repository: "baobab-platform/shared"
-    commit: "6e0059989a45ee189b98df6ce1a430c83829049c"
+    commit: "f7466cc89a17c0b6e02b5a1e5fce3ce76073a718"
     legal_entity_registry: "contracts/legal-entity/registry.yaml"
     development_environment: "contracts/development-environment/schema.yaml"
   trade:
