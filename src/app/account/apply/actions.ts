@@ -16,10 +16,12 @@ export async function submitBuyerApplicationAction(formData: FormData): Promise<
   if (!customer) redirect("/login?next=/account/apply")
 
   const parsed = buyerApplicationSchema.safeParse({
+    idempotencyKey: formData.get("idempotencyKey"),
     legalName: formData.get("legalName"),
     tradingName: formData.get("tradingName") || undefined,
     registrationNumber: formData.get("registrationNumber") || undefined,
-    defaultMarketKey: formData.get("defaultMarketKey") || undefined,
+    countryOfRegistration: formData.get("countryOfRegistration"),
+    requestedMarketKeys: formData.getAll("requestedMarketKeys"),
   })
 
   if (!parsed.success) {
