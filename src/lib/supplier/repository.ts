@@ -1,5 +1,5 @@
 import "server-only"
-import { eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { getDb } from "@/lib/db/client"
 import {
   supplierCapabilities,
@@ -8,7 +8,10 @@ import {
   supplierOrganisations,
   supplierStatusEvents,
 } from "@/lib/db/schema"
-import { assertSupplierStatusTransition } from "./lifecycle"
+import {
+  assertSupplierStatusTransition,
+  type SupplierStatus,
+} from "./lifecycle"
 import type { SupplierApplicationInput } from "@/lib/validation/supplier-application"
 
 export const getSupplierApplicationForCustomer = async (medusaCustomerId: string) => {
@@ -131,4 +134,151 @@ export const setSupplierCanonicalOrganisationId = async (
     .where(eq(supplierOrganisations.id, supplierOrganisationId))
     .returning()
   return organisation ?? null
+}
+
+export const listSupplierApplications = async (options?: {
+  status?: SupplierStatus
+  limit?: number
+}) => {
+  const db = getDb()
+  const limit = Math.min(Math.max(options?.limit ?? 50, 1), 100)
+
+  const rows = options?.status
+    ? await db
+        .select()
+        .from(supplierOrganisations)
+        .where(eq(supplierOrganisations.status, options.status))
+        .orderBy(desc(supplierOrganisations.submittedAt), desc(supplierOrganisations.createdAt))
+        .limit(limit)
+    : await db
+        .select()
+        .from(supplierOrganisations)
+        .orderBy(desc(supplierOrganisations.submittedAt), desc(supplierOrganisations.createdAt))
+        .limit(limit)
+
+  return rows
+}
+
+export const getSupplierApplicationById = async (supplierOrganisationId: string) => {
+  const db = getDb()
+  const [organisation] = await db
+    .select()
+    .from(supplierOrganisations)
+    .where(eq(supplierOrganisations.id, supplierOrganisationId))
+    .limit(1)
+  if (!organisation) return null
+
+  const [capabilities, certifications, contacts, statusEvents] = await Promise.all([
+    db
+      .select()
+      .from(supplierCapabilities)
+      .where(eq(supplierCapabilities.supplierOrganisationId, organisation.id)),
+    db
+      .select()
+      .from(supplierCertifications)
+      .where(eq(supplierCertifications.supplierOrganisationId, organisation.id)),
+    db
+      .select()
+      .from(supplierContacts)
+      .where(eq(supplierContacts.supplierOrganisationId, organisation.id)),
+    db
+      .select()
+      .from(supplierStatusEvents)
+      .where(eq(supplierStatusEvents.supplierOrganisationId, organisation.id))
+      .orderBy(desc(supplierStatusEvents.occurredAt)),
+  ])
+
+  return { organisation, capabilities, certifications, contacts, statusEvents }
+}
+
+/**
+ * Staff-driven lifecycle transition (ADR-0011). Registration is never approval:
+ * transitions must pass assertSupplierStatusTransition.
+ */
+export const transitionSupplierStatus = async (input: {
+  supplierOrganisationId: string
+  toStatus: SupplierStatus
+  actor: string
+  reason?: string
+}) => {
+  const db = getDb()
+
+  return db.transaction(async (tx) => {
+    const [organisation] = await tx
+      .select()
+      .from(supplierOrganisations)
+      .where(eq(supplierOrganisations.id, input.supplierOrganisationId))
+      .limit(1)
+
+    if (!organisation) return null
+
+    const fromStatus = organisation.status as SupplierStatus
+    assertSupplierStatusTransition(fromStatus, input.toStatus)
+
+    const [updated] = await tx
+      .update(supplierOrganisations)
+      .set({ status: input.toStatus, updatedAt: new Date() })
+      .where(eq(supplierOrganisations.id, organisation.id))
+      .returning()
+
+    await tx.insert(supplierStatusEvents).values({
+      supplierOrganisationId: organisation.id,
+      fromStatus,
+      toStatus: input.toStatus,
+      actor: input.actor,
+      reason: input.reason ?? null,
+    })
+
+    return updated
+  })
+}
+
+type VerificationOutcome = "verified" | "rejected"
+
+export const setCapabilityVerification = async (input: {
+  supplierOrganisationId: string
+  capabilityId: string
+  status: VerificationOutcome
+  verifiedBy: string
+}) => {
+  const db = getDb()
+  const [row] = await db
+    .update(supplierCapabilities)
+    .set({
+      verificationStatus: input.status,
+      verifiedAt: new Date(),
+      verifiedBy: input.verifiedBy,
+    })
+    .where(
+      and(
+        eq(supplierCapabilities.id, input.capabilityId),
+        eq(supplierCapabilities.supplierOrganisationId, input.supplierOrganisationId),
+      ),
+    )
+    .returning()
+  return row ?? null
+}
+
+export const setCertificationVerification = async (input: {
+  supplierOrganisationId: string
+  certificationId: string
+  status: VerificationOutcome
+  verifiedBy: string
+}) => {
+  const db = getDb()
+  const [row] = await db
+    .update(supplierCertifications)
+    .set({
+      verificationStatus: input.status,
+      verifiedAt: new Date(),
+      verifiedBy: input.verifiedBy,
+    })
+    .where(
+      and(
+        eq(supplierCertifications.id, input.certificationId),
+        eq(supplierCertifications.supplierOrganisationId, input.supplierOrganisationId),
+      ),
+    )
+    .returning()
+  return row ?? null
 }
