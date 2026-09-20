@@ -4,9 +4,8 @@ import { cookieAuthStorage } from "@/lib/auth/session-storage"
 import type { BuyerCapabilitySnapshot } from "./capabilities"
 import type {
   BuyerApplyInput,
-  BuyerOrganisationMembership,
-  BuyerOrganisationSummary,
-  BuyerMembershipSummary,
+  BuyerAccountRelationships,
+  BuyerApplicationSummary,
   BuyerTeamMember,
   BuyerTaxRegistration,
   BuyerDeliverySite,
@@ -48,9 +47,7 @@ const tradeUrl = (path: string): string => {
   return `${environment.MEDUSA_BACKEND_URL.replace(/\/$/, "")}${path}`
 }
 
-export const listBuyerOrganisationsForCustomer = async (): Promise<
-  BuyerOrganisationMembership[]
-> => {
+export const listBuyerRelationshipsForCustomer = async (): Promise<BuyerAccountRelationships> => {
   const response = await fetch(tradeUrl("/store/b2b/organisations/me"), {
     method: "GET",
     headers: await authHeaders(),
@@ -61,27 +58,29 @@ export const listBuyerOrganisationsForCustomer = async (): Promise<
     throw new BuyerTradeError("Session expired", "unauthorized", 401)
   }
   if (!response.ok) {
-    throw new BuyerTradeError("Could not load buyer organisations", "failed", response.status)
+    throw new BuyerTradeError("Could not load buyer relationships", "failed", response.status)
   }
 
-  const body = (await response.json()) as {
-    organisations?: BuyerOrganisationMembership[]
+  const body = (await response.json()) as Partial<BuyerAccountRelationships>
+  return {
+    applications: body.applications ?? [],
+    organisations: body.organisations ?? [],
   }
-  return body.organisations ?? []
 }
 
 export const applyForBuyerOrganisation = async (
   input: BuyerApplyInput,
-): Promise<{ organisation: BuyerOrganisationSummary; membership: BuyerMembershipSummary }> => {
+): Promise<{ application: BuyerApplicationSummary }> => {
+  const headers = await authHeaders()
   const response = await fetch(tradeUrl("/store/b2b/organisations/apply"), {
     method: "POST",
-    headers: await authHeaders(),
+    headers: { ...headers, "Idempotency-Key": input.idempotencyKey },
     body: JSON.stringify({
       legal_name: input.legalName,
       trading_name: input.tradingName,
       registration_number: input.registrationNumber,
-      default_market_key: input.defaultMarketKey,
-      tenant_id: "zuribeans",
+      country_of_registration: input.countryOfRegistration,
+      requested_market_keys: input.requestedMarketKeys,
     }),
     cache: "no-store",
   })
@@ -99,10 +98,7 @@ export const applyForBuyerOrganisation = async (
     throw new BuyerTradeError("Application failed", "failed", response.status)
   }
 
-  return (await response.json()) as {
-    organisation: BuyerOrganisationSummary
-    membership: BuyerMembershipSummary
-  }
+  return (await response.json()) as { application: BuyerApplicationSummary }
 }
 
 export const getBuyerCapabilitySnapshot = async (): Promise<BuyerCapabilitySnapshot | null> => {
