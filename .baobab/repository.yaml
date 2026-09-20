@@ -1,0 +1,15 @@
+schema_version: 1
+repository:
+  lifecycle: active
+capabilities:
+  - node
+  - container
+  - digital-estate
+environment:
+  baobab_dev:
+    required: true
+    profile: frontend
+package_managers:
+  node: pnpm
+artifacts:
+  container: true
