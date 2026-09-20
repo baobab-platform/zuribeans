@@ -1,10 +1,11 @@
+import { randomUUID } from "node:crypto"
 import { redirect } from "next/navigation"
 import { Alert } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { FieldDescription, Input, Select } from "@/components/ui/form-controls"
 import { ErrorState } from "@/components/ui/state-panel"
 import { getCurrentCustomer } from "@/lib/auth/customer"
-import { listBuyerOrganisationsForCustomer, BuyerTradeError } from "@/lib/buyer/trade-client"
+import { listBuyerRelationshipsForCustomer, BuyerTradeError } from "@/lib/buyer/trade-client"
 import { submitBuyerApplicationAction, type BuyerApplicationErrorCode } from "./actions"
 
 const errorMessages: Record<BuyerApplicationErrorCode, string> = {
@@ -27,9 +28,9 @@ export default async function BuyerApplyPage({
   const customer = await getCurrentCustomer()
   if (!customer) redirect("/login?next=/account/apply")
 
-  let existing: Awaited<ReturnType<typeof listBuyerOrganisationsForCustomer>>
+  let existing: Awaited<ReturnType<typeof listBuyerRelationshipsForCustomer>>
   try {
-    existing = await listBuyerOrganisationsForCustomer()
+    existing = await listBuyerRelationshipsForCustomer()
   } catch (error) {
     if (error instanceof BuyerTradeError && error.code === "unauthorized") {
       redirect("/login?next=/account/apply")
@@ -43,8 +44,9 @@ export default async function BuyerApplyPage({
     )
   }
 
-  if (existing.some((row) => row.organisation))
+  if (existing.applications.length > 0 || existing.organisations.some((row) => row.organisation)) {
     redirect("/account")
+  }
 
   const { error } = await searchParams
   const message = error && isBuyerApplicationErrorCode(error) ? errorMessages[error] : null
@@ -56,8 +58,9 @@ export default async function BuyerApplyPage({
         Apply for a trading account
       </h2>
       <p className="mt-4 max-w-2xl leading-7 text-muted">
-        Submitting this application creates a buyer organisation in review. It does not approve
-        trading, pricing, or orders — commercial and credit review must complete first.
+        Submitting this application creates an application for review. It does not create or approve
+        a trading organisation, pricing, or orders — identity, KYB, commercial, and credit review
+        must complete first.
       </p>
       {message ? (
         <Alert id="buyer-form-error" title="Application not submitted" tone="danger" className="mt-6">
@@ -69,6 +72,7 @@ export default async function BuyerApplyPage({
         className="mt-10 space-y-8"
         aria-describedby={message ? "buyer-form-error" : undefined}
       >
+        <input type="hidden" name="idempotencyKey" value={randomUUID()} />
         <fieldset className="space-y-5 rounded-panel border border-line bg-surface-raised p-6 sm:p-8">
           <legend className="font-display text-2xl">Organisation</legend>
           <label className={labelClass}>
@@ -91,13 +95,26 @@ export default async function BuyerApplyPage({
             <Input name="registrationNumber" type="text" autoComplete="off" />
           </label>
           <label className={labelClass}>
-            Primary market
-            <Select name="defaultMarketKey" defaultValue="zuribeans_za">
-              <option value="zuribeans_za">South Africa (zuribeans_za)</option>
-              <option value="zuribeans_ug">Uganda (zuribeans_ug)</option>
+            Country of registration
+            <Select name="countryOfRegistration" defaultValue="ZA">
+              <option value="ZA">South Africa</option>
+              <option value="UG">Uganda</option>
             </Select>
-            <FieldDescription>Candidate market key until Control Plane publishes authoritative Market records.</FieldDescription>
           </label>
+          <fieldset className="space-y-3">
+            <legend className={labelClass}>Requested operating markets</legend>
+            <label className="flex items-center gap-3 text-sm">
+              <input name="requestedMarketKeys" type="checkbox" value="zuribeans_za" defaultChecked />
+              South Africa
+            </label>
+            <label className="flex items-center gap-3 text-sm">
+              <input name="requestedMarketKeys" type="checkbox" value="zuribeans_ug" />
+              Uganda
+            </label>
+            <FieldDescription>
+              These are requested markets only. Control Plane resolution remains authoritative.
+            </FieldDescription>
+          </fieldset>
         </fieldset>
 
         <Button type="submit" size="lg" className="w-full">
