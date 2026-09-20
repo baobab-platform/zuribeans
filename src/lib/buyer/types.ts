@@ -1,5 +1,26 @@
 export type BuyerOrganisationStatus = "PENDING" | "ACTIVE" | "SUSPENDED" | "CLOSED"
 
+export type BuyerApplicationStatus =
+  | "DRAFT"
+  | "SUBMITTED"
+  | "INFORMATION_REQUIRED"
+  | "UNDER_REVIEW"
+  | "APPROVED"
+  | "REJECTED"
+  | "WITHDRAWN"
+
+export type BuyerApplicationSummary = {
+  id: string
+  status: BuyerApplicationStatus
+  legal_name: string
+  trading_name: string | null
+  registration_number: string | null
+  country_of_registration: string | null
+  requested_market_keys: string[]
+  submitted_at: string | null
+  revision: number
+}
+
 export type BuyerMembershipStatus = "INVITED" | "ACTIVE" | "SUSPENDED" | "REVOKED"
 
 export type BuyerOrganisationSummary = {
@@ -25,10 +46,12 @@ export type BuyerOrganisationMembership = {
 }
 
 export type BuyerApplyInput = {
+  idempotencyKey: string
   legalName: string
   tradingName?: string
   registrationNumber?: string
-  defaultMarketKey?: string
+  countryOfRegistration?: string
+  requestedMarketKeys: string[]
 }
 
 export type BuyerTeamMember = {
@@ -68,4 +91,9 @@ export type BuyerDeliverySite = {
   contact_phone?: string | null
   allow_shipping: boolean
   allow_billing: boolean
+}
+
+export type BuyerAccountRelationships = {
+  applications: BuyerApplicationSummary[]
+  organisations: BuyerOrganisationMembership[]
 }
