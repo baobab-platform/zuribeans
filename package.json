@@ -18,6 +18,8 @@
     "test": "vitest run",
     "test:storybook": "vitest run --config vitest.storybook.config.ts",
     "test:e2e": "playwright test",
+    "test:e2e:a11y": "playwright test tests/e2e/landing-page.accessibility.spec.ts",
+    "test:e2e:visual": "playwright test tests/e2e/landing-page.visual.spec.ts --project=chromium-desktop",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "storybook": "storybook dev -p 6006",
@@ -36,6 +38,7 @@
     "zod": "4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@medusajs/types": "2.21.0",
     "@playwright/test": "1.62.1",
     "@storybook/addon-a11y": "^10.6.0",
