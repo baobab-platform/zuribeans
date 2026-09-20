@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input, Select } from "@/components/ui/form-controls"
 import { isOpsAuthenticated } from "@/lib/auth/ops-session"
+import { isErpProjectionConfigured } from "@/lib/erp/business-partner-client"
 import { getSupplierApplicationById } from "@/lib/supplier/repository"
 import { getSupplierStatusPresentation } from "@/lib/supplier/presentation"
 import type { SupplierStatus } from "@/lib/supplier/lifecycle"
 import {
   opsDocumentRefAction,
+  opsErpProjectAction,
   opsErpReadyAction,
   opsTransitionAction,
   opsVerifyCapabilityAction,
@@ -44,6 +46,11 @@ export default async function OpsSupplierDetailPage({
   const status = detail.organisation.status as SupplierStatus
   const presentation = getSupplierStatusPresentation(status)
   const allowed = NEXT[status] ?? []
+  const erpConfigured = isErpProjectionConfigured()
+  const canProject =
+    (detail.organisation.erpProjectionStatus === "READY" ||
+      detail.organisation.erpProjectionStatus === "FAILED") &&
+    Boolean(detail.organisation.canonicalOrganisationId)
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-8">
@@ -60,10 +67,16 @@ export default async function OpsSupplierDetailPage({
           {error === "transition"
             ? "Illegal status transition."
             : error === "erp"
-              ? "ERP READY only when approved or active."
-              : error === "not_found"
-                ? "Capability or certification not found."
-                : "Invalid input."}
+              ? "ERP READY only when approved or active; project only when READY."
+              : error === "erp_config"
+                ? "ERP client is not configured (BAOBAB_ERP_* env). Status unchanged."
+                : error === "erp_canonical"
+                  ? "Set canonical_organisation_id before projecting to ERP."
+                  : error === "erp_project"
+                    ? "ERP projection failed — status set to FAILED. Check ERP logs."
+                    : error === "not_found"
+                      ? "Capability or certification not found."
+                      : "Invalid input."}
         </Alert>
       ) : null}
 
@@ -191,15 +204,35 @@ export default async function OpsSupplierDetailPage({
       </Card>
 
       <Card className="space-y-4 p-6">
-        <h2 className="font-display text-xl">ERP projection readiness</h2>
+        <h2 className="font-display text-xl">ERP projection</h2>
         <p className="text-sm text-muted">
-          Marks readiness only — does not create an iDempiere Business Partner (ADR-0006).
+          READY marks estate readiness. Project calls baobab-erp and moves READY → PENDING →
+          PROJECTED (or FAILED). Does not create a Business Partner inside this estate.
         </p>
-        <form action={opsErpReadyAction}>
-          <input type="hidden" name="id" value={id} />
-          <input type="hidden" name="actor" value="ops" />
-          <Button type="submit">Mark ERP READY</Button>
-        </form>
+        {!erpConfigured ? (
+          <Alert title="ERP client not configured" tone="warning">
+            Set BAOBAB_ERP_BASE_URL, BAOBAB_ERP_WORKLOAD_TOKEN, BAOBAB_ERP_TENANT_ID, and
+            BAOBAB_ERP_LEGAL_ENTITY_ID to enable projection.
+          </Alert>
+        ) : null}
+        <div className="flex flex-wrap gap-3">
+          <form action={opsErpReadyAction}>
+            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="actor" value="ops" />
+            <Button type="submit" variant="secondary">
+              Mark ERP READY
+            </Button>
+          </form>
+          {canProject ? (
+            <form action={opsErpProjectAction}>
+              <input type="hidden" name="id" value={id} />
+              <input type="hidden" name="actor" value="ops" />
+              <Button type="submit" disabled={!erpConfigured}>
+                Project to ERP (READY → PROJECTED)
+              </Button>
+            </form>
+          ) : null}
+        </div>
       </Card>
 
       <Card className="p-6">
