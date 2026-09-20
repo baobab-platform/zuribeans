@@ -5,6 +5,7 @@ import {
   supplierCapabilities,
   supplierCertifications,
   supplierContacts,
+  supplierDocumentReferences,
   supplierOrganisations,
   supplierStatusEvents,
 } from "@/lib/db/schema"
@@ -13,6 +14,11 @@ import {
   type SupplierStatus,
 } from "./lifecycle"
 import type { SupplierApplicationInput } from "@/lib/validation/supplier-application"
+
+const APPLICANT_EDITABLE: readonly SupplierStatus[] = [
+  "more_information_required",
+  "sample_required",
+]
 
 export const getSupplierApplicationForCustomer = async (medusaCustomerId: string) => {
   const db = getDb()
@@ -23,7 +29,7 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
     .limit(1)
   if (!organisation) return null
 
-  const [capabilities, certifications, latestStatusEvent] = await Promise.all([
+  const [capabilities, certifications, latestStatusEvent, documents] = await Promise.all([
     db
       .select()
       .from(supplierCapabilities)
@@ -38,22 +44,21 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
       .where(eq(supplierStatusEvents.supplierOrganisationId, organisation.id))
       .orderBy(desc(supplierStatusEvents.occurredAt))
       .limit(1),
+    db
+      .select()
+      .from(supplierDocumentReferences)
+      .where(eq(supplierDocumentReferences.supplierOrganisationId, organisation.id)),
   ])
 
   return {
     organisation,
     capabilities,
     certifications,
+    documents,
     latestStatusEvent: latestStatusEvent[0] ?? null,
   }
 }
 
-/**
- * Creates a supplier application already in `submitted` status (this
- * increment collects everything in one form, so there is no separate
- * "save draft" step yet — draft/under_review/etc. remain real states for a
- * future multi-step flow and staff review, not dead enum values).
- */
 export const submitSupplierApplication = async (
   medusaCustomerId: string,
   input: SupplierApplicationInput,
@@ -125,9 +130,105 @@ export const submitSupplierApplication = async (
 }
 
 /**
- * Sets supplier_organisations.canonical_organisation_id (ADR-0006's
- * reserved reconciliation column, ADR-0009's linkage route).
+ * Applicant updates after staff requested more information or a sample (ADR-0012).
+ * Replaces contacts/capabilities/certs and transitions to under_review.
  */
+export const resubmitSupplierApplication = async (
+  medusaCustomerId: string,
+  input: SupplierApplicationInput,
+  note?: string,
+) => {
+  const db = getDb()
+
+  return db.transaction(async (tx) => {
+    const [organisation] = await tx
+      .select()
+      .from(supplierOrganisations)
+      .where(eq(supplierOrganisations.medusaCustomerId, medusaCustomerId))
+      .limit(1)
+
+    if (!organisation) return null
+
+    const fromStatus = organisation.status as SupplierStatus
+    if (!APPLICANT_EDITABLE.includes(fromStatus)) {
+      throw new Error(
+        `Cannot resubmit a supplier application from "${fromStatus}" — only more_information_required or sample_required allow applicant updates.`,
+      )
+    }
+
+    assertSupplierStatusTransition(fromStatus, "under_review")
+
+    const [updated] = await tx
+      .update(supplierOrganisations)
+      .set({
+        legalName: input.legalName,
+        registrationNumber: input.registrationNumber,
+        taxIdentifier: input.taxIdentifier,
+        countryCode: input.countryCode,
+        status: "under_review",
+        updatedAt: new Date(),
+      })
+      .where(eq(supplierOrganisations.id, organisation.id))
+      .returning()
+
+    await tx
+      .delete(supplierContacts)
+      .where(eq(supplierContacts.supplierOrganisationId, organisation.id))
+    await tx
+      .delete(supplierCapabilities)
+      .where(eq(supplierCapabilities.supplierOrganisationId, organisation.id))
+    await tx
+      .delete(supplierCertifications)
+      .where(eq(supplierCertifications.supplierOrganisationId, organisation.id))
+
+    await tx.insert(supplierContacts).values({
+      supplierOrganisationId: organisation.id,
+      name: input.contactName,
+      email: input.contactEmail,
+      role: input.contactRole,
+      phone: input.contactPhone,
+    })
+
+    if (input.capabilities.length > 0) {
+      await tx.insert(supplierCapabilities).values(
+        input.capabilities.map((capability) => ({
+          supplierOrganisationId: organisation.id,
+          productCategory: capability.category,
+          variety: capability.variety,
+          grade: capability.grade,
+          originCountryCode: capability.originCountryCode,
+          capacityDescription: capability.capacityDescription,
+          season: capability.season,
+          leadTimeDays: capability.leadTimeDays,
+        })),
+      )
+    }
+
+    if (input.certifications.length > 0) {
+      await tx.insert(supplierCertifications).values(
+        input.certifications.map((certification) => ({
+          supplierOrganisationId: organisation.id,
+          certificationType: certification.certificationType,
+          issuer: certification.issuer,
+          referenceNumber: certification.referenceNumber,
+          issuedOn: certification.issuedOn,
+          expiresOn: certification.expiresOn,
+        })),
+      )
+    }
+
+    await tx.insert(supplierStatusEvents).values({
+      supplierOrganisationId: organisation.id,
+      fromStatus,
+      toStatus: "under_review",
+      actor: `customer:${medusaCustomerId}`,
+      reason: note?.trim() || "Applicant resubmitted updated information.",
+    })
+
+    return updated
+  })
+}
+
 export const setSupplierCanonicalOrganisationId = async (
   supplierOrganisationId: string,
   canonicalOrganisationId: string,
@@ -173,7 +274,7 @@ export const getSupplierApplicationById = async (supplierOrganisationId: string)
     .limit(1)
   if (!organisation) return null
 
-  const [capabilities, certifications, contacts, statusEvents] = await Promise.all([
+  const [capabilities, certifications, contacts, statusEvents, documents] = await Promise.all([
     db
       .select()
       .from(supplierCapabilities)
@@ -191,14 +292,15 @@ export const getSupplierApplicationById = async (supplierOrganisationId: string)
       .from(supplierStatusEvents)
       .where(eq(supplierStatusEvents.supplierOrganisationId, organisation.id))
       .orderBy(desc(supplierStatusEvents.occurredAt)),
+    db
+      .select()
+      .from(supplierDocumentReferences)
+      .where(eq(supplierDocumentReferences.supplierOrganisationId, organisation.id)),
   ])
 
-  return { organisation, capabilities, certifications, contacts, statusEvents }
+  return { organisation, capabilities, certifications, contacts, statusEvents, documents }
 }
 
-/**
- * Staff-driven lifecycle transition (ADR-0011). Registration is never approval.
- */
 export const transitionSupplierStatus = async (input: {
   supplierOrganisationId: string
   toStatus: SupplierStatus
@@ -285,4 +387,68 @@ export const setCertificationVerification = async (input: {
     )
     .returning()
   return row ?? null
+}
+
+export const addSupplierDocumentReference = async (input: {
+  supplierOrganisationId: string
+  kind: string
+  label: string
+  externalReference?: string
+  contentHash?: string
+  recordedBy: string
+}) => {
+  const db = getDb()
+  const [row] = await db
+    .insert(supplierDocumentReferences)
+    .values({
+      supplierOrganisationId: input.supplierOrganisationId,
+      kind: input.kind,
+      label: input.label,
+      externalReference: input.externalReference ?? null,
+      contentHash: input.contentHash ?? null,
+      recordedBy: input.recordedBy,
+    })
+    .returning()
+  return row
+}
+
+/**
+ * Marks ERP projection readiness only — does not create a Business Partner (ADR-0012).
+ */
+export const setErpProjectionStatus = async (input: {
+  supplierOrganisationId: string
+  status: "NOT_REQUESTED" | "READY" | "PENDING" | "FAILED" | "PROJECTED"
+  actor: string
+}) => {
+  const db = getDb()
+  const [organisation] = await db
+    .select()
+    .from(supplierOrganisations)
+    .where(eq(supplierOrganisations.id, input.supplierOrganisationId))
+    .limit(1)
+
+  if (!organisation) return null
+
+  if (input.status === "READY") {
+    const st = organisation.status as SupplierStatus
+    if (st !== "approved" && st !== "active") {
+      throw new Error("ERP projection READY is only allowed when the supplier is approved or active.")
+    }
+  }
+
+  const [updated] = await db
+    .update(supplierOrganisations)
+    .set({ erpProjectionStatus: input.status, updatedAt: new Date() })
+    .where(eq(supplierOrganisations.id, organisation.id))
+    .returning()
+
+  await db.insert(supplierStatusEvents).values({
+    supplierOrganisationId: organisation.id,
+    fromStatus: organisation.status,
+    toStatus: organisation.status,
+    actor: input.actor,
+    reason: `erp_projection_status=${input.status}`,
+  })
+
+  return updated
 }
