@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { Alert } from "@/components/ui/alert"
@@ -87,6 +88,7 @@ export default async function BuyerTeamPage({
         <h3 className="font-display text-xl">Invite a member</h3>
         {canInvite ? (
           <form action={inviteBuyerMemberAction} className="mt-4 grid gap-4 sm:grid-cols-2">
+            <input type="hidden" name="idempotencyKey" value={`buyer-invite:${randomUUID()}`} />
             <label className="block text-sm font-semibold sm:col-span-2">
               Email address
               <Input name="email" type="email" autoComplete="email" required />
