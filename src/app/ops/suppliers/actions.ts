@@ -10,6 +10,7 @@ import {
   setErpProjectionStatus,
   transitionSupplierStatus,
 } from "@/lib/supplier/repository"
+import { requestErpBusinessPartnerProjection } from "@/lib/supplier/erp-projection"
 import type { SupplierStatus } from "@/lib/supplier/lifecycle"
 import { clearOpsSessionCookie, isOpsAuthenticated, setOpsSessionCookie } from "@/lib/auth/ops-session"
 
@@ -90,6 +91,34 @@ export async function opsErpReadyAction(formData: FormData): Promise<void> {
   } catch {
     redirect(`/ops/suppliers/${id}?error=erp`)
   }
+  redirect(`/ops/suppliers/${id}`)
+}
+
+/** READY/FAILED → PENDING → PROJECTED | FAILED via baobab-erp (ADR-ERP-021). */
+export async function opsErpProjectAction(formData: FormData): Promise<void> {
+  if (!(await isOpsAuthenticated())) redirect("/ops/suppliers?error=unauthorized")
+
+  const id = formData.get("id")?.toString()
+  const actor = formData.get("actor")?.toString() || "ops"
+  if (!id) redirect("/ops/suppliers?error=invalid")
+
+  const result = await requestErpBusinessPartnerProjection({
+    supplierOrganisationId: id,
+    actor: `staff:${actor}`,
+  })
+
+  if (!result.ok) {
+    const code =
+      result.error === "erp_not_configured"
+        ? "erp_config"
+        : result.error === "missing_canonical"
+          ? "erp_canonical"
+          : result.error === "not_ready"
+            ? "erp"
+            : "erp_project"
+    redirect(`/ops/suppliers/${id}?error=${code}`)
+  }
+
   redirect(`/ops/suppliers/${id}`)
 }
 
