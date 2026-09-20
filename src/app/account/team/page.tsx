@@ -1,14 +1,10 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Input, Select } from "@/components/ui/form-controls"
 import { resolveBuyerAccountContext } from "@/lib/buyer/resolve-account-context"
 import { listOrganisationMembers, BuyerTradeError } from "@/lib/buyer/trade-client"
 import { getCurrentCustomer } from "@/lib/auth/customer"
-import { inviteTeamMemberAction } from "./actions"
 
 const membershipTone = (status: string) => {
   switch (status) {
@@ -24,18 +20,7 @@ const membershipTone = (status: string) => {
   }
 }
 
-const errorMessages: Record<string, string> = {
-  invalid_input: "Enter a valid email address.",
-  forbidden: "Only an account admin can invite members.",
-  duplicate: "That email is already invited to this organisation.",
-  failed: "The invitation could not be sent. Try again.",
-}
-
-export default async function BuyerTeamPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ error?: string; invited?: string; token?: string }>
-}) {
+export default async function BuyerTeamPage() {
   const customer = await getCurrentCustomer()
   if (!customer) redirect("/login?next=/account/team")
 
@@ -56,11 +41,8 @@ export default async function BuyerTeamPage({
     loadFailed = true
   }
 
-  const caller = members.find((m) => m.customer_id === customer.id)
+  const caller = members.find((member) => member.customer_id === customer.id)
   const canInvite = caller?.roles.includes("ACCOUNT_ADMIN") === true
-
-  const { error, invited, token } = await searchParams
-  const errorMessage = error ? errorMessages[error] : null
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -68,68 +50,26 @@ export default async function BuyerTeamPage({
         <p className="eyebrow">Team</p>
         <h2 className="mt-3 font-display text-3xl">Members</h2>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
-          Roster for {organisation.legal_name}. Share the accept link until email delivery is wired.
+          Roster for {organisation.legal_name}.
         </p>
       </div>
 
-      {invited ? (
-        <Alert title="Invitation created" tone="success">
-          {token ? (
-            <>
-              Share this accept link with the invitee:{" "}
-              <Link
-                className="font-semibold underline-offset-2 hover:underline"
-                href={`/account/invitations/accept?token=${encodeURIComponent(token)}`}
-              >
-                Accept invitation
-              </Link>
-              . Token is shown once; email delivery is not enabled yet.
-            </>
-          ) : (
-            "Member listed as INVITED."
-          )}
-        </Alert>
-      ) : null}
-      {errorMessage ? (
-        <Alert title="Invitation not sent" tone="danger">
-          {errorMessage}
-        </Alert>
-      ) : null}
-
-      {canInvite ? (
-        <Card className="p-6">
-          <h3 className="font-display text-xl">Invite a member</h3>
-          <form
-            action={inviteTeamMemberAction}
-            className="mt-4 grid gap-4 sm:grid-cols-[1fr_auto_auto] sm:items-end"
+      <Card className="p-6">
+        <h3 className="font-display text-xl">Invite a member</h3>
+        <p className="mt-3 text-sm leading-6 text-muted">
+          {canInvite
+            ? "Invitations are temporarily unavailable while secure email delivery and one-time token handling are completed."
+            : "Only account admins can invite members."}{" "}
+          If you already received an invitation through an approved channel,{" "}
+          <Link
+            href="/account/invitations/accept"
+            className="font-semibold underline-offset-2 hover:underline"
           >
-            <label className="block text-sm font-semibold">
-              Email
-              <Input name="email" type="email" required autoComplete="email" />
-            </label>
-            <label className="block text-sm font-semibold">
-              Role
-              <Select name="role" defaultValue="BUYER">
-                <option value="BUYER">Buyer</option>
-                <option value="SENIOR_BUYER">Senior buyer</option>
-                <option value="APPROVER">Approver</option>
-                <option value="VIEWER">Viewer</option>
-              </Select>
-            </label>
-            <Button type="submit">Invite</Button>
-          </form>
-        </Card>
-      ) : (
-        <Card className="p-6">
-          <p className="text-sm text-muted">
-            Only account admins can invite members.{" "}
-            <Link href="/account/invitations/accept" className="font-semibold underline-offset-2 hover:underline">
-              Accept an invitation
-            </Link>
-            .
-          </p>
-        </Card>
-      )}
+            accept it here
+          </Link>
+          .
+        </p>
+      </Card>
 
       {loadFailed ? (
         <Card className="p-6">
