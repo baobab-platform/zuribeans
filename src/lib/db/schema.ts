@@ -20,13 +20,19 @@ export const verificationStatusEnum = pgEnum("verification_status", [
   "rejected",
 ])
 
-/** Readiness for a future ERP adapter — not a Business Partner id (ADR-0006 / ADR-0012). */
 export const erpProjectionStatusEnum = pgEnum("erp_projection_status", [
   "NOT_REQUESTED",
   "READY",
   "PENDING",
   "FAILED",
   "PROJECTED",
+])
+
+/** Durable event rows for a future broker (ADR-0006) — never published from this table yet. */
+export const supplierOutboxStatusEnum = pgEnum("supplier_outbox_status", [
+  "PENDING",
+  "PUBLISHED",
+  "FAILED",
 ])
 
 export const supplierOrganisations = pgTable("supplier_organisations", {
@@ -92,9 +98,6 @@ export const supplierCertifications = pgTable("supplier_certifications", {
   verifiedBy: text("verified_by"),
 })
 
-/**
- * Metadata-only evidence pointers (ADR-0012). No blob bytes stored here.
- */
 export const supplierDocumentReferences = pgTable("supplier_document_references", {
   id: uuid("id").primaryKey().defaultRandom(),
   supplierOrganisationId: uuid("supplier_organisation_id")
@@ -102,7 +105,6 @@ export const supplierDocumentReferences = pgTable("supplier_document_references"
     .references(() => supplierOrganisations.id, { onDelete: "cascade" }),
   kind: text("kind").notNull(),
   label: text("label").notNull(),
-  /** External URI or offline handling note — never estate-hosted object key until storage ADR. */
   externalReference: text("external_reference"),
   contentHash: text("content_hash"),
   recordedBy: text("recorded_by").notNull(),
@@ -119,4 +121,14 @@ export const supplierStatusEvents = pgTable("supplier_status_events", {
   actor: text("actor").notNull(),
   reason: text("reason"),
   occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const supplierEventOutbox = pgTable("supplier_event_outbox", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  eventType: text("event_type").notNull(),
+  subject: text("subject").notNull(),
+  payload: text("payload").notNull(),
+  status: supplierOutboxStatusEnum("status").notNull().default("PENDING"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
 })
