@@ -72,6 +72,24 @@ jobs:
           NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm test:e2e
+      - name: Landing-page accessibility checks
+        env:
+          CI: "true"
+          MEDUSA_BACKEND_URL: http://localhost:9000
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
+          NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
+        run: pnpm test:e2e:a11y
+      - name: Landing-page visual regression checks
+        env:
+          CI: "true"
+          MEDUSA_BACKEND_URL: http://localhost:9000
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
+          NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
+        run: pnpm test:e2e:visual
       - name: Validate architecture declarations
         run: test -f contracts.lock.yaml && test -f runtime/requirements.yaml && test -f .baobab/environment.yaml
 
