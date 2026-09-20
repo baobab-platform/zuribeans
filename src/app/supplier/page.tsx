@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation"
+import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { EmptyState, ErrorState } from "@/components/ui/state-panel"
@@ -36,6 +37,14 @@ export default async function SupplierDashboardPage() {
   }
 
   const status = getSupplierStatusPresentation(application.organisation.status as SupplierStatus)
+  const staffReason =
+    application.latestStatusEvent?.reason &&
+    application.latestStatusEvent.actor.startsWith("staff:")
+      ? application.latestStatusEvent.reason
+      : null
+  const needsApplicantAttention =
+    application.organisation.status === "more_information_required" ||
+    application.organisation.status === "sample_required"
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -50,7 +59,15 @@ export default async function SupplierDashboardPage() {
         <p className="mt-3 max-w-2xl leading-7 text-muted">{status.description}</p>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
           Declarations remain unverified until the sourcing team completes the relevant review.
+          Registration is not approval.
         </p>
+        {needsApplicantAttention && staffReason ? (
+          <div className="mt-6">
+            <Alert title="Message from sourcing review" tone="warning">
+              {staffReason}
+            </Alert>
+          </div>
+        ) : null}
       </Card>
       <Card className="p-8">
         <p className="eyebrow">Organisation profile</p>

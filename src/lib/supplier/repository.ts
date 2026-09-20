@@ -23,7 +23,7 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
     .limit(1)
   if (!organisation) return null
 
-  const [capabilities, certifications] = await Promise.all([
+  const [capabilities, certifications, latestStatusEvent] = await Promise.all([
     db
       .select()
       .from(supplierCapabilities)
@@ -32,9 +32,20 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
       .select()
       .from(supplierCertifications)
       .where(eq(supplierCertifications.supplierOrganisationId, organisation.id)),
+    db
+      .select()
+      .from(supplierStatusEvents)
+      .where(eq(supplierStatusEvents.supplierOrganisationId, organisation.id))
+      .orderBy(desc(supplierStatusEvents.occurredAt))
+      .limit(1),
   ])
 
-  return { organisation, capabilities, certifications }
+  return {
+    organisation,
+    capabilities,
+    certifications,
+    latestStatusEvent: latestStatusEvent[0] ?? null,
+  }
 }
 
 /**
@@ -115,13 +126,7 @@ export const submitSupplierApplication = async (
 
 /**
  * Sets supplier_organisations.canonical_organisation_id (ADR-0006's
- * reserved reconciliation column, ADR-0009's linkage route) -- the
- * counterpart to baobab-trade's b2b_organisation.canonical_organisation_id
- * write path from Gate ZB-03.3. Never called by application code directly;
- * only by the admin-authenticated route (src/app/api/admin/suppliers/[id]/
- * canonical-link/route.ts). Returns null when supplierOrganisationId does
- * not name an existing row, so the route can answer 404 rather than a
- * silent no-op update.
+ * reserved reconciliation column, ADR-0009's linkage route).
  */
 export const setSupplierCanonicalOrganisationId = async (
   supplierOrganisationId: string,
@@ -192,8 +197,7 @@ export const getSupplierApplicationById = async (supplierOrganisationId: string)
 }
 
 /**
- * Staff-driven lifecycle transition (ADR-0011). Registration is never approval:
- * transitions must pass assertSupplierStatusTransition.
+ * Staff-driven lifecycle transition (ADR-0011). Registration is never approval.
  */
 export const transitionSupplierStatus = async (input: {
   supplierOrganisationId: string
