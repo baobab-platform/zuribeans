@@ -13,7 +13,13 @@ import type {
 export class BuyerTradeError extends Error {
   constructor(
     message: string,
-    readonly code: "unauthorized" | "already_applied" | "invalid_input" | "failed" | "forbidden",
+    readonly code:
+      | "unauthorized"
+      | "already_applied"
+      | "invalid_input"
+      | "failed"
+      | "forbidden"
+      | "duplicate",
     readonly status?: number,
   ) {
     super(message)
@@ -137,4 +143,35 @@ export const listOrganisationMembers = async (
 
   const body = (await response.json()) as { members?: BuyerTeamMember[] }
   return body.members ?? []
+}
+
+export const inviteOrganisationMember = async (
+  organisationId: string,
+  input: { email: string; role?: string },
+): Promise<void> => {
+  const response = await fetch(tradeUrl(`/store/b2b/organisations/${organisationId}/members`), {
+    method: "POST",
+    headers: await authHeaders(),
+    body: JSON.stringify({
+      email: input.email,
+      role: input.role,
+    }),
+    cache: "no-store",
+  })
+
+  if (response.status === 401) {
+    throw new BuyerTradeError("Session expired", "unauthorized", 401)
+  }
+  if (response.status === 403) {
+    throw new BuyerTradeError("Only ACCOUNT_ADMIN can invite", "forbidden", 403)
+  }
+  if (response.status === 400) {
+    throw new BuyerTradeError("Invalid invite", "invalid_input", 400)
+  }
+  if (response.status === 409 || response.status === 422) {
+    throw new BuyerTradeError("Already invited", "duplicate", response.status)
+  }
+  if (!response.ok) {
+    throw new BuyerTradeError("Invite failed", "failed", response.status)
+  }
 }
