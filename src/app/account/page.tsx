@@ -1,8 +1,7 @@
-import Link from "next/link"
 import { BuyerCapabilityBoundary } from "@/components/buyer/capability-boundary"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { listBuyerOrganisationsForCustomer, BuyerTradeError } from "@/lib/buyer/trade-client"
+import { resolveBuyerAccountContext } from "@/lib/buyer/resolve-account-context"
 import type { BuyerOrganisationStatus } from "@/lib/buyer/types"
 
 const statusCopy = (status: BuyerOrganisationStatus | null): { title: string; body: string } => {
@@ -15,7 +14,7 @@ const statusCopy = (status: BuyerOrganisationStatus | null): { title: string; bo
     case "ACTIVE":
       return {
         title: "Organisation active",
-        body: "Your buyer organisation is active. Commercial workspace sections still open only when Trade confirms each capability.",
+        body: "Your buyer organisation is active. Company and team open when Trade confirms those capabilities; catalogue, orders and documents remain gated until later contracts.",
       }
     case "SUSPENDED":
       return {
@@ -36,23 +35,8 @@ const statusCopy = (status: BuyerOrganisationStatus | null): { title: string; bo
 }
 
 export default async function AccountDashboardPage() {
-  let orgStatus: BuyerOrganisationStatus | null = null
-  let legalName: string | null = null
-  let loadFailed = false
-
-  try {
-    const rows = await listBuyerOrganisationsForCustomer()
-    const first = rows.find((row) => row.organisation)?.organisation
-    if (first) {
-      orgStatus = first.status
-      legalName = first.legal_name
-    }
-  } catch (error) {
-    if (!(error instanceof BuyerTradeError && error.code === "unauthorized")) {
-      loadFailed = true
-    }
-  }
-
+  const { organisation, capabilities, loadFailed } = await resolveBuyerAccountContext()
+  const orgStatus = organisation?.status ?? null
   const copy = statusCopy(orgStatus)
 
   return (
@@ -61,8 +45,8 @@ export default async function AccountDashboardPage() {
         <p className="eyebrow">Account status</p>
         <h2 className="mt-4 font-display text-3xl">{copy.title}</h2>
         <p className="mt-4 max-w-2xl leading-7 text-muted">{copy.body}</p>
-        {legalName ? (
-          <p className="mt-3 text-sm font-semibold">Organisation: {legalName}</p>
+        {organisation ? (
+          <p className="mt-3 text-sm font-semibold">Organisation: {organisation.legal_name}</p>
         ) : null}
         {loadFailed ? (
           <p className="mt-3 text-sm text-muted">
@@ -82,7 +66,9 @@ export default async function AccountDashboardPage() {
             ],
             [
               "3",
-              orgStatus === "ACTIVE" ? "Capabilities gated by Trade" : "Trading features restricted",
+              capabilities?.organisation
+                ? "Company workspace available"
+                : "Trading features restricted",
             ],
           ].map(([number, label]) => (
             <div key={number} className="rounded-control bg-surface-muted p-4">
@@ -96,6 +82,11 @@ export default async function AccountDashboardPage() {
             Apply for a trading account
           </ButtonLink>
         ) : null}
+        {capabilities?.organisation ? (
+          <ButtonLink href="/account/company" variant="outline" className="mt-8">
+            View company profile
+          </ButtonLink>
+        ) : null}
       </Card>
       <Card className="p-8">
         <p className="eyebrow">While access is reviewed</p>
@@ -107,21 +98,8 @@ export default async function AccountDashboardPage() {
         <ButtonLink href="/products" variant="outline" className="mt-6">
           Browse products
         </ButtonLink>
-        {orgStatus === "PENDING" ? (
-          <p className="mt-6 text-sm leading-6 text-muted">
-            Need to update details? Contact support — re-apply is blocked while a membership exists.
-          </p>
-        ) : null}
-        {orgStatus ? (
-          <p className="mt-4 text-sm">
-            <Link href="/account/apply" className="font-semibold underline-offset-4 hover:underline">
-              Application entry
-            </Link>{" "}
-            redirects here once an organisation exists.
-          </p>
-        ) : null}
       </Card>
-      <BuyerCapabilityBoundary capabilities={null} />
+      <BuyerCapabilityBoundary capabilities={capabilities} />
     </div>
   )
 }

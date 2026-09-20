@@ -1,6 +1,7 @@
 import "server-only"
 import { getServerEnvironment } from "@/lib/configuration/environment"
 import { cookieAuthStorage } from "@/lib/auth/session-storage"
+import type { BuyerCapabilitySnapshot } from "./capabilities"
 import type {
   BuyerApplyInput,
   BuyerOrganisationMembership,
@@ -92,4 +93,24 @@ export const applyForBuyerOrganisation = async (
     organisation: BuyerOrganisationSummary
     membership: BuyerMembershipSummary
   }
+}
+
+export const getBuyerCapabilitySnapshot = async (): Promise<BuyerCapabilitySnapshot | null> => {
+  const response = await fetch(tradeUrl("/store/b2b/capabilities"), {
+    method: "GET",
+    headers: await authHeaders(),
+    cache: "no-store",
+  })
+
+  if (response.status === 401) {
+    throw new BuyerTradeError("Session expired", "unauthorized", 401)
+  }
+  if (!response.ok) {
+    return null
+  }
+
+  const body = (await response.json()) as {
+    capabilities?: BuyerCapabilitySnapshot
+  }
+  return body.capabilities ?? null
 }
