@@ -30,3 +30,13 @@ export type BuyerApplyInput = {
   registrationNumber?: string
   defaultMarketKey?: string
 }
+
+export type BuyerTeamMember = {
+  id: string
+  customer_id: string
+  principal_id: string
+  status: BuyerMembershipStatus
+  invited_email: string | null
+  invitation_accepted_at: string | null
+  roles: string[]
+}

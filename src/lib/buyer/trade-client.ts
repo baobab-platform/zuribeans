@@ -7,12 +7,13 @@ import type {
   BuyerOrganisationMembership,
   BuyerOrganisationSummary,
   BuyerMembershipSummary,
+  BuyerTeamMember,
 } from "./types"
 
 export class BuyerTradeError extends Error {
   constructor(
     message: string,
-    readonly code: "unauthorized" | "already_applied" | "invalid_input" | "failed",
+    readonly code: "unauthorized" | "already_applied" | "invalid_input" | "failed" | "forbidden",
     readonly status?: number,
   ) {
     super(message)
@@ -113,4 +114,27 @@ export const getBuyerCapabilitySnapshot = async (): Promise<BuyerCapabilitySnaps
     capabilities?: BuyerCapabilitySnapshot
   }
   return body.capabilities ?? null
+}
+
+export const listOrganisationMembers = async (
+  organisationId: string,
+): Promise<BuyerTeamMember[]> => {
+  const response = await fetch(tradeUrl(`/store/b2b/organisations/${organisationId}/members`), {
+    method: "GET",
+    headers: await authHeaders(),
+    cache: "no-store",
+  })
+
+  if (response.status === 401) {
+    throw new BuyerTradeError("Session expired", "unauthorized", 401)
+  }
+  if (response.status === 403) {
+    throw new BuyerTradeError("Not a member of this organisation", "forbidden", 403)
+  }
+  if (!response.ok) {
+    throw new BuyerTradeError("Could not load team members", "failed", response.status)
+  }
+
+  const body = (await response.json()) as { members?: BuyerTeamMember[] }
+  return body.members ?? []
 }
