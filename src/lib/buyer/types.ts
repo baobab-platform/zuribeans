@@ -51,3 +51,21 @@ export type BuyerTaxRegistration = {
   verified_at?: string | null
   expires_at?: string | null
 }
+
+export type BuyerDeliverySite = {
+  id: string
+  market_key: string
+  code: string
+  name: string
+  status: string
+  address_1: string
+  address_2?: string | null
+  city: string
+  province?: string | null
+  postal_code?: string | null
+  country_code: string
+  contact_name?: string | null
+  contact_phone?: string | null
+  allow_shipping: boolean
+  allow_billing: boolean
+}

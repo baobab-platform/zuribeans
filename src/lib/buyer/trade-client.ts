@@ -9,6 +9,7 @@ import type {
   BuyerMembershipSummary,
   BuyerTeamMember,
   BuyerTaxRegistration,
+  BuyerDeliverySite,
 } from "./types"
 
 export class BuyerTradeError extends Error {
@@ -270,5 +271,88 @@ export const createTaxRegistration = async (
   }
   if (!response.ok) {
     throw new BuyerTradeError("Could not save tax registration", "failed", response.status)
+  }
+}
+
+export const listDeliverySites = async (organisationId: string): Promise<BuyerDeliverySite[]> => {
+  const response = await fetch(
+    tradeUrl(`/store/b2b/organisations/${organisationId}/delivery-sites`),
+    {
+      method: "GET",
+      headers: await authHeaders(),
+      cache: "no-store",
+    },
+  )
+
+  if (response.status === 401) {
+    throw new BuyerTradeError("Session expired", "unauthorized", 401)
+  }
+  if (response.status === 403) {
+    throw new BuyerTradeError("Forbidden", "forbidden", 403)
+  }
+  if (!response.ok) {
+    throw new BuyerTradeError("Could not load delivery sites", "failed", response.status)
+  }
+
+  const body = (await response.json()) as { delivery_sites?: BuyerDeliverySite[] }
+  return body.delivery_sites ?? []
+}
+
+export const createDeliverySite = async (
+  organisationId: string,
+  input: {
+    marketKey: string
+    code: string
+    name: string
+    address1: string
+    address2?: string
+    city: string
+    province?: string
+    postalCode?: string
+    countryCode: string
+    contactName?: string
+    contactPhone?: string
+    allowShipping: boolean
+    allowBilling: boolean
+  },
+): Promise<void> => {
+  const response = await fetch(
+    tradeUrl(`/store/b2b/organisations/${organisationId}/delivery-sites`),
+    {
+      method: "POST",
+      headers: await authHeaders(),
+      body: JSON.stringify({
+        market_key: input.marketKey,
+        code: input.code,
+        name: input.name,
+        address_1: input.address1,
+        address_2: input.address2,
+        city: input.city,
+        province: input.province,
+        postal_code: input.postalCode,
+        country_code: input.countryCode,
+        contact_name: input.contactName,
+        contact_phone: input.contactPhone,
+        allow_shipping: input.allowShipping,
+        allow_billing: input.allowBilling,
+      }),
+      cache: "no-store",
+    },
+  )
+
+  if (response.status === 401) {
+    throw new BuyerTradeError("Session expired", "unauthorized", 401)
+  }
+  if (response.status === 403) {
+    throw new BuyerTradeError("Only ACCOUNT_ADMIN can manage delivery sites", "forbidden", 403)
+  }
+  if (response.status === 400) {
+    throw new BuyerTradeError("Invalid delivery site", "invalid_input", 400)
+  }
+  if (response.status === 409 || response.status === 422) {
+    throw new BuyerTradeError("Duplicate site code", "duplicate", response.status)
+  }
+  if (!response.ok) {
+    throw new BuyerTradeError("Could not save delivery site", "failed", response.status)
   }
 }
