@@ -2,7 +2,7 @@ import { BuyerCapabilityBoundary } from "@/components/buyer/capability-boundary"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { resolveBuyerAccountContext } from "@/lib/buyer/resolve-account-context"
-import type { BuyerOrganisationStatus } from "@/lib/buyer/types"
+import type { BuyerApplicationStatus, BuyerOrganisationStatus } from "@/lib/buyer/types"
 
 const statusCopy = (status: BuyerOrganisationStatus | null): { title: string; body: string } => {
   switch (status) {
@@ -34,10 +34,46 @@ const statusCopy = (status: BuyerOrganisationStatus | null): { title: string; bo
   }
 }
 
+const applicationCopy = (
+  status: BuyerApplicationStatus,
+): { title: string; body: string } => {
+  switch (status) {
+    case "INFORMATION_REQUIRED":
+      return {
+        title: "More information required",
+        body: "ZuriBeans needs additional organisation evidence before review can continue.",
+      }
+    case "UNDER_REVIEW":
+      return {
+        title: "Application under review",
+        body: "Identity, KYB and commercial checks are in progress. Trading remains restricted.",
+      }
+    case "REJECTED":
+      return {
+        title: "Application not approved",
+        body: "The buyer application was not approved. Contact support if you need the decision reviewed.",
+      }
+    case "WITHDRAWN":
+      return {
+        title: "Application withdrawn",
+        body: "This application is no longer under review.",
+      }
+    default:
+      return {
+        title: "Application submitted",
+        body: "Your application is recorded. It has not created or approved a trading organisation.",
+      }
+  }
+}
+
 export default async function AccountDashboardPage() {
-  const { organisation, capabilities, loadFailed } = await resolveBuyerAccountContext()
+  const { application, organisation, capabilities, loadFailed } = await resolveBuyerAccountContext()
   const orgStatus = organisation?.status ?? null
-  const copy = statusCopy(orgStatus)
+  const copy = organisation
+    ? statusCopy(orgStatus)
+    : application
+      ? applicationCopy(application.status)
+      : statusCopy(null)
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
@@ -47,6 +83,8 @@ export default async function AccountDashboardPage() {
         <p className="mt-4 max-w-2xl leading-7 text-muted">{copy.body}</p>
         {organisation ? (
           <p className="mt-3 text-sm font-semibold">Organisation: {organisation.legal_name}</p>
+        ) : application ? (
+          <p className="mt-3 text-sm font-semibold">Application: {application.legal_name}</p>
         ) : null}
         {loadFailed ? (
           <p className="mt-3 text-sm text-muted">
@@ -60,9 +98,9 @@ export default async function AccountDashboardPage() {
               "2",
               orgStatus === "ACTIVE"
                 ? "Organisation active"
-                : orgStatus === "PENDING"
-                  ? "Organisation in review"
-                  : "Organisation required",
+                : application
+                  ? "Application in review"
+                  : "Application required",
             ],
             [
               "3",
@@ -77,7 +115,7 @@ export default async function AccountDashboardPage() {
             </div>
           ))}
         </div>
-        {!orgStatus ? (
+        {!orgStatus && !application ? (
           <ButtonLink href="/account/apply" className="mt-8">
             Apply for a trading account
           </ButtonLink>
