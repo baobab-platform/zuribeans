@@ -1,0 +1,151 @@
+import Link from "next/link"
+import { notFound, redirect } from "next/navigation"
+import { Alert } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Input, Select } from "@/components/ui/form-controls"
+import { isOpsAuthenticated } from "@/lib/auth/ops-session"
+import { getSupplierApplicationById } from "@/lib/supplier/repository"
+import { getSupplierStatusPresentation } from "@/lib/supplier/presentation"
+import type { SupplierStatus } from "@/lib/supplier/lifecycle"
+import { opsDocumentRefAction, opsErpReadyAction, opsTransitionAction } from "../actions"
+
+const NEXT: Partial<Record<SupplierStatus, SupplierStatus[]>> = {
+  submitted: ["under_review"],
+  under_review: ["more_information_required", "sample_required", "qualification", "rejected"],
+  more_information_required: ["under_review"],
+  sample_required: ["under_review"],
+  qualification: ["approved", "rejected"],
+  approved: ["active"],
+  active: ["suspended", "offboarded"],
+  suspended: ["active", "offboarded"],
+}
+
+export default async function OpsSupplierDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ error?: string }>
+}) {
+  if (!(await isOpsAuthenticated())) redirect("/ops/suppliers?error=unauthorized")
+
+  const { id } = await params
+  const { error } = await searchParams
+  const detail = await getSupplierApplicationById(id)
+  if (!detail) notFound()
+
+  const status = detail.organisation.status as SupplierStatus
+  const presentation = getSupplierStatusPresentation(status)
+  const allowed = NEXT[status] ?? []
+
+  return (
+    <div className="mx-auto max-w-3xl space-y-6 p-8">
+      <Link href="/ops/suppliers" className="text-sm font-semibold underline">
+        ← All applications
+      </Link>
+      <h1 className="font-display text-3xl">{detail.organisation.legalName}</h1>
+      <p className="text-muted">
+        {presentation.label} · {detail.organisation.countryCode} · ERP{" "}
+        {detail.organisation.erpProjectionStatus}
+      </p>
+      {error ? (
+        <Alert title="Action failed" tone="danger">
+          {error === "transition"
+            ? "Illegal status transition."
+            : error === "erp"
+              ? "ERP READY only when approved or active."
+              : "Invalid input."}
+        </Alert>
+      ) : null}
+
+      <Card className="space-y-4 p-6">
+        <h2 className="font-display text-xl">Transition status</h2>
+        {allowed.length === 0 ? (
+          <p className="text-sm text-muted">No staff transitions from this terminal/state.</p>
+        ) : (
+          <form action={opsTransitionAction} className="space-y-3">
+            <input type="hidden" name="id" value={id} />
+            <label className="block text-sm font-semibold">
+              Next status
+              <Select name="status" required defaultValue={allowed[0]}>
+                {allowed.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <label className="block text-sm font-semibold">
+              Actor label
+              <Input name="actor" type="text" defaultValue="ops" required />
+            </label>
+            <label className="block text-sm font-semibold">
+              Reason
+              <Input name="reason" type="text" />
+            </label>
+            <Button type="submit">Apply transition</Button>
+          </form>
+        )}
+      </Card>
+
+      <Card className="space-y-3 p-6">
+        <h2 className="font-display text-xl">Capabilities</h2>
+        <ul className="space-y-2 text-sm">
+          {detail.capabilities.map((c) => (
+            <li key={c.id}>
+              {c.productCategory} · {c.verificationStatus}
+            </li>
+          ))}
+        </ul>
+      </Card>
+
+      <Card className="space-y-4 p-6">
+        <h2 className="font-display text-xl">Document references (metadata only)</h2>
+        <Alert title="No blob custody" tone="info">
+          Record offline or external evidence pointers. Object storage is not integrated.
+        </Alert>
+        <ul className="space-y-2 text-sm">
+          {detail.documents.map((d) => (
+            <li key={d.id}>
+              {d.kind}: {d.label}
+              {d.externalReference ? ` — ${d.externalReference}` : ""}
+            </li>
+          ))}
+        </ul>
+        <form action={opsDocumentRefAction} className="space-y-3">
+          <input type="hidden" name="id" value={id} />
+          <Input name="kind" placeholder="kind e.g. cert" required />
+          <Input name="label" placeholder="label" required />
+          <Input name="externalReference" placeholder="URI or offline note" />
+          <Input name="actor" defaultValue="ops" />
+          <Button type="submit">Add reference</Button>
+        </form>
+      </Card>
+
+      <Card className="space-y-4 p-6">
+        <h2 className="font-display text-xl">ERP projection readiness</h2>
+        <p className="text-sm text-muted">
+          Marks readiness only — does not create an iDempiere Business Partner (ADR-0006).
+        </p>
+        <form action={opsErpReadyAction}>
+          <input type="hidden" name="id" value={id} />
+          <input type="hidden" name="actor" value="ops" />
+          <Button type="submit">Mark ERP READY</Button>
+        </form>
+      </Card>
+
+      <Card className="p-6">
+        <h2 className="font-display text-xl">Status history</h2>
+        <ul className="mt-3 space-y-2 text-sm">
+          {detail.statusEvents.map((e) => (
+            <li key={e.id}>
+              {e.fromStatus ?? "—"} → {e.toStatus} · {e.actor}
+              {e.reason ? ` · ${e.reason}` : ""}
+            </li>
+          ))}
+        </ul>
+      </Card>
+    </div>
+  )
+}
