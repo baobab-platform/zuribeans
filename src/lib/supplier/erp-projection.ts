@@ -5,6 +5,10 @@ import {
 } from "@/lib/erp/business-partner-client"
 import { getSupplierApplicationById, setErpProjectionStatus } from "@/lib/supplier/repository"
 
+/** Shared erp/v1 public identifier only (ADR-ERP-021 / ADR-0013). */
+export const isPublicErpBusinessPartnerId = (value: string): boolean =>
+  /^erp_[a-zA-Z0-9]+$/.test(value)
+
 /**
  * READY → PENDING → PROJECTED | FAILED handoff (ADR-0012 / ADR-ERP-021).
  * Does not invent a Business Partner locally.
@@ -78,15 +82,30 @@ export const requestErpBusinessPartnerProjection = async (input: {
     }
   }
 
+  const publicId = result.projection.business_partner_id
+  if (!isPublicErpBusinessPartnerId(publicId)) {
+    await setErpProjectionStatus({
+      supplierOrganisationId: organisation.id,
+      status: "FAILED",
+      actor: input.actor,
+    })
+    return {
+      ok: false as const,
+      error: "erp_failed" as const,
+      detail: `ERP returned a non-public business_partner_id (expected erp_*): ${publicId.slice(0, 40)}`,
+    }
+  }
+
   await setErpProjectionStatus({
     supplierOrganisationId: organisation.id,
     status: "PROJECTED",
     actor: input.actor,
+    erpBusinessPartnerId: publicId,
   })
 
   return {
     ok: true as const,
-    businessPartnerId: result.projection.business_partner_id,
+    businessPartnerId: publicId,
     projection: result.projection,
   }
 }

@@ -47,6 +47,8 @@ export const supplierOrganisations = pgTable("supplier_organisations", {
   erpProjectionStatus: erpProjectionStatusEnum("erp_projection_status")
     .notNull()
     .default("NOT_REQUESTED"),
+  /** Shared erp/v1 public id (`erp_…`) — never native C_BPartner_ID (ADR-ERP-021). */
+  erpBusinessPartnerId: text("erp_business_partner_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   submittedAt: timestamp("submitted_at", { withTimezone: true }),
