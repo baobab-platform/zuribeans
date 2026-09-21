@@ -20,6 +20,23 @@ export const verificationStatusEnum = pgEnum("verification_status", [
   "rejected",
 ])
 
+export const supplierKybDecisionEnum = pgEnum("supplier_kyb_decision", [
+  "pending",
+  "verified",
+  "failed",
+  "expired",
+])
+
+export const supplierKybEvidenceKindEnum = pgEnum("supplier_kyb_evidence_kind", [
+  "company_registration",
+  "tax_registration",
+  "registered_address",
+  "beneficial_ownership",
+  "director_identity",
+  "operating_licence",
+  "other",
+])
+
 export const erpProjectionStatusEnum = pgEnum("erp_projection_status", [
   "NOT_REQUESTED",
   "READY",
@@ -109,6 +126,31 @@ export const supplierDocumentReferences = pgTable("supplier_document_references"
   contentHash: text("content_hash"),
   recordedBy: text("recorded_by").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const supplierKybEvidence = pgTable("supplier_kyb_evidence", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  supplierOrganisationId: uuid("supplier_organisation_id")
+    .notNull()
+    .references(() => supplierOrganisations.id, { onDelete: "cascade" }),
+  kind: supplierKybEvidenceKindEnum("kind").notNull(),
+  reference: text("reference").notNull(),
+  contentHash: text("content_hash"),
+  issuingCountry: text("issuing_country"),
+  recordedBy: text("recorded_by").notNull(),
+  recordedAt: timestamp("recorded_at", { withTimezone: true }).notNull().defaultNow(),
+})
+
+export const supplierKybDecisions = pgTable("supplier_kyb_decisions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  supplierOrganisationId: uuid("supplier_organisation_id")
+    .notNull()
+    .references(() => supplierOrganisations.id, { onDelete: "cascade" }),
+  decision: supplierKybDecisionEnum("decision").notNull(),
+  reasonCodes: text("reason_codes").notNull().default("[]"),
+  applicantVisibleExplanation: text("applicant_visible_explanation"),
+  decidedBy: text("decided_by").notNull(),
+  decidedAt: timestamp("decided_at", { withTimezone: true }).notNull().defaultNow(),
 })
 
 export const supplierStatusEvents = pgTable("supplier_status_events", {
