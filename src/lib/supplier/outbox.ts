@@ -12,6 +12,8 @@ export const SUPPLIER_EVENT_TYPES = {
   applicationDecided: "com.baobab-platform.supplier-onboarding.application.decided.v1",
   qualificationUpdated: "com.baobab-platform.supplier-onboarding.qualification.updated.v1",
   capabilityVerified: "com.baobab-platform.supplier-onboarding.capability.verified.v1",
+  kybEvidenceRecorded: "com.baobab-platform.supplier-onboarding.kyb.evidence-recorded.v1",
+  kybDecisionRecorded: "com.baobab-platform.supplier-onboarding.kyb.decision-recorded.v1",
 } as const
 
 export const estateApplicationId = (organisationUuid: string): string =>
