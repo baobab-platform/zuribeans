@@ -2,6 +2,7 @@ import "server-only"
 import {
   applyAssortmentToProductList,
   fetchMarketSellableProductIds,
+  pageSellableProductIds,
 } from "@/lib/catalogue/assortment"
 import type { ZuribeansMarketKey } from "@/lib/market/markets"
 import { createMedusaClient } from "./client"
@@ -57,34 +58,59 @@ export const listProductCategories = async (): Promise<ProductCategoryModel[]> =
 
 export const listProducts = async (options: ProductListOptions): Promise<ProductListModel> => {
   const sdk = createMedusaClient()
-  const { products, count, limit, offset } = await sdk.store.product.list({
-    limit: options.limit ?? 12,
-    offset: options.offset ?? 0,
+  const limit = options.limit ?? 12
+  const offset = options.offset ?? 0
+
+  // Strict assortment: page Trade sellable ids first, then load those products from Medusa.
+  if (options.marketKey) {
+    const assortment = await fetchMarketSellableProductIds(options.marketKey)
+    if (assortment.mode === "strict" && assortment.source === "trade") {
+      const page = pageSellableProductIds(assortment.sellableProductIds, { limit, offset })
+      if (page.pageIds.length === 0) {
+        return { items: [], count: page.total, limit: page.limit, offset: page.offset }
+      }
+
+      const { products } = await sdk.store.product.list({
+        id: page.pageIds,
+        limit: page.pageIds.length,
+        country_code: options.countryCode.toLowerCase(),
+        ...(options.query ? { q: options.query } : {}),
+        ...(options.categoryId ? { category_id: options.categoryId } : {}),
+      })
+
+      // Preserve assortment order; drop any id Medusa did not return (unpublished).
+      const byId = new Map((products as MedusaProduct[]).map((p) => [p.id, toCard(p)]))
+      const items = page.pageIds
+        .map((id) => byId.get(id))
+        .filter((p): p is ProductCardModel => p !== undefined)
+
+      return {
+        items,
+        count: page.total,
+        limit: page.limit,
+        offset: page.offset,
+      }
+    }
+  }
+
+  const { products, count } = await sdk.store.product.list({
+    limit,
+    offset,
     country_code: options.countryCode.toLowerCase(),
     ...(options.query ? { q: options.query } : {}),
     ...(options.categoryId ? { category_id: options.categoryId } : {}),
   })
 
   let items = (products as MedusaProduct[]).map(toCard)
-  let effectiveCount = count
 
   if (options.marketKey) {
     const assortment = await fetchMarketSellableProductIds(options.marketKey)
-    const before = items.length
     items = applyAssortmentToProductList(items, assortment)
-    // Page-local filter: count reflects visible page composition, not global Trade count
-    if (assortment.mode === "strict" && assortment.source === "trade") {
-      effectiveCount = items.length < before ? items.length : count
-      // When the whole page was filtered out but Medusa had results, prefer visible length
-      if (before > 0 && items.length === 0) {
-        effectiveCount = 0
-      }
-    }
   }
 
   return {
     items,
-    count: effectiveCount,
+    count,
     limit,
     offset,
   }

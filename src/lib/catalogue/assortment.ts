@@ -28,6 +28,24 @@ export const intersectProductsBySellableIds = <T extends { id: string }>(
 }
 
 /**
+ * Page over Trade sellable ids so catalogue pagination matches assortment size
+ * (not Medusa publication size) under strict mode.
+ */
+export const pageSellableProductIds = (
+  sellableProductIds: readonly string[],
+  options: { limit: number; offset: number },
+): { pageIds: string[]; total: number; limit: number; offset: number } => {
+  const limit = options.limit > 0 ? options.limit : 12
+  const offset = options.offset >= 0 ? options.offset : 0
+  return {
+    pageIds: sellableProductIds.slice(offset, offset + limit),
+    total: sellableProductIds.length,
+    limit,
+    offset,
+  }
+}
+
+/**
  * When ZB06_ASSORTMENT_FILTER is not "strict", catalogue behaviour is unchanged
  * (Trade route may not be deployed yet). In strict mode, missing/failed Trade
  * assortment yields zero sellable ids (fail closed).

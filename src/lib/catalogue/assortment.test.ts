@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 import {
   applyAssortmentToProductList,
   intersectProductsBySellableIds,
+  pageSellableProductIds,
   type AssortmentSnapshot,
 } from "./assortment"
 
@@ -44,5 +45,17 @@ describe("catalogue assortment composition", () => {
       source: "trade",
     }
     expect(applyAssortmentToProductList(products, empty)).toEqual([])
+  })
+
+  it("pages sellable ids for coherent catalogue pagination", () => {
+    const ids = ["p1", "p2", "p3", "p4", "p5"]
+    expect(pageSellableProductIds(ids, { limit: 2, offset: 0 })).toEqual({
+      pageIds: ["p1", "p2"],
+      total: 5,
+      limit: 2,
+      offset: 0,
+    })
+    expect(pageSellableProductIds(ids, { limit: 2, offset: 4 }).pageIds).toEqual(["p5"])
+    expect(pageSellableProductIds(ids, { limit: 2, offset: 10 }).pageIds).toEqual([])
   })
 })
