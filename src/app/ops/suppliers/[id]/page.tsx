@@ -61,6 +61,9 @@ export default async function OpsSupplierDetailPage({
       <p className="text-muted">
         {presentation.label} · {detail.organisation.countryCode} · ERP{" "}
         {detail.organisation.erpProjectionStatus}
+        {detail.organisation.erpBusinessPartnerId
+          ? ` · ${detail.organisation.erpBusinessPartnerId}`
+          : ""}
       </p>
       {error ? (
         <Alert title="Action failed" tone="danger">
@@ -207,8 +210,14 @@ export default async function OpsSupplierDetailPage({
         <h2 className="font-display text-xl">ERP projection</h2>
         <p className="text-sm text-muted">
           READY marks estate readiness. Project calls baobab-erp and moves READY → PENDING →
-          PROJECTED (or FAILED). Does not create a Business Partner inside this estate.
+          PROJECTED (or FAILED). Stores Shared public <code>erp_*</code> id only — never a native
+          C_BPartner id (ADR-0013 / ADR-ERP-021).
         </p>
+        {detail.organisation.erpBusinessPartnerId ? (
+          <Alert title="Projected business partner" tone="info">
+            Public id: {detail.organisation.erpBusinessPartnerId}
+          </Alert>
+        ) : null}
         {!erpConfigured ? (
           <Alert title="ERP client not configured" tone="warning">
             Set BAOBAB_ERP_BASE_URL, BAOBAB_ERP_WORKLOAD_TOKEN, BAOBAB_ERP_TENANT_ID, and

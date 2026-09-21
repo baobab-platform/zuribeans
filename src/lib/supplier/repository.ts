@@ -490,6 +490,8 @@ export const setErpProjectionStatus = async (input: {
   supplierOrganisationId: string
   status: "NOT_REQUESTED" | "READY" | "PENDING" | "FAILED" | "PROJECTED"
   actor: string
+  /** Shared public erp_* id only — set on PROJECTED (ADR-0013). */
+  erpBusinessPartnerId?: string
 }) => {
   const db = getDb()
   const [organisation] = await db
@@ -507,18 +509,35 @@ export const setErpProjectionStatus = async (input: {
     }
   }
 
+  const patch: {
+    erpProjectionStatus: typeof input.status
+    updatedAt: Date
+    erpBusinessPartnerId?: string
+  } = {
+    erpProjectionStatus: input.status,
+    updatedAt: new Date(),
+  }
+  if (input.status === "PROJECTED" && input.erpBusinessPartnerId) {
+    patch.erpBusinessPartnerId = input.erpBusinessPartnerId
+  }
+
   const [updated] = await db
     .update(supplierOrganisations)
-    .set({ erpProjectionStatus: input.status, updatedAt: new Date() })
+    .set(patch)
     .where(eq(supplierOrganisations.id, organisation.id))
     .returning()
+
+  const reason =
+    input.status === "PROJECTED" && input.erpBusinessPartnerId
+      ? `erp_projection_status=${input.status}; erp_business_partner_id=${input.erpBusinessPartnerId}`
+      : `erp_projection_status=${input.status}`
 
   await db.insert(supplierStatusEvents).values({
     supplierOrganisationId: organisation.id,
     fromStatus: organisation.status,
     toStatus: organisation.status,
     actor: input.actor,
-    reason: `erp_projection_status=${input.status}`,
+    reason,
   })
 
   return updated
