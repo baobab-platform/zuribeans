@@ -1,4 +1,4 @@
-FROM node:24.20.0-alpine3.24 AS dependencies
+FROM node:26.9.0-alpine3.24 AS dependencies
 WORKDIR /app
 # Next.js documents libc6-compat as needed on Alpine for some native dependencies.
 RUN apk add --no-cache libc6-compat
@@ -20,7 +20,7 @@ ENV NEXT_PUBLIC_ENABLED_MARKETS=$NEXT_PUBLIC_ENABLED_MARKETS
 ENV NEXT_PUBLIC_DEFAULT_MARKET=$NEXT_PUBLIC_DEFAULT_MARKET
 RUN pnpm build
 
-FROM node:24.20.0-alpine3.24 AS runtime
+FROM node:26.9.0-alpine3.24 AS runtime
 ARG VERSION=0.0.0-dev
 ARG REVISION=unknown
 LABEL org.opencontainers.image.source="https://github.com/baobab-platform/zuribeans" \
