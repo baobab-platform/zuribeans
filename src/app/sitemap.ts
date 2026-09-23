@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next"
-import { listPublishedInsightSlugs } from "@/lib/content/insights"
+import { listSitemapEligibleInsightSlugs } from "@/lib/content/insights"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
@@ -16,9 +16,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/help",
     "/insights",
   ]
-  // Draft articles are excluded here the same way they're excluded from the
-  // index and detail routes — see `listPublishedInsightSlugs` and ADR-0011.
-  const insightPaths = listPublishedInsightSlugs().map((slug) => `/insights/${slug}`)
+  // Until market-segmented canonical URLs exist, the global sitemap advertises
+  // only published articles that are visible in every enabled market. Published
+  // market-scoped articles remain discoverable from /insights in their active
+  // market but are intentionally excluded here; see ADR-0011.
+  const insightPaths = listSitemapEligibleInsightSlugs().map((slug) => `/insights/${slug}`)
 
   return [...staticPaths, ...insightPaths].map((path) => ({
     url: `${base}${path}`,
