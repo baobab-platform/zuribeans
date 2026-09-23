@@ -50,10 +50,10 @@ yet.
   - `src/lib/content/insights.ts` — the `InsightArticle` type and the article list. Editorial
     changes ship as a reviewed pull request, exactly like every other page's copy in this repo
     today. No new write path, no new secret, no new database, no new CI dependency.
-  - Every article carries an explicit `status: "draft" | "published"`. Public routes and the
-    sitemap only ever resolve `"published"` articles — an unfinished or unreviewed article commits
-    to the repository without being publicly visible, the same discipline ADR-0006 applies to
-    supplier lifecycle states.
+  - Every article carries an explicit `status: "draft" | "published"`. Public routes only resolve
+    `"published"` articles that are visible in the active market — an unfinished or unreviewed
+    article commits to the repository without being publicly visible, the same discipline ADR-0006
+    applies to supplier lifecycle states.
 - **Market scoping from day one.** `InsightArticle.marketKeys` is `readonly ZuribeansMarketKey[] |
 null` — `null` means the article is relevant to every enabled market (company news, cross-market
   trade explainers); a populated array scopes it to specific markets (a Uganda harvest update, a
@@ -68,11 +68,14 @@ null` — `null` means the article is relevant to every enabled market (company 
   articles migrate rather than requiring a breaking schema change or new URLs (slugs are treated
   as the stable, permanent identifier from the start).
 - Insights joins the **Resources** navigation disclosure (`docs/frontend/information-architecture.md`),
-  is fully public and indexable, and follows every existing SEO convention: `getPublicPageMetadata`
-  for canonical/OG/Twitter tags, a new `getArticleStructuredData` builder in
-  `src/lib/seo/structured-data.ts` for `BlogPosting` JSON-LD (only fields the article data actually
-  has — no invented `datePublished`, no invented author credentials), and inclusion in
-  `src/app/sitemap.ts` restricted to published slugs.
+  is public and indexable where publication and market visibility allow, and follows the estate's
+  existing SEO conventions: `getPublicPageMetadata` for canonical/OG/Twitter tags and
+  `BlogPosting` JSON-LD from `src/lib/seo/structured-data.ts` using only fields the article
+  actually has. Until market-segmented canonical URLs exist, `src/app/sitemap.ts` includes only
+  published articles whose `marketKeys` is `null` (globally visible articles). A published
+  market-scoped article remains discoverable from the Insights experience in its active market but
+  is deliberately excluded from the sitemap so one unsegmented URL is never advertised where it
+  may resolve as not found.
 
 ## Explicitly deferred (tracked as gaps, not silently skipped)
 
@@ -93,16 +96,20 @@ null` — `null` means the article is relevant to every enabled market (company 
   `information-architecture.md` already records that market-scoped URLs require their own ADR
   covering caching, canonical URLs and Control Plane reconciliation; Insights does not get ahead of
   that decision. Market scoping here is content-level (which articles a market sees), not
-  URL-level.
+  URL-level. Until that URL/canonical decision exists, market-scoped articles are excluded from
+  sitemap enumeration even after publication; globally visible published articles may be listed.
 
 ## Consequences
 
 - No new database, no new CI Postgres dependency, no new environment variable, no new secret.
   `runtime/requirements.yaml`'s single database exception (recorded for supplier data under
   ADR-0006) is unaffected.
-- `/insights` and `/insights/[slug]` can be statically rendered/ISR'd like other file-content pages
-  (`/trade`, `/quality-traceability`) rather than forced dynamic — there is no session-scoped read
-  the way supplier/account pages require.
+- The content source is static and file-backed, but the Insights routes are intentionally rendered
+  with request-time context rather than treated as static/ISR pages. `/insights` resolves the
+  active market through `getMarketContext()` and accepts category `searchParams`; article detail
+  routes resolve market visibility through the same request context. This preserves one
+  server-authoritative market decision and prevents a statically generated page from leaking
+  content intended for another market.
 - Editorial velocity is bounded by PR review, not a CMS UI. That is the acknowledged trade-off of
   Phase 1 and is revisited if bi-weekly cadence outgrows it, per the deferred item above.
 - When Gate ZB-18 is reached, this ADR's `canonicalContentId` seam and slug-stability decision are
