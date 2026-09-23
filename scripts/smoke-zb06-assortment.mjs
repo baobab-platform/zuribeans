@@ -41,7 +41,9 @@ try {
 console.log(JSON.stringify({ status: res.status, market_key: marketKey, body }, null, 2))
 
 if (!res.ok) {
-  console.error("Assortment endpoint failed — deploy Trade #90 route before enabling strict filter.")
+  console.error(
+    "Assortment endpoint failed — deploy Trade #90 route before enabling strict filter.",
+  )
   process.exit(1)
 }
 

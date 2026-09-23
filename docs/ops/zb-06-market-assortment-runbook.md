@@ -24,19 +24,19 @@ ZB06_ASSORTMENT_FILTER=strict
 3. Restart the estate process so `process.env` is re-read.
 4. Run the smoke path below before announcing catalogue readiness.
 
-| Variable | Effect |
-|----------|--------|
-| unset / other | Catalogue shows Medusa publication only |
+| Variable                        | Effect                                                     |
+| ------------------------------- | ---------------------------------------------------------- |
+| unset / other                   | Catalogue shows Medusa publication only                    |
 | `ZB06_ASSORTMENT_FILTER=strict` | Intersect with Trade assortment; empty/error → no products |
 
 Requires `MEDUSA_BACKEND_URL` and `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`.
 
 ## Market keys
 
-| Estate key | Country |
-|------------|---------|
-| `zuribeans_ug` | UG |
-| `zuribeans_za` | ZA |
+| Estate key     | Country |
+| -------------- | ------- |
+| `zuribeans_ug` | UG      |
+| `zuribeans_za` | ZA      |
 
 Use the **same** `market_key` on Trade eligibility rows.
 
