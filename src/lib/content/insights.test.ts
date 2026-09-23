@@ -3,7 +3,7 @@ import {
   getPublishedInsightBySlug,
   listInsightCategoriesInUse,
   listPublishedInsights,
-  listPublishedInsightSlugs,
+  listSitemapEligibleInsightSlugs,
   type InsightArticle,
 } from "./insights"
 
@@ -107,9 +107,17 @@ describe("listInsightCategoriesInUse", () => {
   })
 })
 
-describe("listPublishedInsightSlugs", () => {
-  it("excludes draft slugs — the set sitemap.ts may safely enumerate", () => {
-    expect(listPublishedInsightSlugs(FIXTURES)).toEqual(["global-published", "ug-only-published"])
+describe("listSitemapEligibleInsightSlugs", () => {
+  it("includes only published articles that are globally visible", () => {
+    expect(listSitemapEligibleInsightSlugs(FIXTURES)).toEqual(["global-published"])
+  })
+
+  it("excludes published market-scoped articles until market-segmented canonical URLs exist", () => {
+    expect(listSitemapEligibleInsightSlugs(FIXTURES)).not.toContain("ug-only-published")
+  })
+
+  it("excludes draft articles", () => {
+    expect(listSitemapEligibleInsightSlugs(FIXTURES)).not.toContain("za-only-draft")
   })
 })
 
