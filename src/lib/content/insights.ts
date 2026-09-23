@@ -147,7 +147,17 @@ export const listInsightCategoriesInUse = (
   return Array.from(keys).filter(isInsightCategoryKey)
 }
 
-/** Published slugs only — the set `sitemap.ts` may safely enumerate. */
-export const listPublishedInsightSlugs = (
+/**
+ * Published slugs that are safe to advertise from the unsegmented sitemap.
+ *
+ * Until market-scoped canonical URLs are introduced, a published article
+ * restricted to one or more markets must not appear in the global sitemap:
+ * the same /insights/[slug] URL can legitimately resolve as not found in a
+ * different active market. See ADR-0011.
+ */
+export const listSitemapEligibleInsightSlugs = (
   source: readonly InsightArticle[] = INSIGHT_ARTICLES,
-): string[] => source.filter(isPublished).map((article) => article.slug)
+): string[] =>
+  source
+    .filter((article) => isPublished(article) && article.marketKeys === null)
+    .map((article) => article.slug)
