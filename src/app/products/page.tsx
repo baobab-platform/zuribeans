@@ -40,6 +40,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         categoriesPromise,
         listProducts({
           countryCode: market.countryCode,
+          marketKey: market.marketKey,
           query: query.query,
           limit: PAGE_SIZE,
           offset: (query.page - 1) * PAGE_SIZE,
@@ -57,6 +58,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       catalogue = category
         ? await listProducts({
             countryCode: market.countryCode,
+            marketKey: market.marketKey,
             query: query.query,
             categoryId: category.id,
             limit: PAGE_SIZE,
@@ -86,8 +88,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </h1>
         </div>
         <p className="text-sm leading-6 text-muted">
-          Showing published products for {market.displayName} ({market.currency}). Applicable price,
-          eligibility and availability are confirmed through the authoritative trade service.
+          Showing published products for {market.displayName} ({market.currency}). Market
+          assortment eligibility is confirmed via the trade service when assortment filtering is
+          enabled — Medusa publication alone is not sellable.
         </p>
       </div>
 
