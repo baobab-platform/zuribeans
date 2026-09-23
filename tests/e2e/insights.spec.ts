@@ -46,12 +46,17 @@ test("an unknown slug resolves to not-found", async ({ page }) => {
   expect(response?.status()).toBe(404)
 })
 
-test("sitemap includes only published insight slugs", async ({ request }) => {
+test("sitemap advertises only globally visible published insight slugs", async ({ request }) => {
   const sitemap = await request.get("/sitemap.xml")
   const body = await sitemap.text()
 
   expect(sitemap.ok()).toBe(true)
   expect(body).toContain("/insights")
   expect(body).toContain("/insights/introducing-zuribeans-insights")
+
+  // Market-scoped seed articles are not sitemap candidates. They are drafts
+  // today, and ADR-0011 also requires market-scoped articles to remain out of
+  // the unsegmented sitemap after publication until canonical market URLs exist.
   expect(body).not.toContain("/insights/reading-a-uganda-harvest-report-as-a-buyer")
+  expect(body).not.toContain("/insights/what-changed-in-sars-import-vat-handling")
 })
