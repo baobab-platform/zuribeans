@@ -1,0 +1,1011 @@
+diff --git a/contracts.lock.yaml b/contracts.lock.yaml
+index 9ed1f70..f7efe86 100644
+--- a/contracts.lock.yaml
++++ b/contracts.lock.yaml
+@@ -20,6 +20,7 @@ gaps:
+   - "Shared has not published buyer-organisation, purchasing, RFQ or quotation schemas."
+   - "Control Plane now implements Market and capability-resolution domains, but ZuriBeans has not locked a canonical UG/ZA Market and buyer-capability resolution contract that Trade exposes to this frontend."
+   - "IAM ADR-0010 defines the intended ZuriBeans B2B identity and organisation-access model but remains Proposed; the approved end-to-end identity-to-Trade buyer-context contract is not published."
++  - "No CMS engine is pinned as a source above (no repository, no commit, no API). The go-live plan's §10.53 names Payload CMS as the eventual owner of content.* capabilities at platform Gate ZB-18, well beyond current gate progress. ADR-0011 records ZuriBeans as the interim owner of Insights editorial content until that contract exists."
+ notes:
+   - "Resolved: shared's ADR-0001 now classifies Zuribeans as B2B/Next.js (contracts/legal-entity/registry.yaml `ZURIBEANS.business_model: B2B`, `digital_estate.status: active`); the organisational mismatch this repo previously recorded no longer exists upstream."
+   - "Contract audit repeated 2026-09-14 at Shared 798a16822f5ea46c826fafc689a64303d32ba3e4, Trade 44b8da95e5800b1ef904fa4b6883d984d602cf04, Control Plane 597cac261d47a4de8d49efd5cf2a52f2f74456c2 and IAM 38f8d27f831ee50959db05a60430d9e5983079cb. These audit revisions are evidence only; they do not replace the consumed source pins above."
+diff --git a/docs/adr/0011-insights-content-ownership.md b/docs/adr/0011-insights-content-ownership.md
+new file mode 100644
+index 0000000..db848fd
+--- /dev/null
++++ b/docs/adr/0011-insights-content-ownership.md
+@@ -0,0 +1,110 @@
++# ADR 0011: Insights content ownership
++
++## Status
++
++Accepted
++
++## Context
++
++The public estate needs an editorial section — "Insights" — for bi-weekly, market-scoped articles
++(sourcing notes, trade/logistics updates, market intelligence) aimed at professional buyers. This
++is new persistent, publicly-indexable content, so the same "who owns this, who is authoritative"
++discovery this repository already runs for market context (ADR-0004) and supplier registration
++(ADR-0006) applies here first.
++
++Re-running that discovery for content specifically:
++
++- The platform's own target architecture (`docs/adr/ZuriBeans Go-Live Implementation Plan….md`,
++  §9 and §10.53) names a future CMS engine — "Payload CMS" — as the authoritative owner of
++  `content.page.manage`, `content.publish`, `content.market-localisation.manage`, etc.
++- That engine is Gate ZB-18 of the platform's 29-gate rollout ("Content and Document Management"),
++  sequenced well after the gates currently in progress (a live runbook exists only up to
++  `docs/ops/zb-06-market-assortment-runbook.md`).
++- `contracts.lock.yaml` has no `cms` source pinned — there is no commit, no API, nothing to
++  integrate against. Building against a CMS contract that does not exist would repeat the
++  Control-Plane-Organisation mistake ADR-0006 explicitly declined to make for suppliers.
++
++There is, in short, no other authoritative system for "what Insights articles exist and are they
++published" — so, following the ADR-0006 precedent exactly, Zuribeans must be that system for now.
++
++Unlike supplier registration, Insights content is:
++
++- editorial, not transactional — no lifecycle state machine, no buyer-facing legal consequence;
++- authored by a small internal team on a known bi-weekly cadence, not submitted by external users;
++- pure public-estate content with no user-scoped or private data.
++
++That combination does not justify this increment's first new database. Reusing `SUPPLIER_DB_URL`
++(or provisioning a second Postgres database) for a low-write, editorially-reviewed, PR-friendly
++content type would add operational surface (migrations, a second CI Postgres dependency, a write
++path) that a two-person editorial team writing one article roughly every two weeks does not need
++yet.
++
++## Decision
++
++- **Phase 1 (this increment): file-based, in-repo content**, following the estate's existing
++  `src/lib/content/*.ts` convention (`trade.ts`, `quality.ts`, `homepage.ts`, …) rather than a
++  database or a headless CMS:
++  - `src/lib/content/insights-categories.ts` — an extensible category registry (same pattern as
++    `src/lib/supplier/categories.ts`): add a category by adding a registry entry, never by adding
++    topic-specific branching to a component.
++  - `src/lib/content/insights.ts` — the `InsightArticle` type and the article list. Editorial
++    changes ship as a reviewed pull request, exactly like every other page's copy in this repo
++    today. No new write path, no new secret, no new database, no new CI dependency.
++  - Every article carries an explicit `status: "draft" | "published"`. Public routes and the
++    sitemap only ever resolve `"published"` articles — an unfinished or unreviewed article commits
++    to the repository without being publicly visible, the same discipline ADR-0006 applies to
++    supplier lifecycle states.
++- **Market scoping from day one.** `InsightArticle.marketKeys` is `readonly ZuribeansMarketKey[] |
++null` — `null` means the article is relevant to every enabled market (company news, cross-market
++  trade explainers); a populated array scopes it to specific markets (a Uganda harvest update, a
++  South Africa customs change). This reuses the existing `ZuribeansMarketKey` type from
++  `src/lib/market/markets.ts` — no parallel market identifier is introduced. The `/insights` index
++  filters against `getMarketContext().active`, the same server-resolved market every other public
++  route already trusts, per ADR-0004.
++- **A reserved migration seam.** Every article carries `canonicalContentId: string | null`,
++  populated by nothing in this increment — the same role `supplier_organisations
++.canonical_organisation_id` plays in ADR-0006. When Gate ZB-18 lands and Payload CMS is
++  contracted in `contracts.lock.yaml`, that field is where reconciliation writes, and existing
++  articles migrate rather than requiring a breaking schema change or new URLs (slugs are treated
++  as the stable, permanent identifier from the start).
++- Insights joins the **Resources** navigation disclosure (`docs/frontend/information-architecture.md`),
++  is fully public and indexable, and follows every existing SEO convention: `getPublicPageMetadata`
++  for canonical/OG/Twitter tags, a new `getArticleStructuredData` builder in
++  `src/lib/seo/structured-data.ts` for `BlogPosting` JSON-LD (only fields the article data actually
++  has — no invented `datePublished`, no invented author credentials), and inclusion in
++  `src/app/sitemap.ts` restricted to published slugs.
++
++## Explicitly deferred (tracked as gaps, not silently skipped)
++
++- **Self-serve authoring.** Phase 1 is PR-based. If bi-weekly cadence grows past what a
++  content-module PR review can comfortably support, the next step is a minimal internal write path
++  backed by a Postgres table shaped like the type in `insights.ts` today — not a rewrite, an
++  extraction. That decision is explicitly deferred to a follow-up ADR if and when it's needed, not
++  decided here.
++- **Payload CMS integration.** Tracked as a `contracts.lock.yaml` gap (see that file's diff in this
++  change). No adapter, no client, nothing built against an unpublished contract — the same
++  discipline ADR-0006 applied to ERP Business Partner mapping and event publishing.
++- **Rich content authoring (MDX/embedded media beyond a hero image).** Article bodies are plain
++  paragraph arrays for this increment; this repo already ships `@tailwindcss/typography`
++  (registered in `globals.css`, previously unused anywhere) specifically so article prose renders
++  well without inventing new formatting primitives. Richer authoring is Phase 1.1 scope, not this
++  ADR's.
++- **Per-market Insights URL segmentation** (e.g. `/za/insights/...`). Explicitly out of scope —
++  `information-architecture.md` already records that market-scoped URLs require their own ADR
++  covering caching, canonical URLs and Control Plane reconciliation; Insights does not get ahead of
++  that decision. Market scoping here is content-level (which articles a market sees), not
++  URL-level.
++
++## Consequences
++
++- No new database, no new CI Postgres dependency, no new environment variable, no new secret.
++  `runtime/requirements.yaml`'s single database exception (recorded for supplier data under
++  ADR-0006) is unaffected.
++- `/insights` and `/insights/[slug]` can be statically rendered/ISR'd like other file-content pages
++  (`/trade`, `/quality-traceability`) rather than forced dynamic — there is no session-scoped read
++  the way supplier/account pages require.
++- Editorial velocity is bounded by PR review, not a CMS UI. That is the acknowledged trade-off of
++  Phase 1 and is revisited if bi-weekly cadence outgrows it, per the deferred item above.
++- When Gate ZB-18 is reached, this ADR's `canonicalContentId` seam and slug-stability decision are
++  what make that migration additive rather than disruptive — the same value ADR-0006's reserved
++  column is expected to deliver for suppliers.
+diff --git a/docs/frontend/information-architecture.md b/docs/frontend/information-architecture.md
+index 27da674..e0c13a5 100644
+--- a/docs/frontend/information-architecture.md
++++ b/docs/frontend/information-architecture.md
+@@ -43,6 +43,8 @@ published and verified.
+ | `/sourcing/become-a-supplier` | Become a Supplier      | Now                     | Existing entry point, expanded without changing the supplier state machine.                                                                              |
+ | `/trade`                      | Trade                  | Now                     | Explain transaction classes, documentation, incoterm context, logistics coordination and how to engage; no operational claims beyond current capability. |
+ | `/quality-traceability`       | Quality & Traceability | Now                     | Standards, lots, certifications, chain-of-custody intent and verification language.                                                                      |
++| `/insights`                   | Insights                | Now                     | Bi-weekly, market-scoped editorial notes for buyers. File-based content per ADR-0011; only published, market-visible articles resolve.                    |
++| `/insights/[slug]`            | Insight detail          | Now                     | Validated against published article slugs only; a draft or out-of-market slug resolves as not found, per ADR-0011.                                        |
+ | `/about`                      | About                  | Now                     | Company, operating model, governance and Baobab-enabled capability in buyer language.                                                                    |
+ | `/contact`                    | Contact                | Now                     | Current mail route until an authoritative enquiry destination exists.                                                                                    |
+ | `/help`                       | Help                   | Now                     | Routes a buyer, supplier or account question to the existing channel that answers it; not a support ticketing system.                                    |
+@@ -103,7 +105,8 @@ full anatomy):
+ 2. Markets (disclosure: Origins & Markets, then each enabled market)
+ 3. Trade (disclosure: How We Trade, Sourcing)
+ 4. About Us
+-5. Resources (disclosure: Quality & Traceability, Become a Supplier, Supplier Portal, Help)
++5. Resources (disclosure: Quality & Traceability, Insights, Become a Supplier, Supplier Portal,
++   Help)
+ 6. Contact
+ 
+ Disclosure content is built from the same authoritative sources as the rest of the estate —
+@@ -154,6 +157,7 @@ horizontal overflow.
+ | -------------------- | --------------------------------------- |
+ | Product              | Home / Products / Product name          |
+ | Product class        | Home / Products / Coffee                |
++| Insight article       | Home / Insights / Article title         |
+ | Market               | Home / Origins & Markets / Uganda       |
+ | Supplier application | Supplier / Application                  |
+ | Buyer resource       | Buyer Portal / Orders / Order reference |
+diff --git a/src/app/insights/[slug]/not-found.tsx b/src/app/insights/[slug]/not-found.tsx
+new file mode 100644
+index 0000000..a272821
+--- /dev/null
++++ b/src/app/insights/[slug]/not-found.tsx
+@@ -0,0 +1,14 @@
++import { EmptyState } from "@/components/ui/state-panel"
++
++export default function InsightNotFound() {
++  return (
++    <section className="page-container py-16">
++      <EmptyState
++        eyebrow="Insight not found"
++        title="This article isn't published for your current market."
++        description="It may not exist, may not yet be published, or may be scoped to a different market."
++        action={{ href: "/insights", label: "Browse all insights" }}
++      />
++    </section>
++  )
++}
+diff --git a/src/app/insights/[slug]/page.tsx b/src/app/insights/[slug]/page.tsx
+new file mode 100644
+index 0000000..b840f43
+--- /dev/null
++++ b/src/app/insights/[slug]/page.tsx
+@@ -0,0 +1,111 @@
++import type { Metadata } from "next"
++import Image from "next/image"
++import { notFound } from "next/navigation"
++import { StructuredData } from "@/components/seo/structured-data"
++import { Breadcrumbs } from "@/components/ui/breadcrumbs"
++import { getInsightCategory } from "@/lib/content/insights-categories"
++import { getPublishedInsightBySlug } from "@/lib/content/insights"
++import { getMarketContext } from "@/lib/market/request"
++import { getInsightArticleStructuredData } from "@/lib/seo/structured-data"
++
++const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000")
++
++type InsightPageProps = { params: Promise<{ slug: string }> }
++
++export async function generateMetadata({ params }: InsightPageProps): Promise<Metadata> {
++  const { slug } = await params
++  const canonical = `/insights/${encodeURIComponent(slug)}`
++  const { active: market } = await getMarketContext()
++  const article = getPublishedInsightBySlug(slug, market.marketKey)
++  if (!article) return { title: "Insight not found", alternates: { canonical } }
++
++  return {
++    title: article.title,
++    description: article.excerpt,
++    alternates: { canonical },
++    openGraph: {
++      type: "article",
++      title: article.title,
++      description: article.excerpt,
++      url: canonical,
++      publishedTime: article.publishedAt,
++      ...(article.heroImage ? { images: [{ url: article.heroImage.src }] } : {}),
++    },
++    twitter: {
++      card: article.heroImage ? "summary_large_image" : "summary",
++      title: article.title,
++      description: article.excerpt,
++      ...(article.heroImage ? { images: [article.heroImage.src] } : {}),
++    },
++  }
++}
++
++export default async function InsightArticlePage({ params }: InsightPageProps) {
++  const { slug } = await params
++  const { active: market } = await getMarketContext()
++  const article = getPublishedInsightBySlug(slug, market.marketKey)
++  if (!article) notFound()
++
++  const category = getInsightCategory(article.category)
++
++  return (
++    <article className="page-container py-12 lg:py-16">
++      <StructuredData
++        data={getInsightArticleStructuredData({
++          siteUrl,
++          path: `/insights/${article.slug}`,
++          title: article.title,
++          description: article.excerpt,
++          authorName: article.authorName,
++          publishedAt: article.publishedAt,
++          imageUrl: article.heroImage
++            ? new URL(article.heroImage.src, siteUrl).toString()
++            : undefined,
++        })}
++      />
++      <Breadcrumbs
++        items={[
++          { label: "Home", href: "/" },
++          { label: "Insights", href: "/insights" },
++          { label: article.title },
++        ]}
++      />
++      <header className="mt-8 max-w-3xl">
++        {category ? <p className="eyebrow">{category.label}</p> : null}
++        <h1 className="mt-4 font-display text-4xl leading-tight text-balance md:text-6xl">
++          {article.title}
++        </h1>
++        <p className="mt-5 flex items-center gap-3 text-sm text-muted">
++          <time dateTime={article.publishedAt}>
++            {new Date(article.publishedAt).toLocaleDateString("en", {
++              year: "numeric",
++              month: "long",
++              day: "numeric",
++            })}
++          </time>
++          <span aria-hidden="true">·</span>
++          <span>{article.authorName}</span>
++        </p>
++      </header>
++
++      {article.heroImage ? (
++        <div className="relative mt-10 aspect-[16/9] overflow-hidden rounded-panel bg-sand">
++          <Image
++            src={article.heroImage.src}
++            alt={article.heroImage.alt}
++            fill
++            sizes="(min-width: 1024px) 60vw, 100vw"
++            className="object-cover"
++            priority
++          />
++        </div>
++      ) : null}
++
++      <div className="prose prose-neutral mt-10 max-w-3xl md:prose-lg">
++        {article.body.map((paragraph, index) => (
++          <p key={index}>{paragraph}</p>
++        ))}
++      </div>
++    </article>
++  )
++}
+diff --git a/src/app/insights/page.tsx b/src/app/insights/page.tsx
+new file mode 100644
+index 0000000..a55a0f5
+--- /dev/null
++++ b/src/app/insights/page.tsx
+@@ -0,0 +1,93 @@
++import Link from "next/link"
++import { InsightCard } from "@/components/insights/insight-card"
++import { Breadcrumbs } from "@/components/ui/breadcrumbs"
++import { EmptyState } from "@/components/ui/state-panel"
++import { INSIGHT_CATEGORIES } from "@/lib/content/insights-categories"
++import { listInsightCategoriesInUse, listPublishedInsights } from "@/lib/content/insights"
++import { getMarketContext } from "@/lib/market/request"
++import { getPublicPageMetadata } from "@/lib/seo/metadata"
++
++export const metadata = getPublicPageMetadata({
++  title: "Insights",
++  description:
++    "Sourcing, trade and market notes for professional buyers working across ZuriBeans' origin markets.",
++  path: "/insights",
++})
++
++type InsightsPageProps = {
++  searchParams: Promise<Record<string, string | string[] | undefined>>
++}
++
++const asSingleParam = (value: string | string[] | undefined): string | undefined =>
++  Array.isArray(value) ? value[0] : value
++
++export default async function InsightsPage({ searchParams }: InsightsPageProps) {
++  const params = await searchParams
++  const requestedCategory = asSingleParam(params.category)
++  const { active: market } = await getMarketContext()
++
++  const categoriesInUse = listInsightCategoriesInUse(market.marketKey)
++  const selectedCategory = categoriesInUse.includes(requestedCategory ?? "")
++    ? requestedCategory
++    : undefined
++  const articles = listPublishedInsights({
++    marketKey: market.marketKey,
++    category: selectedCategory,
++  })
++
++  return (
++    <section className="page-container py-12 lg:py-16">
++      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Insights" }]} />
++      <div className="mt-8 max-w-3xl">
++        <p className="eyebrow">Insights</p>
++        <h1 className="mt-4 font-display text-5xl leading-tight text-balance md:text-7xl">
++          Sourcing and trade notes for {market.displayName}.
++        </h1>
++        <p className="mt-6 text-lg leading-8 text-muted">
++          Bi-weekly notes on sourcing, trade, logistics and market context — written for buyers
++          working with ZuriBeans, not general audience marketing copy.
++        </p>
++      </div>
++
++      {categoriesInUse.length ? (
++        <nav aria-label="Insight categories" className="mt-10 flex flex-wrap gap-2">
++          <Link
++            href="/insights"
++            aria-current={!selectedCategory ? "page" : undefined}
++            className="rounded-full border border-line px-4 py-2 text-sm font-semibold aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-white"
++          >
++            All insights
++          </Link>
++          {INSIGHT_CATEGORIES.filter((category) => categoriesInUse.includes(category.key)).map(
++            (category) => (
++              <Link
++                key={category.key}
++                href={`/insights?category=${category.key}`}
++                aria-current={selectedCategory === category.key ? "page" : undefined}
++                className="rounded-full border border-line px-4 py-2 text-sm font-semibold aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-white"
++              >
++                {category.label}
++              </Link>
++            ),
++          )}
++        </nav>
++      ) : null}
++
++      {articles.length ? (
++        <div className="mt-10 grid gap-x-7 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
++          {articles.map((article) => (
++            <InsightCard key={article.slug} article={article} />
++          ))}
++        </div>
++      ) : (
++        <div className="mt-10">
++          <EmptyState
++            title={`No insights are published for ${market.displayName} yet.`}
++            description="Check back soon — new sourcing and trade notes are added on a bi-weekly cadence."
++            action={{ href: "/contact", label: "Ask the trade desk directly" }}
++          />
++        </div>
++      )}
++    </section>
++  )
++}
+diff --git a/src/app/sitemap.ts b/src/app/sitemap.ts
+index c029ca6..9c33ab6 100644
+--- a/src/app/sitemap.ts
++++ b/src/app/sitemap.ts
+@@ -1,7 +1,9 @@
+ import type { MetadataRoute } from "next"
++import { listPublishedInsightSlugs } from "@/lib/content/insights"
++
+ export default function sitemap(): MetadataRoute.Sitemap {
+   const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+-  return [
++  const staticPaths = [
+     "",
+     "/products",
+     "/origins-markets",
+@@ -12,7 +14,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
+     "/about",
+     "/contact",
+     "/help",
+-  ].map((path) => ({
++    "/insights",
++  ]
++  // Draft articles are excluded here the same way they're excluded from the
++  // index and detail routes — see `listPublishedInsightSlugs` and ADR-0011.
++  const insightPaths = listPublishedInsightSlugs().map((slug) => `/insights/${slug}`)
++
++  return [...staticPaths, ...insightPaths].map((path) => ({
+     url: `${base}${path}`,
+     changeFrequency: "weekly",
+   }))
+diff --git a/src/components/insights/insight-card.stories.tsx b/src/components/insights/insight-card.stories.tsx
+new file mode 100644
+index 0000000..8e5e7d0
+--- /dev/null
++++ b/src/components/insights/insight-card.stories.tsx
+@@ -0,0 +1,60 @@
++import type { Meta, StoryObj } from "@storybook/nextjs-vite"
++import type { InsightArticle } from "@/lib/content/insights"
++import { InsightCard } from "./insight-card"
++
++const sampleArticle: InsightArticle = {
++  slug: "reading-a-uganda-harvest-report-as-a-buyer",
++  title: "Reading a Uganda harvest report as a buyer",
++  excerpt:
++    "What a procurement team should actually take from a seasonal harvest update — and what it can't tell you.",
++  body: ["Body copy."],
++  category: "market-intelligence",
++  marketKeys: ["zuribeans_ug"],
++  publishedAt: "2026-09-15",
++  authorName: "ZuriBeans Editorial",
++  status: "published",
++  canonicalContentId: null,
++}
++
++const meta: Meta<typeof InsightCard> = {
++  title: "Insights/InsightCard",
++  component: InsightCard,
++  parameters: { layout: "padded" },
++  args: { article: sampleArticle },
++  decorators: [
++    (Story) => (
++      <div className="max-w-sm">
++        <Story />
++      </div>
++    ),
++  ],
++}
++export default meta
++
++type Story = StoryObj<typeof InsightCard>
++
++export const Default: Story = {}
++
++export const WithHeroImage: Story = {
++  args: {
++    article: {
++      ...sampleArticle,
++      heroImage: {
++        src: "/images/zuribeans-origin-trade-hero-v1.webp",
++        alt: "Coffee lots prepared for export",
++      },
++    },
++  },
++}
++
++export const GlobalArticle: Story = {
++  args: {
++    article: {
++      ...sampleArticle,
++      slug: "company-update",
++      title: "Company update: new quality partnerships",
++      category: "company-news",
++      marketKeys: null,
++    },
++  },
++}
+diff --git a/src/components/insights/insight-card.tsx b/src/components/insights/insight-card.tsx
+new file mode 100644
+index 0000000..5542c76
+--- /dev/null
++++ b/src/components/insights/insight-card.tsx
+@@ -0,0 +1,55 @@
++import Image from "next/image"
++import Link from "next/link"
++import { ArrowRight } from "lucide-react"
++import { getInsightCategory } from "@/lib/content/insights-categories"
++import type { InsightArticle } from "@/lib/content/insights"
++
++type InsightCardProps = {
++  article: InsightArticle
++}
++
++export function InsightCard({ article }: InsightCardProps) {
++  const category = getInsightCategory(article.category)
++
++  return (
++    <Link
++      href={`/insights/${article.slug}`}
++      className="group block h-full rounded-panel focus-visible:outline-offset-4"
++    >
++      <article className="flex h-full flex-col overflow-hidden rounded-panel border border-line bg-surface-raised shadow-panel transition-transform group-hover:-translate-y-1">
++        {article.heroImage ? (
++          <div className="relative aspect-[16/9] overflow-hidden bg-sand">
++            <Image
++              src={article.heroImage.src}
++              alt={article.heroImage.alt}
++              fill
++              sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
++              className="object-cover transition-transform duration-500 group-hover:scale-[1.025]"
++            />
++          </div>
++        ) : null}
++        <div className="flex flex-1 flex-col p-7 md:p-8">
++          {category ? <p className="eyebrow">{category.label}</p> : null}
++          <h3 className="mt-4 font-display text-2xl leading-snug">{article.title}</h3>
++          <p className="mt-3 flex-1 leading-7 text-muted">{article.excerpt}</p>
++          <div className="mt-6 flex items-center justify-between text-sm text-muted">
++            <time dateTime={article.publishedAt}>
++              {new Date(article.publishedAt).toLocaleDateString("en", {
++                year: "numeric",
++                month: "long",
++                day: "numeric",
++              })}
++            </time>
++            <span className="inline-flex items-center gap-2 font-semibold text-clay-on-light">
++              Read
++              <ArrowRight
++                className="size-4 transition-transform group-hover:translate-x-1"
++                aria-hidden="true"
++              />
++            </span>
++          </div>
++        </div>
++      </article>
++    </Link>
++  )
++}
+diff --git a/src/components/navigation/desktop-navigation.tsx b/src/components/navigation/desktop-navigation.tsx
+index ebb7f76..3afff97 100644
+--- a/src/components/navigation/desktop-navigation.tsx
++++ b/src/components/navigation/desktop-navigation.tsx
+@@ -37,6 +37,7 @@ export function DesktopNavigation({ marketContext }: { marketContext: MarketCont
+ 
+   const resources: NavDisclosureItem[] = [
+     { href: "/quality-traceability", label: "Quality & Traceability" },
++    { href: "/insights", label: "Insights" },
+     { href: "/sourcing/become-a-supplier", label: "Become a Supplier" },
+     { href: "/supplier", label: "Supplier Portal" },
+     { href: "/help", label: "Help" },
+diff --git a/src/components/navigation/mobile-navigation.tsx b/src/components/navigation/mobile-navigation.tsx
+index 3d4051f..5012919 100644
+--- a/src/components/navigation/mobile-navigation.tsx
++++ b/src/components/navigation/mobile-navigation.tsx
+@@ -116,6 +116,15 @@ export function MobileNavigation({
+             >
+               Help
+             </ButtonLink>
++            <ButtonLink
++              href="/insights"
++              onClick={() => setOpen(false)}
++              className="w-full"
++              size="lg"
++              variant="outline"
++            >
++              Insights
++            </ButtonLink>
+           </div>
+         </div>
+       </Dialog>
+diff --git a/src/lib/content/insights-categories.ts b/src/lib/content/insights-categories.ts
+new file mode 100644
+index 0000000..c07a9e2
+--- /dev/null
++++ b/src/lib/content/insights-categories.ts
+@@ -0,0 +1,24 @@
++/**
++ * Extensible Insights category registry (see ADR-0011). Add a category by
++ * adding an entry here — never by adding topic-specific branching to a
++ * component, the same rule `src/lib/supplier/categories.ts` applies to
++ * supplier product categories.
++ */
++export type InsightCategory = {
++  key: string
++  label: string
++}
++
++export const INSIGHT_CATEGORIES: readonly InsightCategory[] = [
++  { key: "sourcing", label: "Sourcing & Procurement" },
++  { key: "trade-logistics", label: "Trade & Logistics" },
++  { key: "quality-compliance", label: "Quality & Compliance" },
++  { key: "market-intelligence", label: "Market Intelligence" },
++  { key: "company-news", label: "Company News" },
++]
++
++export const isInsightCategoryKey = (value: string): boolean =>
++  INSIGHT_CATEGORIES.some((category) => category.key === value)
++
++export const getInsightCategory = (key: string): InsightCategory | undefined =>
++  INSIGHT_CATEGORIES.find((category) => category.key === key)
+diff --git a/src/lib/content/insights.test.ts b/src/lib/content/insights.test.ts
+new file mode 100644
+index 0000000..54053b2
+--- /dev/null
++++ b/src/lib/content/insights.test.ts
+@@ -0,0 +1,134 @@
++import { describe, expect, it } from "vitest"
++import {
++  getPublishedInsightBySlug,
++  listInsightCategoriesInUse,
++  listPublishedInsights,
++  listPublishedInsightSlugs,
++  type InsightArticle,
++} from "./insights"
++
++const FIXTURES: readonly InsightArticle[] = [
++  {
++    slug: "global-published",
++    title: "Global published",
++    excerpt: "Relevant everywhere.",
++    body: ["Body."],
++    category: "company-news",
++    marketKeys: null,
++    publishedAt: "2026-09-01",
++    authorName: "Editorial",
++    status: "published",
++    canonicalContentId: null,
++  },
++  {
++    slug: "ug-only-published",
++    title: "Uganda only, published",
++    excerpt: "Scoped to Uganda.",
++    body: ["Body."],
++    category: "sourcing",
++    marketKeys: ["zuribeans_ug"],
++    publishedAt: "2026-09-15",
++    authorName: "Editorial",
++    status: "published",
++    canonicalContentId: null,
++  },
++  {
++    slug: "za-only-draft",
++    title: "South Africa only, still a draft",
++    excerpt: "Not ready.",
++    body: ["Body."],
++    category: "trade-logistics",
++    marketKeys: ["zuribeans_za"],
++    publishedAt: "2026-09-20",
++    authorName: "Editorial",
++    status: "draft",
++    canonicalContentId: null,
++  },
++] as const
++
++describe("listPublishedInsights", () => {
++  it("never returns a draft article", () => {
++    const results = listPublishedInsights({ marketKey: "zuribeans_za" }, FIXTURES)
++    expect(results.some((article) => article.status === "draft")).toBe(false)
++  })
++
++  it("includes market-scoped articles only for their own market", () => {
++    const ug = listPublishedInsights({ marketKey: "zuribeans_ug" }, FIXTURES).map((a) => a.slug)
++    const za = listPublishedInsights({ marketKey: "zuribeans_za" }, FIXTURES).map((a) => a.slug)
++
++    expect(ug).toContain("ug-only-published")
++    expect(za).not.toContain("ug-only-published")
++  })
++
++  it("always includes a global (market-independent) article", () => {
++    const za = listPublishedInsights({ marketKey: "zuribeans_za" }, FIXTURES).map((a) => a.slug)
++    expect(za).toContain("global-published")
++  })
++
++  it("orders newest first", () => {
++    const results = listPublishedInsights({ marketKey: "zuribeans_ug" }, FIXTURES)
++    const dates = results.map((article) => article.publishedAt)
++    expect(dates).toEqual([...dates].sort().reverse())
++  })
++
++  it("narrows by category when provided", () => {
++    const results = listPublishedInsights(
++      { marketKey: "zuribeans_ug", category: "sourcing" },
++      FIXTURES,
++    )
++    expect(results.map((a) => a.slug)).toEqual(["ug-only-published"])
++  })
++})
++
++describe("getPublishedInsightBySlug", () => {
++  it("returns a published, market-visible article", () => {
++    expect(getPublishedInsightBySlug("global-published", "zuribeans_za", FIXTURES)?.slug).toBe(
++      "global-published",
++    )
++  })
++
++  it("treats a draft article as not found, never leaking it publicly", () => {
++    expect(getPublishedInsightBySlug("za-only-draft", "zuribeans_za", FIXTURES)).toBeUndefined()
++  })
++
++  it("treats an out-of-market article as not found for a different market", () => {
++    expect(
++      getPublishedInsightBySlug("ug-only-published", "zuribeans_za", FIXTURES),
++    ).toBeUndefined()
++  })
++})
++
++describe("listInsightCategoriesInUse", () => {
++  it("only surfaces categories with a published, market-visible article", () => {
++    expect(listInsightCategoriesInUse("zuribeans_za", FIXTURES)).toEqual(["company-news"])
++    expect(listInsightCategoriesInUse("zuribeans_ug", FIXTURES)).toEqual(
++      expect.arrayContaining(["company-news", "sourcing"]),
++    )
++  })
++})
++
++describe("listPublishedInsightSlugs", () => {
++  it("excludes draft slugs — the set sitemap.ts may safely enumerate", () => {
++    expect(listPublishedInsightSlugs(FIXTURES)).toEqual(["global-published", "ug-only-published"])
++  })
++})
++
++describe("real editorial content (src/lib/content/insights.ts)", () => {
++  it("keeps the two seed topic drafts unpublished until reviewed copy replaces them", () => {
++    expect(
++      getPublishedInsightBySlug("reading-a-uganda-harvest-report-as-a-buyer", "zuribeans_ug"),
++    ).toBeUndefined()
++    expect(
++      getPublishedInsightBySlug("what-changed-in-sars-import-vat-handling", "zuribeans_za"),
++    ).toBeUndefined()
++  })
++
++  it("publishes the launch announcement for every market", () => {
++    expect(
++      getPublishedInsightBySlug("introducing-zuribeans-insights", "zuribeans_za"),
++    ).toBeDefined()
++    expect(
++      getPublishedInsightBySlug("introducing-zuribeans-insights", "zuribeans_ug"),
++    ).toBeDefined()
++  })
++})
+diff --git a/src/lib/content/insights.ts b/src/lib/content/insights.ts
+new file mode 100644
+index 0000000..ee7c66a
+--- /dev/null
++++ b/src/lib/content/insights.ts
+@@ -0,0 +1,153 @@
++import type { ZuribeansMarketKey } from "@/lib/market/markets"
++import { isInsightCategoryKey } from "./insights-categories"
++
++export type InsightArticleStatus = "draft" | "published"
++
++export type InsightArticle = {
++  slug: string
++  title: string
++  /** One or two sentences shown on cards and used as the SEO/OG description fallback. */
++  excerpt: string
++  /** Plain paragraphs, rendered with `@tailwindcss/typography`. See ADR-0011 for why this is not MDX yet. */
++  body: readonly string[]
++  /** Key into `INSIGHT_CATEGORIES` — validated by `isInsightCategoryKey`, never a free string in routes. */
++  category: string
++  /**
++   * `null` means relevant to every enabled market (company news, cross-market
++   * explainers). A populated array scopes the article to those markets only.
++   * See ADR-0011 — market scoping is content-level, not URL-level.
++   */
++  marketKeys: readonly ZuribeansMarketKey[] | null
++  /** ISO 8601 date. Editorial cadence is bi-weekly; keep entries in descending order below. */
++  publishedAt: string
++  authorName: string
++  status: InsightArticleStatus
++  heroImage?: { src: string; alt: string }
++  /**
++   * Reserved for the future CMS engine (Payload CMS, platform Gate ZB-18).
++   * Never populated by this file-based increment — see ADR-0011.
++   */
++  canonicalContentId: string | null
++}
++
++/**
++ * Editorial content lives here as a reviewed pull request, the same
++ * convention as every other page's copy in this repo (`trade.ts`,
++ * `quality.ts`, `homepage.ts`). Flip an entry's `status` to `"published"`
++ * once real, reviewed copy replaces placeholder text — draft entries never
++ * resolve on a public route or appear in the sitemap (see ADR-0011).
++ */
++export const INSIGHT_ARTICLES: readonly InsightArticle[] = [
++  {
++    slug: "introducing-zuribeans-insights",
++    title: "Introducing ZuriBeans Insights",
++    excerpt:
++      "A new bi-weekly series of sourcing, trade and market notes for professional buyers working with ZuriBeans.",
++    body: [
++      "ZuriBeans Insights is a new home for the sourcing notes, trade and logistics updates, and market context our buyers ask us for directly — published on a bi-weekly cadence rather than scattered across individual conversations.",
++      "It starts small and stays honest: an article appears here once it has been written and reviewed, not before, and it only appears for the markets it is actually relevant to. If you have a topic you'd like covered, the trade desk is the fastest way to reach us.",
++    ],
++    category: "company-news",
++    marketKeys: null,
++    publishedAt: "2026-09-22",
++    authorName: "ZuriBeans Editorial",
++    status: "published",
++    canonicalContentId: null,
++  },
++  {
++    slug: "reading-a-uganda-harvest-report-as-a-buyer",
++    title: "Reading a Uganda harvest report as a buyer",
++    excerpt:
++      "What a procurement team should actually take from a seasonal harvest update — and what it can't tell you.",
++    body: [
++      "Placeholder draft — replace with reviewed editorial copy before publishing.",
++      "This entry exists to demonstrate the Insights content shape (market scoping, category, hero image) introduced by ADR-0011. It intentionally stays in draft status so it never renders on a public route or the sitemap.",
++    ],
++    category: "market-intelligence",
++    marketKeys: ["zuribeans_ug"],
++    publishedAt: "2026-09-15",
++    authorName: "ZuriBeans Editorial",
++    status: "draft",
++    canonicalContentId: null,
++  },
++  {
++    slug: "what-changed-in-sars-import-vat-handling",
++    title: "What changed in SARS import VAT handling",
++    excerpt:
++      "A working note for buyers on recent South African customs process changes relevant to cross-border lots.",
++    body: [
++      "Placeholder draft — replace with reviewed editorial copy before publishing.",
++      "This entry exists to demonstrate the Insights content shape (market scoping, category, hero image) introduced by ADR-0011. It intentionally stays in draft status so it never renders on a public route or the sitemap.",
++    ],
++    category: "trade-logistics",
++    marketKeys: ["zuribeans_za"],
++    publishedAt: "2026-09-01",
++    authorName: "ZuriBeans Editorial",
++    status: "draft",
++    canonicalContentId: null,
++  },
++] as const satisfies readonly InsightArticle[]
++
++const isPublished = (article: InsightArticle): boolean => article.status === "published"
++
++const isVisibleForMarket = (article: InsightArticle, marketKey: ZuribeansMarketKey): boolean =>
++  article.marketKeys === null || article.marketKeys.includes(marketKey)
++
++const byPublishedAtDescending = (a: InsightArticle, b: InsightArticle): number =>
++  b.publishedAt.localeCompare(a.publishedAt)
++
++/**
++ * Published, market-visible articles, optionally narrowed by category —
++ * newest first. Never returns a `"draft"` article; callers do not need to
++ * filter status themselves.
++ *
++ * `source` defaults to the real editorial content and exists as a parameter
++ * (rather than a closed-over module constant) purely so unit tests can
++ * exercise this filtering logic against small fixtures instead of mocking
++ * module internals.
++ */
++export const listPublishedInsights = (
++  options: { marketKey: ZuribeansMarketKey; category?: string },
++  source: readonly InsightArticle[] = INSIGHT_ARTICLES,
++): InsightArticle[] =>
++  source
++    .filter(
++      (article) =>
++        isPublished(article) &&
++        isVisibleForMarket(article, options.marketKey) &&
++        (!options.category || article.category === options.category),
++    )
++    .sort(byPublishedAtDescending)
++
++/**
++ * A single published article by slug, scoped to a market the same way the
++ * index is — an article that exists but isn't published, or isn't scoped to
++ * this market, behaves as not found rather than leaking draft content.
++ */
++export const getPublishedInsightBySlug = (
++  slug: string,
++  marketKey: ZuribeansMarketKey,
++  source: readonly InsightArticle[] = INSIGHT_ARTICLES,
++): InsightArticle | undefined =>
++  source.find(
++    (article) =>
++      article.slug === slug && isPublished(article) && isVisibleForMarket(article, marketKey),
++  )
++
++/** All categories that have at least one currently-published, market-visible article. */
++export const listInsightCategoriesInUse = (
++  marketKey: ZuribeansMarketKey,
++  source: readonly InsightArticle[] = INSIGHT_ARTICLES,
++): string[] => {
++  const keys = new Set(
++    source
++      .filter((article) => isPublished(article) && isVisibleForMarket(article, marketKey))
++      .map((article) => article.category),
++  )
++  return Array.from(keys).filter(isInsightCategoryKey)
++}
++
++/** Published slugs only — the set `sitemap.ts` may safely enumerate. */
++export const listPublishedInsightSlugs = (
++  source: readonly InsightArticle[] = INSIGHT_ARTICLES,
++): string[] => source.filter(isPublished).map((article) => article.slug)
+diff --git a/src/lib/seo/structured-data.ts b/src/lib/seo/structured-data.ts
+index 0ad3a9c..8b6e812 100644
+--- a/src/lib/seo/structured-data.ts
++++ b/src/lib/seo/structured-data.ts
+@@ -19,3 +19,30 @@ export const getOrganizationStructuredData = (siteUrl: URL) => ({
+     "Cross-border trade",
+   ],
+ })
++
++/**
++ * `BlogPosting` JSON-LD for a published Insights article. Only ever called
++ * with a published article (see `getPublishedInsightBySlug`), and only ever
++ * emits fields the article data actually has — no invented `dateModified`,
++ * no invented author credentials, matching the discipline `getOrganizationStructuredData`
++ * and Product JSON-LD already apply on this estate (see ADR-0011, docs/frontend/seo.md).
++ */
++export const getInsightArticleStructuredData = (options: {
++  siteUrl: URL
++  path: `/${string}`
++  title: string
++  description: string
++  authorName: string
++  publishedAt: string
++  imageUrl?: string
++}) => ({
++  "@context": "https://schema.org",
++  "@type": "BlogPosting",
++  headline: options.title,
++  description: options.description,
++  url: new URL(options.path, options.siteUrl).toString(),
++  datePublished: options.publishedAt,
++  author: { "@type": "Organization", name: options.authorName },
++  publisher: { "@type": "Organization", name: "ZuriBeans" },
++  ...(options.imageUrl ? { image: options.imageUrl } : {}),
++})
+diff --git a/tests/e2e/insights.spec.ts b/tests/e2e/insights.spec.ts
+new file mode 100644
+index 0000000..23e8829
+--- /dev/null
++++ b/tests/e2e/insights.spec.ts
+@@ -0,0 +1,57 @@
++import { expect, test } from "@playwright/test"
++
++test("insights index lists published articles and excludes drafts", async ({ page }) => {
++  await page.goto("/insights")
++
++  await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
++  await expect(page.getByRole("link", { name: /Introducing ZuriBeans Insights/i })).toBeVisible()
++  // Seed drafts (see src/lib/content/insights.ts) must never render publicly.
++  await expect(page.getByText(/Reading a Uganda harvest report/i)).toHaveCount(0)
++  await expect(page.getByText(/SARS import VAT/i)).toHaveCount(0)
++})
++
++test("insight article detail page renders with breadcrumbs and structured data", async ({
++  page,
++}) => {
++  await page.goto("/insights/introducing-zuribeans-insights")
++
++  await expect(page.getByRole("heading", { name: "Introducing ZuriBeans Insights" })).toBeVisible()
++  await expect(page.locator('nav[aria-label="Breadcrumb"]')).toContainText("Insights")
++
++  const canonical = await page.locator('link[rel="canonical"]').getAttribute("href")
++  expect(new URL(canonical!).pathname).toBe("/insights/introducing-zuribeans-insights")
++
++  const structuredData = await page.locator('script[type="application/ld+json"]').allTextContents()
++  const records = structuredData.map((record) => JSON.parse(record) as Record<string, unknown>)
++  expect(records).toEqual(
++    expect.arrayContaining([
++      expect.objectContaining({
++        "@type": "BlogPosting",
++        headline: "Introducing ZuriBeans Insights",
++      }),
++    ]),
++  )
++})
++
++test("a draft article slug resolves to not-found, never leaking draft content", async ({
++  page,
++}) => {
++  const response = await page.goto("/insights/reading-a-uganda-harvest-report-as-a-buyer")
++  expect(response?.status()).toBe(404)
++  await expect(page.getByText(/isn't published for your current market/i)).toBeVisible()
++})
++
++test("an unknown slug resolves to not-found", async ({ page }) => {
++  const response = await page.goto("/insights/not-a-real-article")
++  expect(response?.status()).toBe(404)
++})
++
++test("sitemap includes only published insight slugs", async ({ request }) => {
++  const sitemap = await request.get("/sitemap.xml")
++  const body = await sitemap.text()
++
++  expect(sitemap.ok()).toBe(true)
++  expect(body).toContain("/insights")
++  expect(body).toContain("/insights/introducing-zuribeans-insights")
++  expect(body).not.toContain("/insights/reading-a-uganda-harvest-report-as-a-buyer")
++})

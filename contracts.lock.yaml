@@ -20,6 +20,7 @@ gaps:
   - "Shared has not published buyer-organisation, purchasing, RFQ or quotation schemas."
   - "Control Plane now implements Market and capability-resolution domains, but ZuriBeans has not locked a canonical UG/ZA Market and buyer-capability resolution contract that Trade exposes to this frontend."
   - "IAM ADR-0010 defines the intended ZuriBeans B2B identity and organisation-access model but remains Proposed; the approved end-to-end identity-to-Trade buyer-context contract is not published."
+  - "No CMS engine is pinned as a source above (no repository, no commit, no API). The go-live plan's §10.53 names Payload CMS as the eventual owner of content.* capabilities at platform Gate ZB-18, well beyond current gate progress. ADR-0011 records ZuriBeans as the interim owner of Insights editorial content until that contract exists."
 notes:
   - "Resolved: shared's ADR-0001 now classifies Zuribeans as B2B/Next.js (contracts/legal-entity/registry.yaml `ZURIBEANS.business_model: B2B`, `digital_estate.status: active`); the organisational mismatch this repo previously recorded no longer exists upstream."
   - "Contract audit repeated 2026-09-14 at Shared 798a16822f5ea46c826fafc689a64303d32ba3e4, Trade 44b8da95e5800b1ef904fa4b6883d984d602cf04, Control Plane 597cac261d47a4de8d49efd5cf2a52f2f74456c2 and IAM 38f8d27f831ee50959db05a60430d9e5983079cb. These audit revisions are evidence only; they do not replace the consumed source pins above."
