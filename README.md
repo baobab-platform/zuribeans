@@ -35,6 +35,6 @@ release decision in `docs/frontend/production-readiness.md`.
 
 ## Foundation 4
 
-Codespaces uses `ghcr.io/baobab-platform/baobab-dev:1.4.2-frontend`. The SHA-pinned
+Codespaces uses `ghcr.io/baobab-platform/baobab-dev:1.4.3-frontend`. The SHA-pinned
 Foundation gate validates contract compatibility and reproducibility and scans
 source, dependencies, secrets, configuration, and the deployable image.
