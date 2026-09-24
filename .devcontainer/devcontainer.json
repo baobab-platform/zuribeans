@@ -1,6 +1,6 @@
 {
   "name": "Zuribeans",
-  "image": "ghcr.io/baobab-platform/baobab-dev:1.4.3-frontend",
+  "image": "ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend",
   "updateContentCommand": "pnpm install --frozen-lockfile",
   "postCreateCommand": "baobab-verify --contract && pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
   "waitFor": "postCreateCommand",
