@@ -18,7 +18,10 @@ type ProductPageProps = { params: Promise<{ handle: string }> }
 const getProductForRequest = cache(async (handle: string) => {
   const { active: market } = await getMarketContext()
   try {
-    const product = await retrieveProduct(handle, { countryCode: market.countryCode })
+    const product = await retrieveProduct(handle, {
+      countryCode: market.countryCode,
+      marketKey: market.marketKey,
+    })
     return { status: "success" as const, product, market }
   } catch {
     return { status: "failure" as const, product: null, market }
@@ -156,8 +159,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </ButtonLink>
           </div>
           <p className="mt-5 text-sm leading-6 text-muted">
-            Viewing the {market.displayName} market. Buyer-specific price, minimum quantity,
-            eligibility and logistics terms are never calculated in the browser.
+            Viewing the {market.displayName} market. Market assortment eligibility is applied when
+            filtering is enabled — Medusa publication alone is not sellable. Buyer-specific price
+            and logistics terms are never calculated in the browser.
           </p>
         </div>
       </div>

@@ -92,7 +92,9 @@ export default async function BuyerCompanyPage({
             <dd className="mt-1 font-semibold">{organisation.legal_name}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted">Trading name</dt>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-muted">
+              Trading name
+            </dt>
             <dd className="mt-1 font-semibold">{organisation.trading_name || "—"}</dd>
           </div>
           <div>
@@ -106,7 +108,9 @@ export default async function BuyerCompanyPage({
             <dd className="mt-1 font-semibold">{organisation.status}</dd>
           </div>
           <div>
-            <dt className="text-xs font-semibold uppercase tracking-wide text-muted">Primary market</dt>
+            <dt className="text-xs font-semibold uppercase tracking-wide text-muted">
+              Primary market
+            </dt>
             <dd className="mt-1 font-semibold">{organisation.default_market_key || "—"}</dd>
           </div>
           <div>

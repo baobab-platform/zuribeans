@@ -1,9 +1,4 @@
-export const BUYER_INVITE_ROLES = [
-  "BUYER",
-  "SENIOR_BUYER",
-  "APPROVER",
-  "VIEWER",
-] as const
+export const BUYER_INVITE_ROLES = ["BUYER", "SENIOR_BUYER", "APPROVER", "VIEWER"] as const
 
 export type BuyerInviteRole = (typeof BUYER_INVITE_ROLES)[number]
 

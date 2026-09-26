@@ -6,10 +6,7 @@ import { applyForBuyerOrganisation, BuyerTradeError } from "@/lib/buyer/trade-cl
 import { buyerApplicationSchema } from "@/lib/validation/buyer-application"
 
 export type BuyerApplicationErrorCode =
-  | "invalid_input"
-  | "already_applied"
-  | "unauthorized"
-  | "failed"
+  "invalid_input" | "already_applied" | "unauthorized" | "failed"
 
 export async function submitBuyerApplicationAction(formData: FormData): Promise<void> {
   const customer = await getCurrentCustomer()
@@ -34,7 +31,13 @@ export async function submitBuyerApplicationAction(formData: FormData): Promise<
     outcome = "ok"
   } catch (error) {
     if (error instanceof BuyerTradeError) {
-      outcome = error.code
+      if (
+        error.code === "invalid_input" ||
+        error.code === "already_applied" ||
+        error.code === "unauthorized"
+      ) {
+        outcome = error.code
+      }
     }
   }
 
