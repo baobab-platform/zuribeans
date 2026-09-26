@@ -1,45 +1,29 @@
 # Buyer portal
 
-Status: Gate 10 boundary implemented; Gates 11–12 contract-blocked
-Reviewed: 2026-09-13
+Status: Gate ZB-04 onboarding surface (application slice in progress)
+Reviewed: 2026-09-20
 
-The authenticated buyer shell remains intentionally restricted. ZuriBeans can identify a Medusa
-customer, but Baobab Trade has not published the buyer-organisation, membership, role, approval,
-contract-pricing, order-projection or document-projection contracts required for a production buyer
-workspace.
+## ADR constraints observed
 
-## Implemented boundary
+- ADR-0005: session = Medusa customer identity only; never trading approval
+- ADR-0017: org membership, roles, approved delivery sites; address ≠ organisation identity
+- zuribeans-tax / ADR-0018: tax registrations PENDING until staff VERIFIED; membership alone grants no treatment
+- ADR-BCP-016: Control Plane verifies the bounded canonical organisation link; it does not own the full buyer admission lifecycle
+- Estate holds no duplicate Trade domain tables — all org/profile data via Trade store APIs
 
-- `/account` remains the only buyer navigation route exposed to an authenticated customer.
-- `src/lib/buyer/capabilities.ts` is the presentation-layer boundary for future server-resolved
-  capability snapshots.
-- Navigation fails closed when a snapshot is absent, false or incomplete.
-- The account dashboard names unavailable workspace sections without linking to nonexistent routes.
-- No customer metadata, browser state or login existence is interpreted as trading approval.
+## Implemented in the open ZB-04 sequence
 
-The capability snapshot must eventually come from a trusted ZuriBeans application service that
-combines approved IAM identity/context with Baobab Trade commercial authorization. Leaf components
-must receive normalized capabilities and must not call Baobab engines directly.
+- Buyer application capture with server-authoritative tenant context and idempotency
+- Application status displayed separately from organisation status
+- Company, team roster, tax-registration, and delivery-site surfaces consume Trade APIs
+- Invitation creation is fail-closed until secure email delivery exists; no bearer token is returned to or displayed by the browser
+- Catalogue, orders, and documents remain closed (Gates 11–12)
 
-## Contract dependencies
+## Not yet certified
 
-| Buyer section        | Required authority                                              |
-| -------------------- | --------------------------------------------------------------- |
-| Company              | Baobab Trade buyer-organisation profile contract                |
-| Team                 | Trade membership/role contract plus IAM entitlement mapping     |
-| Catalogue            | Market eligibility, account pricing and availability projection |
-| Orders               | Buyer-scoped Trade order projection                             |
-| Documents            | Buyer-scoped Trade/ERP document projection                      |
-| Approval authorities | Trade purchasing-approval contract; no route is exposed yet     |
-| RFQs and quotations  | Trade RFQ/quotation contracts; deferred to Gate 12              |
+- Staff review and immutable admission decision workflow
+- Atomic organisation, initial membership, role, and outbox creation after approval
+- Secure invitation delivery adapter
+- ERP projection and end-to-end certification
 
-The Gate 11 and Gate 12 dependency audit is recorded in
-[`docs/frontend/purchasing.md`](./purchasing.md). It confirms that Medusa-native carts and orders
-remain the preferred commerce primitives, but they cannot be exposed to a merely authenticated
-customer before organisation approval and commercial entitlement contracts exist.
-
-## Activation rule
-
-A route may be added to buyer navigation only when its server-side application service supplies an
-explicit `true` capability from the authoritative contract. Unknown and missing values remain
-unavailable. The current shell therefore passes `null` and exposes Overview only.
+No ZB-04 work is mergeable while required CI workflows cannot start because of Actions billing.
