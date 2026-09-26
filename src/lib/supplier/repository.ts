@@ -9,15 +9,8 @@ import {
   supplierOrganisations,
   supplierStatusEvents,
 } from "@/lib/db/schema"
-import {
-  assertSupplierStatusTransition,
-  type SupplierStatus,
-} from "./lifecycle"
-import {
-  estateApplicationId,
-  enqueueSupplierOutboxEvent,
-  SUPPLIER_EVENT_TYPES,
-} from "./outbox"
+import { assertSupplierStatusTransition, type SupplierStatus } from "./lifecycle"
+import { estateApplicationId, enqueueSupplierOutboxEvent, SUPPLIER_EVENT_TYPES } from "./outbox"
 import type { SupplierApplicationInput } from "@/lib/validation/supplier-application"
 
 const APPLICANT_EDITABLE: readonly SupplierStatus[] = [
@@ -192,7 +185,9 @@ export const resubmitSupplierApplication = async (
       .where(eq(supplierOrganisations.id, organisation.id))
       .returning()
 
-    await tx.delete(supplierContacts).where(eq(supplierContacts.supplierOrganisationId, organisation.id))
+    await tx
+      .delete(supplierContacts)
+      .where(eq(supplierContacts.supplierOrganisationId, organisation.id))
     await tx
       .delete(supplierCapabilities)
       .where(eq(supplierCapabilities.supplierOrganisationId, organisation.id))
@@ -505,7 +500,9 @@ export const setErpProjectionStatus = async (input: {
   if (input.status === "READY") {
     const st = organisation.status as SupplierStatus
     if (st !== "approved" && st !== "active") {
-      throw new Error("ERP projection READY is only allowed when the supplier is approved or active.")
+      throw new Error(
+        "ERP projection READY is only allowed when the supplier is approved or active.",
+      )
     }
   }
 

@@ -70,7 +70,10 @@ export default async function OpsSuppliersPage({
                       {row.countryCode} · {status.label} · ERP {row.erpProjectionStatus}
                     </p>
                   </div>
-                  <Link className="text-sm font-semibold underline" href={`/ops/suppliers/${row.id}`}>
+                  <Link
+                    className="text-sm font-semibold underline"
+                    href={`/ops/suppliers/${row.id}`}
+                  >
                     Open
                   </Link>
                 </div>

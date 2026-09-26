@@ -143,7 +143,12 @@ export default async function SupplierResubmitPage({
                 </label>
                 <label className={labelClass}>
                   Origin country
-                  <Input name="capability_origin_country" type="text" maxLength={2} className="uppercase" />
+                  <Input
+                    name="capability_origin_country"
+                    type="text"
+                    maxLength={2}
+                    className="uppercase"
+                  />
                 </label>
                 <label className={labelClass}>
                   Capacity

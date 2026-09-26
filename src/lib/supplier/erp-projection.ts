@@ -23,7 +23,10 @@ export const requestErpBusinessPartnerProjection = async (input: {
   }
 
   const { organisation } = detail
-  if (organisation.erpProjectionStatus !== "READY" && organisation.erpProjectionStatus !== "FAILED") {
+  if (
+    organisation.erpProjectionStatus !== "READY" &&
+    organisation.erpProjectionStatus !== "FAILED"
+  ) {
     return {
       ok: false as const,
       error: "not_ready" as const,
@@ -51,8 +54,7 @@ export const requestErpBusinessPartnerProjection = async (input: {
     return {
       ok: false as const,
       error: "erp_not_configured" as const,
-      detail:
-        "ERP client is not configured in this estate environment. Status left unchanged.",
+      detail: "ERP client is not configured in this estate environment. Status left unchanged.",
     }
   }
 

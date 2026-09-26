@@ -12,7 +12,11 @@ import {
 } from "@/lib/supplier/repository"
 import { requestErpBusinessPartnerProjection } from "@/lib/supplier/erp-projection"
 import type { SupplierStatus } from "@/lib/supplier/lifecycle"
-import { clearOpsSessionCookie, isOpsAuthenticated, setOpsSessionCookie } from "@/lib/auth/ops-session"
+import {
+  clearOpsSessionCookie,
+  isOpsAuthenticated,
+  setOpsSessionCookie,
+} from "@/lib/auth/ops-session"
 
 export async function opsLoginAction(formData: FormData): Promise<void> {
   const key = formData.get("apiKey")?.toString() ?? ""

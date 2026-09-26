@@ -66,11 +66,12 @@ export async function POST(
     return Response.json({ error: "invalid_request", issues: parsed.error.issues }, { status: 400 })
   }
 
-  if (parsed.data.status === "rejected" && !parsed.data.rejection_reason_code && !parsed.data.reason) {
-    return Response.json(
-      { error: "rejection_requires_reason" },
-      { status: 400 },
-    )
+  if (
+    parsed.data.status === "rejected" &&
+    !parsed.data.rejection_reason_code &&
+    !parsed.data.reason
+  ) {
+    return Response.json({ error: "rejection_requires_reason" }, { status: 400 })
   }
 
   const reasonParts = [
