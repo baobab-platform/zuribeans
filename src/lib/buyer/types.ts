@@ -56,8 +56,8 @@ export type BuyerApplyInput = {
 
 export type BuyerTeamMember = {
   id: string
-  customer_id: string
-  principal_id: string
+  customer_id: string | null
+  principal_id: string | null
   status: BuyerMembershipStatus
   invited_email: string | null
   invitation_accepted_at: string | null
@@ -96,4 +96,15 @@ export type BuyerDeliverySite = {
 export type BuyerAccountRelationships = {
   applications: BuyerApplicationSummary[]
   organisations: BuyerOrganisationMembership[]
+}
+
+export type BuyerInvitationReceipt = {
+  membership: {
+    id: string
+    status: "INVITED"
+    invited_email: string
+    invitation_expires_at?: string
+    roles?: string[]
+  }
+  delivery_status: "QUEUED" | "ALREADY_REQUESTED"
 }

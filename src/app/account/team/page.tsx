@@ -1,10 +1,16 @@
+import { randomUUID } from "node:crypto"
 import Link from "next/link"
 import { redirect } from "next/navigation"
+import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { FieldDescription, Input, Select } from "@/components/ui/form-controls"
 import { resolveBuyerAccountContext } from "@/lib/buyer/resolve-account-context"
 import { listOrganisationMembers, BuyerTradeError } from "@/lib/buyer/trade-client"
 import { getCurrentCustomer } from "@/lib/auth/customer"
+import { BUYER_INVITE_ROLES } from "@/lib/validation/buyer-invitation"
+import { inviteBuyerMemberAction } from "./actions"
 
 const membershipTone = (status: string) => {
   switch (status) {
@@ -20,7 +26,18 @@ const membershipTone = (status: string) => {
   }
 }
 
-export default async function BuyerTeamPage() {
+const invitationErrors: Record<string, string> = {
+  invalid_input: "Enter a valid email address and choose a permitted buyer role.",
+  forbidden: "Only an active account admin with a canonical Principal can invite members.",
+  duplicate: "That email already has a membership or pending invitation.",
+  failed: "The invitation could not be queued. Try again or contact support.",
+}
+
+export default async function BuyerTeamPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; invited?: string }>
+}) {
   const customer = await getCurrentCustomer()
   if (!customer) redirect("/login?next=/account/team")
 
@@ -43,6 +60,8 @@ export default async function BuyerTeamPage() {
 
   const caller = members.find((member) => member.customer_id === customer.id)
   const canInvite = caller?.roles.includes("ACCOUNT_ADMIN") === true
+  const { error, invited } = await searchParams
+  const invitationError = error ? invitationErrors[error] : null
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -54,18 +73,58 @@ export default async function BuyerTeamPage() {
         </p>
       </div>
 
+      {invited === "1" ? (
+        <Alert title="Invitation queued" tone="success">
+          Trade queued a one-time invitation for email delivery. No bearer token is displayed here.
+        </Alert>
+      ) : null}
+      {invitationError ? (
+        <Alert title="Could not invite member" tone="danger">
+          {invitationError}
+        </Alert>
+      ) : null}
+
       <Card className="p-6">
         <h3 className="font-display text-xl">Invite a member</h3>
-        <p className="mt-3 text-sm leading-6 text-muted">
-          {canInvite
-            ? "Invitations are temporarily unavailable while secure email delivery and one-time token handling are completed."
-            : "Only account admins can invite members."}{" "}
-          If you already received an invitation through an approved channel,{" "}
+        {canInvite ? (
+          <form action={inviteBuyerMemberAction} className="mt-4 grid gap-4 sm:grid-cols-2">
+            <input type="hidden" name="idempotencyKey" value={`buyer-invite:${randomUUID()}`} />
+            <label className="block text-sm font-semibold sm:col-span-2">
+              Email address
+              <Input name="email" type="email" autoComplete="email" required />
+            </label>
+            <label className="block text-sm font-semibold">
+              Organisation role
+              <Select name="role" defaultValue="BUYER" required>
+                {BUYER_INVITE_ROLES.map((role) => (
+                  <option key={role} value={role}>
+                    {role.replaceAll("_", " ")}
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <div className="flex items-end">
+              <Button type="submit" className="w-full">
+                Send secure invitation
+              </Button>
+            </div>
+            <FieldDescription id="invitation-delivery">
+              The invitation is delivered by Trade using a one-time token that expires after 48
+              hours. ZuriBeans never displays or stores the token.
+            </FieldDescription>
+          </form>
+        ) : (
+          <p className="mt-3 text-sm leading-6 text-muted">
+            Only account admins can invite members.
+          </p>
+        )}
+        <p className="mt-4 text-sm leading-6 text-muted">
+          Already received an invitation?{" "}
           <Link
             href="/account/invitations/accept"
             className="font-semibold underline-offset-2 hover:underline"
           >
-            accept it here
+            Accept it here
           </Link>
           .
         </p>

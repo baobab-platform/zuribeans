@@ -51,7 +51,7 @@ export default async function AcceptInvitationPage({
               autoComplete="off"
             />
             <FieldDescription>
-              Tokens expire after 14 days and can only be used once.
+              Tokens expire after 48 hours and can only be used once.
             </FieldDescription>
           </label>
           <Button type="submit" className="w-full">
