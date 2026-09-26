@@ -63,7 +63,12 @@ export default async function BuyerApplyPage({
         must complete first.
       </p>
       {message ? (
-        <Alert id="buyer-form-error" title="Application not submitted" tone="danger" className="mt-6">
+        <Alert
+          id="buyer-form-error"
+          title="Application not submitted"
+          tone="danger"
+          className="mt-6"
+        >
           {message}
         </Alert>
       ) : null}
@@ -88,7 +93,9 @@ export default async function BuyerApplyPage({
           <label className={labelClass}>
             Trading name
             <Input name="tradingName" type="text" autoComplete="organization" />
-            <FieldDescription>Optional. Shown on commercial documents when different from legal name.</FieldDescription>
+            <FieldDescription>
+              Optional. Shown on commercial documents when different from legal name.
+            </FieldDescription>
           </label>
           <label className={labelClass}>
             Registration number
@@ -104,7 +111,12 @@ export default async function BuyerApplyPage({
           <fieldset className="space-y-3">
             <legend className={labelClass}>Requested operating markets</legend>
             <label className="flex items-center gap-3 text-sm">
-              <input name="requestedMarketKeys" type="checkbox" value="zuribeans_za" defaultChecked />
+              <input
+                name="requestedMarketKeys"
+                type="checkbox"
+                value="zuribeans_za"
+                defaultChecked
+              />
               South Africa
             </label>
             <label className="flex items-center gap-3 text-sm">

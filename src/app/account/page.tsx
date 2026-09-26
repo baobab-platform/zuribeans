@@ -34,9 +34,7 @@ const statusCopy = (status: BuyerOrganisationStatus | null): { title: string; bo
   }
 }
 
-const applicationCopy = (
-  status: BuyerApplicationStatus,
-): { title: string; body: string } => {
+const applicationCopy = (status: BuyerApplicationStatus): { title: string; body: string } => {
   switch (status) {
     case "INFORMATION_REQUIRED":
       return {
