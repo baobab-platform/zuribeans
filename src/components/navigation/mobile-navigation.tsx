@@ -116,6 +116,15 @@ export function MobileNavigation({
             >
               Help
             </ButtonLink>
+            <ButtonLink
+              href="/insights"
+              onClick={() => setOpen(false)}
+              className="w-full"
+              size="lg"
+              variant="outline"
+            >
+              Insights
+            </ButtonLink>
           </div>
         </div>
       </Dialog>

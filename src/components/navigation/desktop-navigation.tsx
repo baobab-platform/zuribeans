@@ -37,6 +37,7 @@ export function DesktopNavigation({ marketContext }: { marketContext: MarketCont
 
   const resources: NavDisclosureItem[] = [
     { href: "/quality-traceability", label: "Quality & Traceability" },
+    { href: "/insights", label: "Insights" },
     { href: "/sourcing/become-a-supplier", label: "Become a Supplier" },
     { href: "/supplier", label: "Supplier Portal" },
     { href: "/help", label: "Help" },
