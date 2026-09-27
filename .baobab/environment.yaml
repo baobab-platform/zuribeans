@@ -8,7 +8,7 @@ application:
 environment:
   provider: "baobab-dev"
   profile: "frontend"
-  minimum_version: "1.4.2-frontend"
+  minimum_version: "1.4.4-frontend"
   contract_minimum_version: "1.0"
 compatibility_policy:
   strict_runtime_versions: true
@@ -28,5 +28,5 @@ validation:
     - { name: "docker", reason: "Not required for ordinary Codespaces development." }
   pending_capabilities: []
 notes:
-  - "Codespaces and local Dev Containers use ghcr.io/baobab-platform/baobab-dev:1.4.2-frontend."
+  - "Codespaces and local Dev Containers use ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend."
   - "Browser-dependent CI uses the separately published frontend-e2e profile."
