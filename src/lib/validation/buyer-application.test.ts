@@ -4,7 +4,7 @@ import { buyerApplicationSchema } from "@/lib/validation/buyer-application"
 describe("buyer application validation", () => {
   it("accepts an idempotent multi-market application", () => {
     const parsed = buyerApplicationSchema.parse({
-      idempotencyKey: "4d5f9a8e-4ed8-4f1b-bf20-b70f693bf12f",
+      idempotencyKey: "00000000-0000-4000-8000-000000000000",
       legalName: "Acme Procurement",
       countryOfRegistration: "za",
       requestedMarketKeys: ["zuribeans_za", "zuribeans_ug"],
@@ -27,7 +27,7 @@ describe("buyer application validation", () => {
   it("rejects applications with no requested market", () => {
     expect(() =>
       buyerApplicationSchema.parse({
-        idempotencyKey: "4d5f9a8e-4ed8-4f1b-bf20-b70f693bf12f",
+        idempotencyKey: "00000000-0000-4000-8000-000000000000",
         legalName: "Acme Procurement",
         countryOfRegistration: "ZA",
         requestedMarketKeys: [],
