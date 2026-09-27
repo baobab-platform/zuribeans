@@ -1,7 +1,7 @@
 # Frontend testing and browser matrix
 
 Status: Gate 17 implemented  
-Reviewed: 2026-09-13
+Reviewed: 2026-09-27
 
 The frontend test strategy combines domain-level unit tests with real browser journeys. CI uses the
 Baobab frontend E2E image so browser binaries and system libraries remain governed by the shared
@@ -33,6 +33,10 @@ mobile device profiles exercise more than the dedicated width checks.
 - canonical/social metadata, structured data, crawler policy and sitemap fundamentals;
 - unmatched routes return an intentional, non-indexable 404 experience;
 - mobile menu destinations, tablet supplier CTA, desktop navigation and horizontal-overflow guards.
+- published Insights index/detail semantics, automated axe checks, market visibility and draft
+  fail-closed behavior;
+- buyer application, staff review, secure invitation and membership boundaries;
+- supplier MIR/resubmission, staff review, canonical linkage and ERP-handoff boundaries.
 
 Supplier persistence tests use PostgreSQL when `SUPPLIER_DB_URL` is available. Buyer checkout,
 orders, RFQ and quotation E2E journeys remain blocked until their authoritative Baobab Trade and
