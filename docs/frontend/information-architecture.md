@@ -176,7 +176,7 @@ screens:
 | Products | Dynamic public product classes; never coffee-only                     |
 | Trade    | Origins & Markets, Trade, Quality & Traceability                      |
 | Partner  | Buyer Portal, Become a Supplier, Contact                              |
-| Company  | About, Insights, governance/policy links when real                    |
+| Company  | About, governance/policy links when real                              |
 | Context  | Current market, currency, operating-market statement and legal footer |
 
 Do not publish placeholder privacy, terms, certification, warehouse, office, or regulatory claims.
