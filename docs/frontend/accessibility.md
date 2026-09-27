@@ -1,7 +1,7 @@
 # Accessibility
 
 Status: Gate 14 hardened
-Reviewed: 2026-09-13
+Reviewed: 2026-09-27
 Target: WCAG 2.2 AA
 
 ## Implemented baseline
@@ -29,7 +29,10 @@ Target: WCAG 2.2 AA
 - A narrow supplier-navigation client boundary observes App Router pathname changes, so Overview is
   current only on `/supplier` and never remains stale after navigating to the nested application.
 - Playwright coverage now checks bypass navigation, one main landmark, one named level-one heading on
-  every public top-level route, and accessible names on authentication controls.
+  every public route (including Insights and legal pages), and accessible names on authentication
+  controls.
+- Dedicated axe coverage protects the Insights index and published article experience. The article
+  card heading hierarchy is semantic, and the footer exposes the collection as a named destination.
 
 ## Verification approach
 
