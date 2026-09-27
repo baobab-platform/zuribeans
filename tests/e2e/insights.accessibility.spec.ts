@@ -19,6 +19,13 @@ test.describe("Insights accessibility", () => {
     await expectNoAxeViolations(page)
   })
 
+  test("footer exposes the Insights collection", async ({ page }) => {
+    await page.goto("/")
+    await expect(
+      page.getByRole("contentinfo").getByRole("link", { name: "Insights" }),
+    ).toHaveAttribute("href", "/insights")
+  })
+
   test("published article has no automated axe violations", async ({ page }) => {
     await page.goto("/insights/introducing-zuribeans-insights")
     await expect(
