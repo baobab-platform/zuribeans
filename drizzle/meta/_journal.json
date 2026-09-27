@@ -8,6 +8,27 @@
       "when": 1788684858034,
       "tag": "0000_huge_hercules",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789908000000,
+      "tag": "0001_zb05_mir_documents_erp",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789909200000,
+      "tag": "0002_zb05_event_outbox",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789910400000,
+      "tag": "0003_zb05_erp_business_partner_id",
+      "breakpoints": true
     }
   ]
 }

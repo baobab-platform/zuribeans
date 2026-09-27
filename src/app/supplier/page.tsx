@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
+import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
+import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { EmptyState, ErrorState } from "@/components/ui/state-panel"
 import { getCurrentCustomer } from "@/lib/auth/customer"
@@ -36,6 +38,14 @@ export default async function SupplierDashboardPage() {
   }
 
   const status = getSupplierStatusPresentation(application.organisation.status as SupplierStatus)
+  const staffReason =
+    application.latestStatusEvent?.reason &&
+    application.latestStatusEvent.actor.startsWith("staff:")
+      ? application.latestStatusEvent.reason
+      : null
+  const needsApplicantAttention =
+    application.organisation.status === "more_information_required" ||
+    application.organisation.status === "sample_required"
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -50,7 +60,18 @@ export default async function SupplierDashboardPage() {
         <p className="mt-3 max-w-2xl leading-7 text-muted">{status.description}</p>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
           Declarations remain unverified until the sourcing team completes the relevant review.
+          Registration is not approval.
         </p>
+        {needsApplicantAttention ? (
+          <div className="mt-6 space-y-4">
+            {staffReason ? (
+              <Alert title="Message from sourcing review" tone="warning">
+                {staffReason}
+              </Alert>
+            ) : null}
+            <ButtonLink href="/supplier/resubmit">Update and resubmit</ButtonLink>
+          </div>
+        ) : null}
       </Card>
       <Card className="p-8">
         <p className="eyebrow">Organisation profile</p>
@@ -69,6 +90,10 @@ export default async function SupplierDashboardPage() {
           <div>
             <dt className="font-semibold text-muted">Tax identifier</dt>
             <dd className="mt-1">{application.organisation.taxIdentifier || "Not supplied"}</dd>
+          </div>
+          <div>
+            <dt className="font-semibold text-muted">ERP projection</dt>
+            <dd className="mt-1">{application.organisation.erpProjectionStatus}</dd>
           </div>
         </dl>
       </Card>
@@ -111,6 +136,22 @@ export default async function SupplierDashboardPage() {
                 >
                   {certification.verificationStatus === "verified" ? "Verified" : "Declared"}
                 </Badge>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      ) : null}
+      {application.documents.length > 0 ? (
+        <Card className="p-8 lg:col-span-2">
+          <h3 className="font-display text-xl">Document references</h3>
+          <p className="mt-2 text-sm text-muted">
+            Metadata pointers only — files are not stored in this estate.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            {application.documents.map((doc) => (
+              <li key={doc.id} className="rounded-control bg-surface-muted p-3">
+                <span className="font-semibold">{doc.kind}</span>: {doc.label}
+                {doc.externalReference ? ` — ${doc.externalReference}` : ""}
               </li>
             ))}
           </ul>
