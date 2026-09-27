@@ -14,6 +14,7 @@ export function InsightCard({ article }: InsightCardProps) {
   return (
     <Link
       href={`/insights/${article.slug}`}
+      aria-label={`Read ${article.title}`}
       className="group block h-full rounded-panel focus-visible:outline-offset-4"
     >
       <article className="flex h-full flex-col overflow-hidden rounded-panel border border-line bg-surface-raised shadow-panel transition-transform group-hover:-translate-y-1">
