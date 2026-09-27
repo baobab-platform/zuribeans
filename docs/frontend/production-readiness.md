@@ -2,9 +2,10 @@
 
 Status: Gate 18 **outstanding** — readiness assessment is No-Go
 
-Reviewed: 2026-09-14
+Reviewed: 2026-09-27
 
-Baseline: `main` after the Next.js 16 lint alignment (`82e447f2d7acee66f4fb9dae4dcae8a50f1f4dfb`)
+Baseline: `main` after the Insights CMS-boundary correction
+(`e4868c7017bbfbd9590cd6cc03f121b994d3bb4b`)
 
 ## Release decision
 
@@ -28,15 +29,17 @@ deployment prerequisite below is evidenced. This document does not authorize dep
 | Uganda and South Africa context                  | Pass with constraint             | Resolver/unit coverage; candidate keys remain non-canonical until Control Plane publishes Market records                             |
 | Catalogue and product detail                     | Pass with environment dependency | Server-only Medusa adapter, intentional service states, normalized presentation; controlled deployed Trade smoke test still required |
 | Buyer authentication and protected route         | Pass with environment dependency | HttpOnly session adapter and protected layout; deployed identity smoke test still required                                           |
-| Gate 11: trading approval and B2B purchasing     | Outstanding / blocked            | Trade has internal B2B models but no authoritative buyer-context, cart-eligibility, checkout, order or private-pricing HTTP contract |
+| Buyer onboarding and secure invitations (ZB-04) | Implemented; deployed evidence outstanding | Application, staff review, secure invitation and membership boundaries are present; end-to-end provider evidence remains required |
+| Gate 11: trading approval and B2B purchasing     | Outstanding / blocked            | Trade has internal B2B models but no authoritative cart-eligibility, checkout, order or private-pricing HTTP contract               |
 | Gate 12: RFQ and quotations                      | Outstanding / blocked            | No published Trade command/query or canonical status contract                                                                        |
-| Supplier application                             | Pass with constraints            | Postgres-backed tests and state machine; documents, resume/edit, staff review and notifications remain deferred                      |
+| Supplier onboarding and review (ZB-05)           | Implemented with constraints     | Application, MIR/resubmission, staff review, canonical linkage and ERP handoff are present; document storage and notifications remain deferred |
 | Private cache isolation                          | Pass by architecture/review      | Account and supplier paths are dynamic; no shared cache for identity or supplier state                                               |
 | Intentional loading/empty/error/not-found states | Pass for implemented slice       | Route loading, domain states and root Next.js failure boundaries are present                                                         |
 | Automated accessibility                          | Pass                             | Semantic/keyboard browser assertions; WCAG manual release review remains required                                                    |
 | Performance regression controls                  | Pass                             | Build asset budgets enforced in CI                                                                                                   |
 | Core Web Vitals/Lighthouse targets               | Not evidenced                    | Requires deployed synthetic runs and approved field telemetry                                                                        |
 | Technical SEO                                    | Pass                             | Route metadata, canonicals, crawler controls, sitemap and structured-data tests                                                      |
+| Insights editorial experience                    | Pass with CMS dependency         | Published/market filtering, SEO, sitemap, provider boundary and accessibility pass; runtime Payload delivery contract remains blocked |
 | Browser compatibility                            | Pass in CI                       | Chromium, Firefox and WebKit desktop plus Chromium/WebKit mobile projects                                                            |
 | Security checks                                  | Pass per PR                      | CodeQL, dependency audit, Foundation gates and deployable-image scan must also pass on the release SHA                               |
 | Observability                                    | Blocked                          | Provider, processing/redaction policy, ingestion contract, alerts and runbooks are unapproved                                        |
