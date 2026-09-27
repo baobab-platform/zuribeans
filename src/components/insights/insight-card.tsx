@@ -31,7 +31,7 @@ export function InsightCard({ article }: InsightCardProps) {
         ) : null}
         <div className="flex flex-1 flex-col p-7 md:p-8">
           {category ? <p className="eyebrow">{category.label}</p> : null}
-          <h3 className="mt-4 font-display text-2xl leading-snug">{article.title}</h3>
+          <h2 className="mt-4 font-display text-2xl leading-snug">{article.title}</h2>
           <p className="mt-3 flex-1 leading-7 text-muted">{article.excerpt}</p>
           <div className="mt-6 flex items-center justify-between text-sm text-muted">
             <time dateTime={article.publishedAt}>
