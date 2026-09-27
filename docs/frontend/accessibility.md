@@ -32,7 +32,7 @@ Target: WCAG 2.2 AA
   every public route (including Insights and legal pages), and accessible names on authentication
   controls.
 - Dedicated axe coverage protects the Insights index and published article experience. The article
-  card heading hierarchy is semantic, and the footer exposes the collection as a named destination.
+  card heading hierarchy is semantic.
 
 ## Verification approach
 
