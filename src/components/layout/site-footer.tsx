@@ -37,6 +37,7 @@ function getFooterGroups(marketContext: MarketContext) {
       title: "Company",
       links: [
         { href: "/about", label: "About ZuriBeans" },
+        { href: "/insights", label: "Insights" },
         { href: "/contact", label: "Contact" },
       ],
     },
