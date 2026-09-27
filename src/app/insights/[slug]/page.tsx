@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { StructuredData } from "@/components/seo/structured-data"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { getInsightCategory } from "@/lib/content/insights-categories"
-import { getPublishedInsightBySlug } from "@/lib/content/insights"
+import { insightContentProvider } from "@/lib/content/insight-content-provider"
 import { getMarketContext } from "@/lib/market/request"
 import { getInsightArticleStructuredData } from "@/lib/seo/structured-data"
 
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: InsightPageProps): Promise<Me
   const { slug } = await params
   const canonical = `/insights/${encodeURIComponent(slug)}`
   const { active: market } = await getMarketContext()
-  const article = getPublishedInsightBySlug(slug, market.marketKey)
+  const article = await insightContentProvider.getPublishedBySlug(slug, market.marketKey)
   if (!article) return { title: "Insight not found", alternates: { canonical } }
 
   return {
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: InsightPageProps): Promise<Me
 export default async function InsightArticlePage({ params }: InsightPageProps) {
   const { slug } = await params
   const { active: market } = await getMarketContext()
-  const article = getPublishedInsightBySlug(slug, market.marketKey)
+  const article = await insightContentProvider.getPublishedBySlug(slug, market.marketKey)
   if (!article) notFound()
 
   const category = getInsightCategory(article.category)

@@ -91,7 +91,7 @@ jobs:
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm test:e2e:visual
       - name: Validate architecture declarations
-        run: test -f contracts.lock.yaml && test -f runtime/requirements.yaml && test -f .baobab/environment.yaml
+        run: pnpm architecture:validate
 
   image:
     name: Build deployable image

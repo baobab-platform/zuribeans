@@ -1,5 +1,5 @@
 /**
- * Extensible Insights category registry (see ADR-0011). Add a category by
+ * Extensible Insights category registry (see ADR-0014). Add a category by
  * adding an entry here — never by adding topic-specific branching to a
  * component, the same rule `src/lib/supplier/categories.ts` applies to
  * supplier product categories.

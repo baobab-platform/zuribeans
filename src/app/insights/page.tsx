@@ -3,7 +3,7 @@ import { InsightCard } from "@/components/insights/insight-card"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { EmptyState } from "@/components/ui/state-panel"
 import { INSIGHT_CATEGORIES } from "@/lib/content/insights-categories"
-import { listInsightCategoriesInUse, listPublishedInsights } from "@/lib/content/insights"
+import { insightContentProvider } from "@/lib/content/insight-content-provider"
 import { getMarketContext } from "@/lib/market/request"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
@@ -26,11 +26,11 @@ export default async function InsightsPage({ searchParams }: InsightsPageProps) 
   const requestedCategory = asSingleParam(params.category)
   const { active: market } = await getMarketContext()
 
-  const categoriesInUse = listInsightCategoriesInUse(market.marketKey)
+  const categoriesInUse = await insightContentProvider.listCategoriesInUse(market.marketKey)
   const selectedCategory = categoriesInUse.includes(requestedCategory ?? "")
     ? requestedCategory
     : undefined
-  const articles = listPublishedInsights({
+  const articles = await insightContentProvider.listPublished({
     marketKey: market.marketKey,
     category: selectedCategory,
   })

@@ -25,13 +25,24 @@ sources:
     repository: "baobab-platform/baobab-trade"
     commit: "bd4074c050183cdca4f3831d9e47524c26a4677e"
     api: "Medusa v2 Store API"
+  cms:
+    repository: "baobab-platform/baobab-cms"
+    commit: "1d742586d1de39e34ace7ac9948a462838b924fd"
+    authority_decisions:
+      - "docs/adr/ADR-0011_ Adopt Payload CMS as the Baobab Content Engine.md"
+      - "docs/adr/ADR-0013_ Payload Canonical Content Identity and External Mapping.md"
+      - "docs/adr/ADR-0014_ Payload Digital Estate, Market, Locale and Content Inheritance.md"
+    note: >-
+      Accepted architecture authority for editorial content. ZuriBeans does not yet consume a
+      versioned estate delivery contract from this source; the current file adapter is a temporary
+      read-only projection under estate ADR-0014, not a transfer of canonical ownership.
 gaps:
   - "Shared has not published a canonical commerce Store API package."
   - "Trade publishes Medusa Store API and B2B module models; buyer apply/admission HTTP contracts beyond stock Medusa remain engine-local until a Shared OpenAPI package is published."
   - "Shared has not published purchasing, RFQ or quotation schemas."
   - "Control Plane implements Market and capability-resolution domains, but ZuriBeans has not locked a canonical UG/ZA Market and buyer-capability resolution contract that Trade exposes to this frontend."
   - "IAM ADR-0010 defines the intended ZuriBeans B2B identity and organisation-access model but remains Proposed; the approved end-to-end identity-to-Trade buyer-context contract is not published."
-  - "No CMS engine is pinned as a source above (no repository, no commit, no API). The go-live plan's §10.53 names Payload CMS as the eventual owner of content.* capabilities at platform Gate ZB-18, well beyond current gate progress. ADR-0011 records ZuriBeans as the interim owner of Insights editorial content until that contract exists."
+  - "Baobab CMS is the accepted authority for editorial content and its architecture revision is pinned above, but no versioned ZuriBeans article/taxonomy delivery schema, API profile or Control Plane capability binding is published for runtime consumption. Estate ADR-0014 confines the current file content to a temporary read-only projection behind InsightContentProvider."
 notes:
   - "Resolved: shared's ADR-0001 classifies Zuribeans as B2B/Next.js (contracts/legal-entity/registry.yaml)."
   - "Resolved (ZB-05): contracts/supplier-onboarding/v1 is published on Shared and locked above; estate owns Supplier Application pre-approval per system-of-record.yaml."
