@@ -21,6 +21,11 @@ ENV NEXT_PUBLIC_DEFAULT_MARKET=$NEXT_PUBLIC_DEFAULT_MARKET
 RUN pnpm build
 
 FROM node:24.20.0-alpine3.24 AS runtime
+ARG VERSION=0.0.0-dev
+ARG REVISION=unknown
+LABEL org.opencontainers.image.source="https://github.com/baobab-platform/zuribeans" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.revision="${REVISION}"
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
@@ -38,4 +43,8 @@ COPY --from=build --chown=nextjs:nextjs /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
+# Probe the host the Next.js standalone server binds to (HOSTNAME, else all
+# interfaces) so the check follows the runtime's network configuration.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD ["node", "-e", "const h = process.env.HOSTNAME; const host = !h || h === '0.0.0.0' ? '127.0.0.1' : h; fetch('http://' + host + ':' + (process.env.PORT || 3000) + '/api/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
 CMD ["node", "server.js"]

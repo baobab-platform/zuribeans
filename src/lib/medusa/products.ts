@@ -1,4 +1,10 @@
 import "server-only"
+import {
+  applyAssortmentToProductList,
+  fetchMarketSellableProductIds,
+  pageSellableProductIds,
+} from "@/lib/catalogue/assortment"
+import type { ZuribeansMarketKey } from "@/lib/market/markets"
 import { createMedusaClient } from "./client"
 import { normalizeProductMediaUrl } from "@/lib/configuration/product-media"
 import { normalizeProductMetadata } from "./product-presentation"
@@ -40,6 +46,8 @@ export type ProductListOptions = MarketPricingContext & {
   categoryId?: string
   limit?: number
   offset?: number
+  /** When set, compose with Trade assortment for this market (ADR-0030). */
+  marketKey?: ZuribeansMarketKey
 }
 
 export const listProductCategories = async (): Promise<ProductCategoryModel[]> => {
@@ -50,15 +58,58 @@ export const listProductCategories = async (): Promise<ProductCategoryModel[]> =
 
 export const listProducts = async (options: ProductListOptions): Promise<ProductListModel> => {
   const sdk = createMedusaClient()
-  const { products, count, limit, offset } = await sdk.store.product.list({
-    limit: options.limit ?? 12,
-    offset: options.offset ?? 0,
+  const limit = options.limit ?? 12
+  const offset = options.offset ?? 0
+
+  // Strict assortment: page Trade sellable ids first, then load those products from Medusa.
+  if (options.marketKey) {
+    const assortment = await fetchMarketSellableProductIds(options.marketKey)
+    if (assortment.mode === "strict" && assortment.source === "trade") {
+      const page = pageSellableProductIds(assortment.sellableProductIds, { limit, offset })
+      if (page.pageIds.length === 0) {
+        return { items: [], count: page.total, limit: page.limit, offset: page.offset }
+      }
+
+      const { products } = await sdk.store.product.list({
+        id: page.pageIds,
+        limit: page.pageIds.length,
+        country_code: options.countryCode.toLowerCase(),
+        ...(options.query ? { q: options.query } : {}),
+        ...(options.categoryId ? { category_id: options.categoryId } : {}),
+      })
+
+      // Preserve assortment order; drop any id Medusa did not return (unpublished).
+      const byId = new Map((products as MedusaProduct[]).map((p) => [p.id, toCard(p)]))
+      const items = page.pageIds
+        .map((id) => byId.get(id))
+        .filter((p): p is ProductCardModel => p !== undefined)
+
+      return {
+        items,
+        count: page.total,
+        limit: page.limit,
+        offset: page.offset,
+      }
+    }
+  }
+
+  const { products, count } = await sdk.store.product.list({
+    limit,
+    offset,
     country_code: options.countryCode.toLowerCase(),
     ...(options.query ? { q: options.query } : {}),
     ...(options.categoryId ? { category_id: options.categoryId } : {}),
   })
+
+  let items = (products as MedusaProduct[]).map(toCard)
+
+  if (options.marketKey) {
+    const assortment = await fetchMarketSellableProductIds(options.marketKey)
+    items = applyAssortmentToProductList(items, assortment)
+  }
+
   return {
-    items: (products as MedusaProduct[]).map(toCard),
+    items,
     count,
     limit,
     offset,
@@ -67,7 +118,7 @@ export const listProducts = async (options: ProductListOptions): Promise<Product
 
 export const retrieveProduct = async (
   handle: string,
-  context?: MarketPricingContext,
+  context?: MarketPricingContext & { marketKey?: ZuribeansMarketKey },
 ): Promise<ProductDetailModel | null> => {
   const sdk = createMedusaClient()
   const { products } = await sdk.store.product.list({
@@ -77,6 +128,18 @@ export const retrieveProduct = async (
   })
   const product = (products as MedusaProduct[])[0]
   if (!product) return null
+
+  if (context?.marketKey) {
+    const assortment = await fetchMarketSellableProductIds(context.marketKey)
+    if (
+      assortment.mode === "strict" &&
+      assortment.source === "trade" &&
+      !assortment.sellableProductIds.includes(product.id)
+    ) {
+      return null
+    }
+  }
+
   const presentation = normalizeProductMetadata(product.metadata)
   return {
     ...toCard(product),

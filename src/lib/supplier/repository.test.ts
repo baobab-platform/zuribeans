@@ -1,20 +1,17 @@
 import { sql } from "drizzle-orm"
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { getDb } from "@/lib/db/client"
-import { supplierOrganisations } from "@/lib/db/schema"
+import { supplierOrganisations, supplierStatusEvents } from "@/lib/db/schema"
 import {
+  getSupplierApplicationById,
   getSupplierApplicationForCustomer,
+  listSupplierApplications,
+  setCapabilityVerification,
   setSupplierCanonicalOrganisationId,
   submitSupplierApplication,
+  transitionSupplierStatus,
 } from "./repository"
 
-/**
- * Integration test against a real Postgres database — schema/migration
- * mistakes (a wrong column type, a missing default, a broken transaction)
- * don't show up against mocks. Skipped when SUPPLIER_DB_URL isn't set
- * (e.g. a contributor without a local Postgres); CI provides one via a
- * service container and runs `drizzle-kit migrate` first (see ci.yml).
- */
 const hasDatabase = Boolean(process.env.SUPPLIER_DB_URL)
 
 const truncateAll = () =>
@@ -103,5 +100,83 @@ describe.runIf(hasDatabase)("supplier repository", () => {
       "canon-org-123",
     )
     expect(updated).toBeNull()
+  })
+
+  it("does not allow staff to skip from submitted to approved", async () => {
+    const created = await submitSupplierApplication("cus_test_skip", validInput)
+    await expect(
+      transitionSupplierStatus({
+        supplierOrganisationId: created.id,
+        toStatus: "approved",
+        actor: "staff:reviewer",
+      }),
+    ).rejects.toThrow(/cannot transition/i)
+  })
+
+  it("walks the staff review path to qualification and records events", async () => {
+    const created = await submitSupplierApplication("cus_test_review", validInput)
+
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "under_review",
+      actor: "staff:alice",
+      reason: "Initial triage",
+    })
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "qualification",
+      actor: "staff:alice",
+    })
+    const approved = await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "approved",
+      actor: "staff:bob",
+      reason: "Met sourcing criteria",
+    })
+
+    expect(approved?.status).toBe("approved")
+
+    const detail = await getSupplierApplicationById(created.id)
+    expect(detail?.statusEvents.map((e) => e.toStatus)).toEqual(
+      expect.arrayContaining(["submitted", "under_review", "qualification", "approved"]),
+    )
+
+    const events = await getDb().select().from(supplierStatusEvents)
+    expect(events.length).toBeGreaterThanOrEqual(4)
+  })
+
+  it("verifies a capability without granting organisation approval", async () => {
+    const created = await submitSupplierApplication("cus_test_cap", validInput)
+    const detail = await getSupplierApplicationById(created.id)
+    const capabilityId = detail!.capabilities[0].id
+
+    const verified = await setCapabilityVerification({
+      supplierOrganisationId: created.id,
+      capabilityId,
+      status: "verified",
+      verifiedBy: "staff:alice",
+    })
+    expect(verified?.verificationStatus).toBe("verified")
+
+    const after = await getSupplierApplicationById(created.id)
+    expect(after?.organisation.status).toBe("submitted")
+    expect(after?.capabilities[0].verificationStatus).toBe("verified")
+  })
+
+  it("lists applications filtered by status", async () => {
+    await submitSupplierApplication("cus_list_a", validInput)
+    const second = await submitSupplierApplication("cus_list_b", {
+      ...validInput,
+      legalName: "Other Co",
+    })
+    await transitionSupplierStatus({
+      supplierOrganisationId: second.id,
+      toStatus: "under_review",
+      actor: "staff:alice",
+    })
+
+    const submitted = await listSupplierApplications({ status: "submitted" })
+    expect(submitted.every((r) => r.status === "submitted")).toBe(true)
+    expect(submitted.some((r) => r.medusaCustomerId === "cus_list_a")).toBe(true)
   })
 })
