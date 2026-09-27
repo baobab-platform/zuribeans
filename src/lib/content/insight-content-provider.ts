@@ -26,6 +26,7 @@ export interface InsightContentProvider {
   ): Promise<InsightArticle | undefined>
   listCategoriesInUse(marketKey: ZuribeansMarketKey): Promise<readonly string[]>
   listSitemapEligibleSlugs(): Promise<readonly string[]>
+  listSyndicationEligible(): Promise<readonly InsightArticle[]>
 }
 
 export class FileInsightContentProvider implements InsightContentProvider {
@@ -48,6 +49,13 @@ export class FileInsightContentProvider implements InsightContentProvider {
 
   async listSitemapEligibleSlugs(): Promise<readonly string[]> {
     return listSitemapEligibleInsightSlugs(this.source)
+  }
+
+  async listSyndicationEligible(): Promise<readonly InsightArticle[]> {
+    const eligibleSlugs = new Set(listSitemapEligibleInsightSlugs(this.source))
+    return this.source
+      .filter((article) => eligibleSlugs.has(article.slug))
+      .sort((left, right) => right.publishedAt.localeCompare(left.publishedAt))
   }
 }
 
