@@ -4,18 +4,32 @@ export const BUYER_CAPABILITY_KEYS = [
   "catalogue",
   "orders",
   "documents",
-] as const
+] as const;
 
-export type BuyerCapabilityKey = (typeof BUYER_CAPABILITY_KEYS)[number]
+export type BuyerCapabilityKey = (typeof BUYER_CAPABILITY_KEYS)[number];
 
-export type BuyerCapabilitySnapshot = Readonly<Partial<Record<BuyerCapabilityKey, boolean>>>
+export type BuyerCapabilitySnapshot = Readonly<
+  Partial<Record<BuyerCapabilityKey, boolean>>
+>;
 
 export type BuyerPortalSection = {
-  key: BuyerCapabilityKey
-  label: string
-  href: string
-  description: string
-}
+  key: BuyerCapabilityKey;
+  label: string;
+  href: string;
+  description: string;
+};
+
+// Route availability is estate-owned; trading permission remains Trade-owned.
+const IMPLEMENTED_BUYER_SECTIONS: readonly BuyerCapabilityKey[] = [
+  "organisation",
+  "team",
+];
+
+const isBuyerSectionAvailable = (
+  key: BuyerCapabilityKey,
+  capabilities: BuyerCapabilitySnapshot | null,
+): boolean =>
+  IMPLEMENTED_BUYER_SECTIONS.includes(key) && capabilities?.[key] === true;
 
 const BUYER_PORTAL_SECTIONS: readonly BuyerPortalSection[] = [
   {
@@ -48,23 +62,25 @@ const BUYER_PORTAL_SECTIONS: readonly BuyerPortalSection[] = [
     href: "/account/documents",
     description: "Buyer-visible transaction and trade documents.",
   },
-]
+];
 
 export type BuyerNavigationItem = {
-  label: string
-  href: string
-}
+  label: string;
+  href: string;
+};
 
 export const getBuyerNavigation = (
   capabilities: BuyerCapabilitySnapshot | null,
 ): readonly BuyerNavigationItem[] => [
   { label: "Overview", href: "/account" },
-  ...BUYER_PORTAL_SECTIONS.filter(({ key }) => capabilities?.[key] === true).map(
-    ({ label, href }) => ({ label, href }),
-  ),
-]
+  ...BUYER_PORTAL_SECTIONS.filter(({ key }) =>
+    isBuyerSectionAvailable(key, capabilities),
+  ).map(({ label, href }) => ({ label, href })),
+];
 
 export const getUnavailableBuyerSections = (
   capabilities: BuyerCapabilitySnapshot | null,
 ): readonly BuyerPortalSection[] =>
-  BUYER_PORTAL_SECTIONS.filter(({ key }) => capabilities?.[key] !== true)
+  BUYER_PORTAL_SECTIONS.filter(
+    ({ key }) => !isBuyerSectionAvailable(key, capabilities),
+  );

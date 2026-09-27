@@ -1,42 +1,33 @@
 # Supplier portal
 
-Status: Gate 13 implemented
-Reviewed: 2026-09-13
+Status: Frontend Gate 13 application slice and Masterplan ZB-05 review/handoff implementation merged;
+production certification outstanding
+Reviewed: 2026-09-27
 
-The supplier experience preserves the ZuriBeans-owned supplier domain and the lifecycle defined in
-ADR-0006. Medusa remains the identity provider only; it does not own supplier organisations,
-capabilities, certifications or qualification state.
+## Implemented on main
 
-## Implemented journeys
+PR #90 integrates staff review and ERP handoff with the existing supplier application journey:
 
-- The public `/sourcing/become-a-supplier` route explains the application evidence and review
-  boundary, using the shared public design system and optimized origin imagery.
-- The protected `/supplier/apply` route collects organisation, contact, extensible product
-  capability and certification declarations with responsive, accessible server-rendered controls.
-- The protected `/supplier` route handles no-application, success and database-unavailable states
-  intentionally.
-- Submitted applications show organisation data, declared capabilities, certification declarations
-  and a status presentation derived from the existing supplier state machine.
-- All protected supplier routes are excluded from indexing.
+- Public supplier introduction and protected application/status pages.
+- Information-request resubmission and lifecycle validation.
+- Staff review, capability/certification verification and document-reference recording.
+- Canonical organisation linkage and ERP readiness/projection state.
+- ERP handoff consuming a public business-partner identifier rather than an internal ERP ID.
+- Supplier event outbox persistence.
 
-## Trust and state rules
+ADR-0006 governs estate-owned pre-approval intake. ADRs 0011–0013 govern staff review,
+information requests, document references and ERP public identifiers. The estate does not
+replace the canonical ERP Supplier domain. Declared evidence is not verified evidence.
 
-- Submission creates the existing `draft → submitted` event; no new transition or review authority
-  is introduced.
-- A declared capability or certification is never presented as verified.
-- Status labels and explanations are centralized in `src/lib/supplier/presentation.ts` and cover
-  every lifecycle state.
-- Database failures return a safe service state and do not imply that an application was lost or
-  resubmitted.
-- The form remains a Server Component using the existing Server Action. No supplier data or token is
-  moved into client-side state.
+## Remaining acceptance work
 
-## Deferred dependencies
+Secure document upload requires approved storage, malware scanning, file policy, authorization
+and retention. Recording an external document reference does not implement file upload.
 
-Secure supporting-document upload remains blocked on an approved object-storage service, malware
-scanning, file policy, authorization and retention contract. The form explains this explicitly and
-does not solicit files through email or local persistence.
+The staff surface uses an interim API-key session; workforce identity and authoritative actor
+attribution require the accepted IAM boundary. Supplier outbox rows remain PENDING without a
+dispatcher; broker delivery, retries, replay and reconciliation are not established by persistence.
 
-Application editing/resume, staff review actions, applicant notifications, settlement-readiness
-collection and supplier profile maintenance remain deferred until their persistence, authorization
-and workflow contracts are designed. The current implementation does not fabricate these behaviors.
+Deployed ERP handoff, applicant notifications, supplier profile maintenance, restore and isolation
+evidence remain release work. Confirm provider progress in the owning repositories before
+describing any dependency as absent. Merged estate code alone does not pass Masterplan ZB-05.
