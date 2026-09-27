@@ -24,18 +24,18 @@ infrastructure authority into the frontend.
 
 ## Execution sequence
 
-| Wave | Scope | Primary repositories | Exit evidence |
-| --- | --- | --- | --- |
-| 0 | Reconcile open PRs, ADR status, contract locks, and gate vocabulary | all affected repos | One dependency ledger; no ambiguous gate names; every open PR assigned a merge order |
-| 1 | Finish buyer onboarding and secure invitations | `shared`, `baobab-cp`, `baobab-trade`, `baobab-erp`, `baobab-iam`, `zuribeans` | Application → review → KYB → ERP commercial decision → activation → membership/invitation tests pass |
-| 2 | Finish supplier onboarding and ERP handoff | `shared`, `baobab-cp`, `baobab-erp`, `zuribeans` | Application → information request/resubmit → verification → canonical linkage → ERP projection passes |
-| 3 | Publish buyer purchasing, RFQ, quotation, and transaction APIs | `shared`, `baobab-trade`, `baobab-cp`, `zuribeans` | Server-enforced capability results and idempotent RFQ/quotation/order APIs; Frontend Gates 11–12 enabled |
-| 4 | Reconcile IAM provider migration | `baobab-iam`, `shared`, `baobab-cp`, `baobab-trade`, `baobab-erp`, `zuribeans` | Provider-neutral BFF contract; Ory migration/cutover tests; revocation enforced in deployed composition |
-| 5 | Activate ZuriBeans UG/ZA ERP | `baobab-erp`, `baobab-cp`, `baobab-trade`, `shared` | Real iDempiere instances pass sell-side, buy-side, inventory, FX, reconciliation and isolation golden paths |
-| 6 | Add production providers | `baobab-payments`, `baobab-regulations`, `baobab-cms`, `baobab-trade`, `baobab-erp` | Tax/customs, logistics, payments, documents and CMS content use approved provider contracts and real test environments |
-| 7 | Build staging and production infrastructure | `infrastructure` plus service repos | DNS/TLS, gateway, secrets, databases, messaging, object storage, telemetry, backups, immutable promotion and rollback operate in staging |
-| 8 | Qualify the release | all affected repos | Nine business simulations, adversarial suite, restore tests, load tests, accessibility review and operational drills pass on one candidate SHA set |
-| 9 | Certify and activate | `baobab-cp`, `infrastructure`, all providers/consumers | P13 REQUEST → VALIDATE → PLAN → APPLY → PROVISION → RECONCILE → READINESS → READY → ACTIVE, with no manual data override |
+| Wave | Scope                                                               | Primary repositories                                                                | Exit evidence                                                                                                                                      |
+| ---- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0    | Reconcile open PRs, ADR status, contract locks, and gate vocabulary | all affected repos                                                                  | One dependency ledger; no ambiguous gate names; every open PR assigned a merge order                                                               |
+| 1    | Finish buyer onboarding and secure invitations                      | `shared`, `baobab-cp`, `baobab-trade`, `baobab-erp`, `baobab-iam`, `zuribeans`      | Application → review → KYB → ERP commercial decision → activation → membership/invitation tests pass                                               |
+| 2    | Finish supplier onboarding and ERP handoff                          | `shared`, `baobab-cp`, `baobab-erp`, `zuribeans`                                    | Application → information request/resubmit → verification → canonical linkage → ERP projection passes                                              |
+| 3    | Publish buyer purchasing, RFQ, quotation, and transaction APIs      | `shared`, `baobab-trade`, `baobab-cp`, `zuribeans`                                  | Server-enforced capability results and idempotent RFQ/quotation/order APIs; Frontend Gates 11–12 enabled                                           |
+| 4    | Reconcile IAM provider migration                                    | `baobab-iam`, `shared`, `baobab-cp`, `baobab-trade`, `baobab-erp`, `zuribeans`      | Provider-neutral BFF contract; Ory migration/cutover tests; revocation enforced in deployed composition                                            |
+| 5    | Activate ZuriBeans UG/ZA ERP                                        | `baobab-erp`, `baobab-cp`, `baobab-trade`, `shared`                                 | Real iDempiere instances pass sell-side, buy-side, inventory, FX, reconciliation and isolation golden paths                                        |
+| 6    | Add production providers                                            | `baobab-payments`, `baobab-regulations`, `baobab-cms`, `baobab-trade`, `baobab-erp` | Tax/customs, logistics, payments, documents and CMS content use approved provider contracts and real test environments                             |
+| 7    | Build staging and production infrastructure                         | `infrastructure` plus service repos                                                 | DNS/TLS, gateway, secrets, databases, messaging, object storage, telemetry, backups, immutable promotion and rollback operate in staging           |
+| 8    | Qualify the release                                                 | all affected repos                                                                  | Nine business simulations, adversarial suite, restore tests, load tests, accessibility review and operational drills pass on one candidate SHA set |
+| 9    | Certify and activate                                                | `baobab-cp`, `infrastructure`, all providers/consumers                              | P13 REQUEST → VALIDATE → PLAN → APPLY → PROVISION → RECONCILE → READINESS → READY → ACTIVE, with no manual data override                           |
 
 ## Immediate merge train
 
@@ -66,12 +66,12 @@ infrastructure authority into the frontend.
 
 ## Release decision points
 
-| Decision | Minimum condition |
-| --- | --- |
-| Public estate candidate | Current frontend checks plus deployed catalogue, identity, supplier, accessibility, browser and performance evidence |
-| Buyer-onboarding candidate | Waves 1–2 complete; no purchasing controls exposed |
-| Controlled B2B pilot | Waves 3–7 complete in staging; explicit market, customer and transaction limits |
-| Production go-live | Waves 0–9 complete and the final immutable candidate receives a recorded GO decision |
+| Decision                   | Minimum condition                                                                                                    |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Public estate candidate    | Current frontend checks plus deployed catalogue, identity, supplier, accessibility, browser and performance evidence |
+| Buyer-onboarding candidate | Waves 1–2 complete; no purchasing controls exposed                                                                   |
+| Controlled B2B pilot       | Waves 3–7 complete in staging; explicit market, customer and transaction limits                                      |
+| Production go-live         | Waves 0–9 complete and the final immutable candidate receives a recorded GO decision                                 |
 
 ## Stop conditions
 
