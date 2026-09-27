@@ -1,7 +1,7 @@
 # ZuriBeans go-live critical-path implementation plan
 
 Status: Execution baseline  
-Reviewed: 2026-09-27  
+Reviewed: 2026-09-26  
 Authority: ZuriBeans Go-Live Implementation Plan, accepted repository ADRs, and current cross-repository contracts
 
 ## Objective
@@ -38,12 +38,6 @@ infrastructure authority into the frontend.
 | 9    | Certify and activate                                                | `baobab-cp`, `infrastructure`, all providers/consumers                              | P13 REQUEST → VALIDATE → PLAN → APPLY → PROVISION → RECONCILE → READINESS → READY → ACTIVE, with no manual data override                           |
 
 ## Immediate merge train
-
-Status on 2026-09-27: items 1–5 completed through ZB-04 PR #91 and ZB-05 PR #90. The
-provider-revision lock and release assessment remain living controls rather than one-off completion
-claims. Insights PR #83 and its CMS-boundary correction PR #93 are also merged; Payload runtime
-delivery remains contract-gated.
-
 
 1. Complete the stacked `baobab-trade` ZB-04 PRs before merging the ZuriBeans buyer UI. The UI
    calls endpoints not present on Trade `main`.
