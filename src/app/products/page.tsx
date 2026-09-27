@@ -88,9 +88,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           </h1>
         </div>
         <p className="text-sm leading-6 text-muted">
-          Showing published products for {market.displayName} ({market.currency}). Market
-          assortment eligibility is confirmed via the trade service when assortment filtering is
-          enabled — Medusa publication alone is not sellable.
+          Showing published products for {market.displayName} ({market.currency}). Market assortment
+          eligibility is confirmed via the trade service when assortment filtering is enabled —
+          Medusa publication alone is not sellable.
         </p>
       </div>
 

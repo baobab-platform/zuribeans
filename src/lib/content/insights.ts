@@ -8,7 +8,7 @@ export type InsightArticle = {
   title: string
   /** One or two sentences shown on cards and used as the SEO/OG description fallback. */
   excerpt: string
-  /** Plain paragraphs, rendered with `@tailwindcss/typography`. See ADR-0011 for why this is not MDX yet. */
+  /** Plain paragraphs. See ADR-0011 for why this is not MDX yet. */
   body: readonly string[]
   /** Key into `INSIGHT_CATEGORIES` — validated by `isInsightCategoryKey`, never a free string in routes. */
   category: string

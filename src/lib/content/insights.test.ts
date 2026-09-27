@@ -92,9 +92,7 @@ describe("getPublishedInsightBySlug", () => {
   })
 
   it("treats an out-of-market article as not found for a different market", () => {
-    expect(
-      getPublishedInsightBySlug("ug-only-published", "zuribeans_za", FIXTURES),
-    ).toBeUndefined()
+    expect(getPublishedInsightBySlug("ug-only-published", "zuribeans_za", FIXTURES)).toBeUndefined()
   })
 })
 

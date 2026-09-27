@@ -43,8 +43,8 @@ published and verified.
 | `/sourcing/become-a-supplier` | Become a Supplier      | Now                     | Existing entry point, expanded without changing the supplier state machine.                                                                              |
 | `/trade`                      | Trade                  | Now                     | Explain transaction classes, documentation, incoterm context, logistics coordination and how to engage; no operational claims beyond current capability. |
 | `/quality-traceability`       | Quality & Traceability | Now                     | Standards, lots, certifications, chain-of-custody intent and verification language.                                                                      |
-| `/insights`                   | Insights                | Now                     | Bi-weekly, market-scoped editorial notes for buyers. File-based content per ADR-0011; only published, market-visible articles resolve.                    |
-| `/insights/[slug]`            | Insight detail          | Now                     | Validated against published article slugs only; a draft or out-of-market slug resolves as not found, per ADR-0011.                                        |
+| `/insights`                   | Insights               | Now                     | Bi-weekly, market-scoped editorial notes for buyers. File-based content per ADR-0011; only published, market-visible articles resolve.                   |
+| `/insights/[slug]`            | Insight detail         | Now                     | Validated against published article slugs only; a draft or out-of-market slug resolves as not found, per ADR-0011.                                       |
 | `/about`                      | About                  | Now                     | Company, operating model, governance and Baobab-enabled capability in buyer language.                                                                    |
 | `/contact`                    | Contact                | Now                     | Current mail route until an authoritative enquiry destination exists.                                                                                    |
 | `/help`                       | Help                   | Now                     | Routes a buyer, supplier or account question to the existing channel that answers it; not a support ticketing system.                                    |
@@ -157,7 +157,7 @@ horizontal overflow.
 | -------------------- | --------------------------------------- |
 | Product              | Home / Products / Product name          |
 | Product class        | Home / Products / Coffee                |
-| Insight article       | Home / Insights / Article title         |
+| Insight article      | Home / Insights / Article title         |
 | Market               | Home / Origins & Markets / Uganda       |
 | Supplier application | Supplier / Application                  |
 | Buyer resource       | Buyer Portal / Orders / Order reference |

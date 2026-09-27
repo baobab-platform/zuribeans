@@ -101,7 +101,7 @@ export default async function InsightArticlePage({ params }: InsightPageProps) {
         </div>
       ) : null}
 
-      <div className="prose prose-neutral mt-10 max-w-3xl md:prose-lg">
+      <div className="mt-10 max-w-3xl space-y-6 text-lg leading-8 text-ink-soft md:text-xl md:leading-9">
         {article.body.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}
