@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import { notFound } from "next/navigation"
+import { InsightCard } from "@/components/insights/insight-card"
 import { StructuredData } from "@/components/seo/structured-data"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { getInsightCategory } from "@/lib/content/insights-categories"
@@ -47,6 +48,16 @@ export default async function InsightArticlePage({ params }: InsightPageProps) {
   if (!article) notFound()
 
   const category = getInsightCategory(article.category)
+  const relatedArticles = (
+    await insightContentProvider.listPublished({ marketKey: market.marketKey })
+  )
+    .filter((candidate) => candidate.slug !== article.slug)
+    .sort((left, right) => {
+      const leftMatchesCategory = left.category === article.category ? 1 : 0
+      const rightMatchesCategory = right.category === article.category ? 1 : 0
+      return rightMatchesCategory - leftMatchesCategory
+    })
+    .slice(0, 3)
 
   return (
     <article className="page-container py-12 lg:py-16">
@@ -106,6 +117,20 @@ export default async function InsightArticlePage({ params }: InsightPageProps) {
           <p key={index}>{paragraph}</p>
         ))}
       </div>
+
+      {relatedArticles.length ? (
+        <aside className="mt-16 border-t border-line pt-12" aria-labelledby="related-insights">
+          <p className="eyebrow">Continue reading</p>
+          <h2 id="related-insights" className="mt-3 font-display text-3xl md:text-4xl">
+            Related insights
+          </h2>
+          <div className="mt-8 grid gap-x-7 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
+            {relatedArticles.map((relatedArticle) => (
+              <InsightCard key={relatedArticle.slug} article={relatedArticle} />
+            ))}
+          </div>
+        </aside>
+      ) : null}
     </article>
   )
 }
