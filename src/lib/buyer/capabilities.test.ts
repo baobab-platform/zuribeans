@@ -14,13 +14,37 @@ describe("buyer capability boundaries", () => {
     ])
   })
 
+  it("does not expose unimplemented routes even when Trade grants every capability", () => {
+    const capabilities = {
+      organisation: true,
+      team: true,
+      catalogue: true,
+      orders: true,
+      documents: true,
+    }
+    expect(getBuyerNavigation(capabilities)).toEqual([
+      { label: "Overview", href: "/account" },
+      { label: "Company", href: "/account/company" },
+      { label: "Team", href: "/account/team" },
+    ])
+    expect(getUnavailableBuyerSections(capabilities).map(({ key }) => key)).toEqual([
+      "catalogue",
+      "orders",
+      "documents",
+    ])
+  })
+
   it("keeps disabled and missing capabilities unavailable", () => {
-    const unavailable = getUnavailableBuyerSections({ orders: true, team: false })
+    const unavailable = getUnavailableBuyerSections({
+      orders: true,
+      team: false,
+    })
 
     expect(unavailable.map(({ key }) => key)).toEqual([
       "organisation",
       "team",
       "catalogue",
+      "orders",
       "documents",
     ])
   })

@@ -1,40 +1,29 @@
 # B2B purchasing, RFQ and quotation dependencies
 
 Status: Gates 11–12 **outstanding and blocked by upstream contracts**
-Reviewed: 2026-09-14
+Reviewed: 2026-09-27
 
 ## Decision
 
 Do not mark Gate 11 or Gate 12 complete. Do not expose cart, bulk order, quick order, checkout,
-order history, reorder, RFQ or quotation actions in the current frontend. The buyer shell proves
-customer identity but has no authoritative buyer-organisation approval or commercial capability
-snapshot. Exposing Medusa cart/order actions at this point would make authentication appear
-equivalent to trading authorization.
+order history, reorder, RFQ or quotation actions in the current frontend. The estate now consumes Trade buyer relationships and capability snapshots through a server-only
+adapter. Those onboarding capabilities do not implement purchasing or RFQ/quotation journeys.
 
 This is a blocked gate, not a decision to replace Medusa. `docs/architecture.md` remains
 authoritative: Medusa-native products, customer groups, sales channels, price lists, carts and
 orders must be used first when the required B2B authorization boundary is available.
 
-## Current upstream evidence
+## Current estate evidence
 
-- At Trade revision `44b8da95e5800b1ef904fa4b6883d984d602cf04`, the B2B module persists
-  organisations, memberships, roles, approvals, commercial terms, contract prices and purchase
-  constraints. Those are internal persistence and policy seams, not a frontend contract.
-- At that same revision, Trade's only custom HTTP routes are `/health` and `/readiness`. There is no
-  buyer-context, purchasing, order-history, RFQ or quotation command/query route and no ZuriBeans
-  middleware that binds the internal B2B policy to Medusa Store cart/checkout operations.
-- At Shared revision `798a16822f5ea46c826fafc689a64303d32ba3e4`, no buyer-organisation,
-  purchasing, RFQ or quotation schema is published.
-- Control Plane revision `597cac261d47a4de8d49efd5cf2a52f2f74456c2` provides Market and
-  capability-resolution domains, but no locked ZuriBeans buyer capability projection consumed by
-  Trade and this frontend.
-- IAM ADR-0010 at revision `38f8d27f831ee50959db05a60430d9e5983079cb` remains Proposed and
-  requires Trade to own buyer membership and purchasing authority.
-- ADR-0005 defines the current session as customer identity only and explicitly prohibits treating
-  it as an approved trading relationship.
-- No ZuriBeans adapter currently resolves an approved buyer organisation, account pricing,
-  purchasing authority, RFQ or quotation capability.
-- No buyer-scoped order, shipment, invoice or document projection is published for this estate.
+Buyer onboarding and invitation consumption are merged through PRs #77 and #91.
+The estate has company/team routes and a Trade capability adapter, but no purchasing,
+order-history, RFQ or quotation routes. Navigation must require an implemented route as well
+as an explicit capability grant.
+
+Shared, Control Plane and IAM have ongoing implementation. Historical provider snapshots from
+September 14 are not evidence of their current state. Before implementation, audit merged
+provider contracts and open PR dependencies, then pin the accepted revisions. Provider delivery
+and deployed acceptance evidence are separate from estate consumption.
 
 ## Gate 11 activation dependencies
 
