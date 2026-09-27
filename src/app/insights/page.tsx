@@ -7,12 +7,20 @@ import { insightContentProvider } from "@/lib/content/insight-content-provider"
 import { getMarketContext } from "@/lib/market/request"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
-export const metadata = getPublicPageMetadata({
+const baseMetadata = getPublicPageMetadata({
   title: "Insights",
   description:
     "Sourcing, trade and market notes for professional buyers working across ZuriBeans' origin markets.",
   path: "/insights",
 })
+
+export const metadata = {
+  ...baseMetadata,
+  alternates: {
+    ...baseMetadata.alternates,
+    types: { "application/atom+xml": "/insights/feed.xml" },
+  },
+}
 
 type InsightsPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>

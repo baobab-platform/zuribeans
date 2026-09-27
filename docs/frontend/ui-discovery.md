@@ -1,8 +1,15 @@
 # ZuriBeans frontend UI discovery
 
-Status: Gate 0 complete  
-Baseline: `main` at `a52f21fa6a7ed2665c30e282e1714f0374500b3f`  
-Reviewed: 2026-09-13
+Status: Historical Gate 0 discovery; current-state reconciliation complete  
+Baseline: `main` at `e4868c7017bbfbd9590cd6cc03f121b994d3bb4b`  
+Reviewed: 2026-09-27
+
+> This document preserves the original discovery evidence. Since that assessment, the public
+> corporate routes, responsive global shell, intentional route boundaries, buyer onboarding and
+> secure invitations (ZB-04), supplier staff review and ERP handoff (ZB-05), and the market-aware
+> Insights experience have been implemented. The route inventory and technical-debt list below are
+> historical findings, not a current backlog. Current release status is maintained in
+> `production-readiness.md` and the go-live critical-path implementation plan.
 
 ## Executive finding
 

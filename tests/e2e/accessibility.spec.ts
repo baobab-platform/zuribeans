@@ -24,6 +24,11 @@ test("public pages expose a single named primary heading and main landmark", asy
     "/sourcing/become-a-supplier",
     "/trade",
     "/help",
+    "/insights",
+    "/insights/introducing-zuribeans-insights",
+    "/privacy",
+    "/terms",
+    "/cookies",
   ]
 
   for (const route of routes) {
