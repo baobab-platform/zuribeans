@@ -25,7 +25,7 @@ export const getOrganizationStructuredData = (siteUrl: URL) => ({
  * with a published article (see `getPublishedInsightBySlug`), and only ever
  * emits fields the article data actually has — no invented `dateModified`,
  * no invented author credentials, matching the discipline `getOrganizationStructuredData`
- * and Product JSON-LD already apply on this estate (see ADR-0011, docs/frontend/seo.md).
+ * and Product JSON-LD already apply on this estate (see ADR-0014, docs/frontend/seo.md).
  */
 export const getInsightArticleStructuredData = (options: {
   siteUrl: URL

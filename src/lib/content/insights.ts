@@ -8,14 +8,14 @@ export type InsightArticle = {
   title: string
   /** One or two sentences shown on cards and used as the SEO/OG description fallback. */
   excerpt: string
-  /** Plain paragraphs. See ADR-0011 for why this is not MDX yet. */
+  /** Plain paragraphs. See ADR-0014 for the temporary projection boundary. */
   body: readonly string[]
   /** Key into `INSIGHT_CATEGORIES` — validated by `isInsightCategoryKey`, never a free string in routes. */
   category: string
   /**
    * `null` means relevant to every enabled market (company news, cross-market
    * explainers). A populated array scopes the article to those markets only.
-   * See ADR-0011 — market scoping is content-level, not URL-level.
+   * See ADR-0014 — market scoping is content-level, not URL-level.
    */
   marketKeys: readonly ZuribeansMarketKey[] | null
   /** ISO 8601 date. Editorial cadence is bi-weekly; keep entries in descending order below. */
@@ -25,7 +25,7 @@ export type InsightArticle = {
   heroImage?: { src: string; alt: string }
   /**
    * Reserved for the future CMS engine (Payload CMS, platform Gate ZB-18).
-   * Never populated by this file-based increment — see ADR-0011.
+   * Populated during canonical CMS reconciliation — see ADR-0014.
    */
   canonicalContentId: string | null
 }
@@ -35,7 +35,7 @@ export type InsightArticle = {
  * convention as every other page's copy in this repo (`trade.ts`,
  * `quality.ts`, `homepage.ts`). Flip an entry's `status` to `"published"`
  * once real, reviewed copy replaces placeholder text — draft entries never
- * resolve on a public route or appear in the sitemap (see ADR-0011).
+ * resolve on a public route or appear in the sitemap (see ADR-0014).
  */
 export const INSIGHT_ARTICLES: readonly InsightArticle[] = [
   {
@@ -61,7 +61,7 @@ export const INSIGHT_ARTICLES: readonly InsightArticle[] = [
       "What a procurement team should actually take from a seasonal harvest update — and what it can't tell you.",
     body: [
       "Placeholder draft — replace with reviewed editorial copy before publishing.",
-      "This entry exists to demonstrate the Insights content shape (market scoping, category, hero image) introduced by ADR-0011. It intentionally stays in draft status so it never renders on a public route or the sitemap.",
+      "This entry exists to demonstrate the Insights content projection (market scoping, category, hero image) governed by ADR-0014. It intentionally stays in draft status so it never renders on a public route or the sitemap.",
     ],
     category: "market-intelligence",
     marketKeys: ["zuribeans_ug"],
@@ -77,7 +77,7 @@ export const INSIGHT_ARTICLES: readonly InsightArticle[] = [
       "A working note for buyers on recent South African customs process changes relevant to cross-border lots.",
     body: [
       "Placeholder draft — replace with reviewed editorial copy before publishing.",
-      "This entry exists to demonstrate the Insights content shape (market scoping, category, hero image) introduced by ADR-0011. It intentionally stays in draft status so it never renders on a public route or the sitemap.",
+      "This entry exists to demonstrate the Insights content projection (market scoping, category, hero image) governed by ADR-0014. It intentionally stays in draft status so it never renders on a public route or the sitemap.",
     ],
     category: "trade-logistics",
     marketKeys: ["zuribeans_za"],
@@ -153,7 +153,7 @@ export const listInsightCategoriesInUse = (
  * Until market-scoped canonical URLs are introduced, a published article
  * restricted to one or more markets must not appear in the global sitemap:
  * the same /insights/[slug] URL can legitimately resolve as not found in a
- * different active market. See ADR-0011.
+ * different active market. See ADR-0014.
  */
 export const listSitemapEligibleInsightSlugs = (
   source: readonly InsightArticle[] = INSIGHT_ARTICLES,
