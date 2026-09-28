@@ -48,8 +48,8 @@ importers:
         specifier: ^4.13.0
         version: 4.13.0(playwright-core@1.62.1)
       '@medusajs/types':
-        specifier: 2.21.0
-        version: 2.21.0(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))
+        specifier: 2.21.1
+        version: 2.21.1(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))
       '@playwright/test':
         specifier: 1.62.1
         version: 1.62.1
@@ -1041,8 +1041,8 @@ packages:
     resolution: {integrity: sha512-57xt2wBgk6IJCYyBV+MwrhSTFbad/YZ7ytoQ/BN8H3ChRXDxzGzMt19N9jNlfoyFSoDxcGKgItPL2WQqtFQlHQ==}
     engines: {node: '>=20'}
 
-  '@medusajs/types@2.21.0':
-    resolution: {integrity: sha512-yO+e6+pjqlodCuATTvT84OSuCfjFrmPUXodMDUS/cMxqPdfoP7mZkiDzJU8w+aMItn7GVnYgfgj4D9MmnrQSUg==}
+  '@medusajs/types@2.21.1':
+    resolution: {integrity: sha512-wJW+bj2PWm2YOrPR74UKl6ObsC3O2VhjFxz3uE2eVcMrL+f8Mfx7iouqyZ2UPcPhgBkvu1wiw+bWSekZycbscQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       ioredis: ^5.4.1
@@ -4972,7 +4972,7 @@ snapshots:
       fetch-event-stream: 0.1.6
       qs: 6.16.0
 
-  '@medusajs/types@2.21.0(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))':
+  '@medusajs/types@2.21.1(vite@8.3.0(@types/node@26.6.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)(yaml@2.9.0))':
     dependencies:
       bignumber.js: 9.3.1
     optionalDependencies:
