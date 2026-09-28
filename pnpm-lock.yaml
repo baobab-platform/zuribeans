@@ -17,8 +17,8 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0(react@19.3.0)
       '@medusajs/js-sdk':
-        specifier: 2.21.0
-        version: 2.21.0
+        specifier: 2.21.1
+        version: 2.21.1
       drizzle-orm:
         specifier: 0.45.2
         version: 0.45.2(postgres@3.4.9)
@@ -1037,8 +1037,8 @@ packages:
       '@types/react': '>=16'
       react: '>=16'
 
-  '@medusajs/js-sdk@2.21.0':
-    resolution: {integrity: sha512-57xt2wBgk6IJCYyBV+MwrhSTFbad/YZ7ytoQ/BN8H3ChRXDxzGzMt19N9jNlfoyFSoDxcGKgItPL2WQqtFQlHQ==}
+  '@medusajs/js-sdk@2.21.1':
+    resolution: {integrity: sha512-Xalvzurz+kQZ3tANeOSRQhBclkIVaAZG6a1V/hNDjfdIMwlBFMsehb8+TaxVzJLOSGBbY7UGBk47K8p5kRBLSA==}
     engines: {node: '>=20'}
 
   '@medusajs/types@2.21.0':
@@ -4967,7 +4967,7 @@ snapshots:
       '@types/react': 19.3.0
       react: 19.3.0
 
-  '@medusajs/js-sdk@2.21.0':
+  '@medusajs/js-sdk@2.21.1':
     dependencies:
       fetch-event-stream: 0.1.6
       qs: 6.16.0
