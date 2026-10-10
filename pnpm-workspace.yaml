@@ -3,10 +3,15 @@ packages:
 
 overrides:
   postcss: 8.5.26
-  sharp: 0.35.4
+  sharp: 0.35.5
+  source-map-js: 1.2.2
   vite: 8.3.0
 
 allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+auditConfig:
+  ignoreGhsas:
+    - GHSA-vfj7-8cjw-p6xm
