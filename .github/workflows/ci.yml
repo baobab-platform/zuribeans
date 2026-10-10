@@ -39,6 +39,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Audit Medusa 2.21.2 Store consumer inventory (static only)
+        run: node scripts/verify-medusa-2212-consumer.mjs
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Check formatting
