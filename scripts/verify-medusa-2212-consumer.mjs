@@ -88,6 +88,26 @@ for (const cat of product.categories) assert.equal(typeof cat.name, "string")
 for (const variant of product.variants) {
   for (const name of ["id", "title", "sku"]) assert.ok(Object.hasOwn(variant, name), `Missing variant.${name}`)
 }
+// Medusa 2.21.0 must not allow Store callers to traverse internal
+// product -> order/customer relations. A strict 400 is acceptable; if the
+// route returns 200 the forbidden expansion must have been removed.
+const privatePivot = new URLSearchParams({
+  handle: process.env.MEDUSA_2212_PRODUCT_HANDLE,
+  limit: "1",
+  fields: "+variants.product.orders.customer.email",
+})
+const pivotResult = await fetch(base + "/store/products?" + privatePivot, {
+  headers,
+  cache: "no-store",
+  signal: AbortSignal.timeout(12000),
+})
+assert.ok([200, 400].includes(pivotResult.status),
+  `Unexpected private-relation selection behavior: ${pivotResult.status}`)
+if (pivotResult.status === 200) {
+  const pivot = await pivotResult.json()
+  const unsafe = pivot.products?.[0]?.variants?.some((v) => v.product?.orders !== undefined)
+  assert.ok(!unsafe, "2.21.2 Store API leaked private order/customer relations")
+}
 const cats = await get("/store/product-categories?limit=100")
 assert.ok(Array.isArray(cats.product_categories) && cats.product_categories.length > 0)
 for (const item of cats.product_categories) {
