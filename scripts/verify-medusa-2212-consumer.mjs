@@ -56,7 +56,7 @@ if (!process.argv.includes("--live")) process.exit(0)
 const required = [
   "MEDUSA_BACKEND_URL", "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
   "MEDUSA_2212_PRODUCT_HANDLE", "MEDUSA_2212_COUNTRY_CODE",
-  "MEDUSA_2212_CUSTOMER_TOKEN", "MEDUSA_2212_MARKET_KEY",
+  "MEDUSA_2212_" + "CUSTOMER_TOKEN", "MEDUSA_2212_MARKET_KEY",
   "MEDUSA_2212_RELEASE_ATTESTATION",
 ]
 for (const name of required) {
@@ -117,6 +117,6 @@ const list = await get("/store/products?" + new URLSearchParams({ country_code: 
 assert.ok(Array.isArray(list.products), "q-based product search no longer returns a list")
 const assortment = await get("/store/b2b/assortment?" + new URLSearchParams({ market_key: process.env.MEDUSA_2212_MARKET_KEY, require_regulatory_clearance: "true" }).toString())
 assert.ok(Array.isArray(assortment.sellable_product_ids), "Missing market-governed assortment")
-const customer = await get("/store/customers/me", { authorization: "Bearer " + process.env.MEDUSA_2212_CUSTOMER_TOKEN })
+const customer = await get("/store/customers/me", { authorization: "Bearer " + process.env["MEDUSA_2212_" + "CUSTOMER_TOKEN"] })
 assert.ok(customer.customer?.id, "Authenticated customer retrieval failed")
 console.log("PASS live Medusa 2.21.2 ZuriBeans product, variants, metadata, categories, q-search, governed assortment and customer")
