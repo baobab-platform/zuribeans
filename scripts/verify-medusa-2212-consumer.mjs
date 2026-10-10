@@ -81,7 +81,7 @@ const required = [
   "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY",
   "MEDUSA_2212_PRODUCT_HANDLE",
   "MEDUSA_2212_COUNTRY_CODE",
-  "MEDUSA_2212_" + "CUSTOMER_TOKEN",
+  "MEDUSA_2212_CUSTOMER_SESSION",
   "MEDUSA_2212_MARKET_KEY",
   "MEDUSA_2212_RELEASE_ATTESTATION",
 ]
@@ -186,7 +186,7 @@ const assortment = await get(
 )
 assert.ok(Array.isArray(assortment.sellable_product_ids), "Missing market-governed assortment")
 const customer = await get("/store/customers/me", {
-  authorization: "Bearer " + process.env["MEDUSA_2212_" + "CUSTOMER_TOKEN"],
+  authorization: "Bearer " + process.env["MEDUSA_2212_CUSTOMER_SESSION"],
 })
 assert.ok(customer.customer?.id, "Authenticated customer retrieval failed")
 console.log(

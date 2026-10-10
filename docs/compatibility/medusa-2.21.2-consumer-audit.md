@@ -29,7 +29,7 @@ MEDUSA_BACKEND_URL=https://<reviewed-staging-host> \
 NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=<staging-sales-channel-publishable-key> \
 MEDUSA_2212_PRODUCT_HANDLE=<seeded-published-product-with-metadata-categories-variants> \
 MEDUSA_2212_COUNTRY_CODE=za \
-MEDUSA_2212_CUSTOMER_TOKEN=<real-staging-test-customer-token> \
+MEDUSA_2212_CUSTOMER_SESSION=<real-staging-test-customer-session> \
 MEDUSA_2212_MARKET_KEY=zuribeans_za \
 MEDUSA_2212_RELEASE_ATTESTATION=2.21.2 \
 node scripts/verify-medusa-2212-consumer.mjs --live
