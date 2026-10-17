@@ -41,7 +41,9 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Audit Medusa 2.21.2 Store consumer inventory (static only)
         run: node scripts/verify-medusa-2212-consumer.mjs
-      - name: Install dependencies
+      - name: Install exact published BXS dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm install --frozen-lockfile
       - name: Check formatting
         run: pnpm format:check
@@ -102,8 +104,11 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Build image
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
           docker build
+          --secret id=npm_token,env=NODE_AUTH_TOKEN
           --build-arg MEDUSA_BACKEND_URL=http://localhost:9000
           --build-arg NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_ci_build_only
           --build-arg NEXT_PUBLIC_SITE_URL=http://localhost:3000
