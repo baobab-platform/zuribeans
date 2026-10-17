@@ -52,3 +52,21 @@ For each frontend change, review client-boundary growth, duplicated requests, ca
 market variation, image dimensions and `sizes`, LCP priority, layout stability, emitted assets and
 upstream waterfalls. A green budget does not permit commercially sensitive caching or unnecessary
 hydration.
+
+## BXS interactive-family profile — 17 October 2026
+
+Base UI navigation and authenticated selection add separately split component
+code. The observed whole-build inventory is 774.2 KiB raw; its reviewed ceiling
+is now 800 KiB. The 250 KiB largest-chunk, 64 KiB CSS and 250 KiB raster limits
+remain unchanged. This aggregate includes all public and protected routes and
+must not be reported as one route's startup payload.
+
+The new production-route browser gate independently caps transferred JavaScript
+at 250 KiB and requires Lighthouse Performance >=90, Accessibility/Best Practices/
+SEO >=95 and CLS <=0.1 on Home and Origins & Markets. The first Home measurement
+was 97/96/96/100 with CLS 0 (CI run 39049696406). Each revised head must pass again;
+this historical receipt alone does not qualify its implementation.
+
+LCP values remain recorded in each JSON trace. A single throttled Lighthouse
+navigation is not field P75: the 2.5s LCP / 200ms INP field targets still require
+real deployed observations. No field compliance is claimed by this source gate.

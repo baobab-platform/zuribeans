@@ -31,13 +31,13 @@ const MAP_PRESENTATION: Readonly<
 > = {
   zuribeans_ug: {
     role: "origin",
-    roleLabel: "Origin capability",
+    roleLabel: "Proposed origin",
     position: { left: 58.47, top: 49.55 },
     labelSide: "right",
   },
   zuribeans_za: {
     role: "destination",
-    roleLabel: "Buyer market",
+    roleLabel: "Proposed buyer market",
     position: { left: 56.93, top: 67.8 },
     labelSide: "left",
   },

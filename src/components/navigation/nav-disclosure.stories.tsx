@@ -30,7 +30,7 @@ export const Closed: Story = {}
 
 export const Open: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
+    const canvas = within(canvasElement.ownerDocument.body)
     await userEvent.click(canvas.getByRole("button", { name: "Commodities" }))
     await expect(canvas.getByRole("link", { name: "View all commodities" })).toBeVisible()
   },
