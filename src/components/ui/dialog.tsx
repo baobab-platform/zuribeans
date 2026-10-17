@@ -10,7 +10,11 @@ import { buttonClassName } from "./button"
  * provided by Base UI. Closing never executes a privileged workflow action.
  */
 export function Dialog({
-  open, title, description, children, onClose,
+  open,
+  title,
+  description,
+  children,
+  onClose,
 }: {
   open: boolean
   title: string
@@ -19,10 +23,17 @@ export function Dialog({
   onClose: () => void
 }) {
   return (
-    <BaseDialog.Root open={open} onOpenChange={(next) => { if (!next) onClose() }}>
+    <BaseDialog.Root
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) onClose()
+      }}
+    >
       <BaseDialog.Portal>
         <BaseDialog.Backdrop className="fixed inset-0 z-50 bg-ink/60" />
-        <BaseDialog.Popup className="fixed left-1/2 top-1/2 z-[51] w-[min(36rem,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-panel bg-surface p-0 text-ink shadow-overlay outline-none">
+        <BaseDialog.Popup
+          className="fixed left-1/2 top-1/2 z-[51] w-[min(36rem,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-panel bg-surface p-0 text-ink shadow-overlay outline-none"
+        >
           <div className="p-6 md:p-8">
             <div className="flex items-start justify-between gap-6">
               <div>

@@ -69,7 +69,7 @@ subset, preload and Core Web Vitals assessment.
 | Empty/Error/Restricted State | `components/ui/state-panel.tsx`   | Intentional route/domain states with optional action.              |
 | Breadcrumbs                  | `components/ui/breadcrumbs.tsx`   | Semantic nav/list and current-page state.                          |
 | Table                        | `components/ui/table.tsx`         | Server-friendly table primitives inside safe horizontal container. |
-| Dialog                       | `components/ui/dialog.tsx`        | Base UI controlled modal with focus/escape/portal semantics.            |
+| Dialog                       | `components/ui/dialog.tsx`        | Base UI controlled modal with focus/escape/portal semantics.       |
 
 Checkboxes and radios use native inputs styled at the form-composite level until a repeated design
 need justifies dedicated wrappers. Combobox, tooltip, popover, menu, tabs, accordion, pagination,

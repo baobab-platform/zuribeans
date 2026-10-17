@@ -48,7 +48,13 @@ export function Button({
   variant?: ButtonVariant
   size?: ButtonSize
 }) {
-  return <BaseButton type={type} className={buttonClassName({ variant, size, className })} {...props} />
+  return (
+    <BaseButton
+      type={type}
+      className={buttonClassName({ variant, size, className })}
+      {...props}
+    />
+  )
 }
 
 export function ButtonLink({
