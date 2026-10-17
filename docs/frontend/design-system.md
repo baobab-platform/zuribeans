@@ -69,7 +69,7 @@ subset, preload and Core Web Vitals assessment.
 | Empty/Error/Restricted State | `components/ui/state-panel.tsx`   | Intentional route/domain states with optional action.              |
 | Breadcrumbs                  | `components/ui/breadcrumbs.tsx`   | Semantic nav/list and current-page state.                          |
 | Table                        | `components/ui/table.tsx`         | Server-friendly table primitives inside safe horizontal container. |
-| Dialog                       | `components/ui/dialog.tsx`        | Native modal behaviour in an isolated client component.            |
+| Dialog                       | `components/ui/dialog.tsx`        | Base UI controlled modal with focus/escape/portal semantics.            |
 
 Checkboxes and radios use native inputs styled at the form-composite level until a repeated design
 need justifies dedicated wrappers. Combobox, tooltip, popover, menu, tabs, accordion, pagination,
@@ -102,3 +102,7 @@ avoids shipping an unused component catalogue and dependencies merely to satisfy
 The foundation is covered by type-checking, linting, the existing build, and a unit test for the
 dependency-free class combiner. High-value interactive primitives receive component and browser
 tests when introduced into an actual journey; unused demo components are not mounted in production.
+
+## Base UI convergence (ADR-SHARED-040)
+
+Button and controlled Dialog use Base UI 1.9.0. Link navigation stays native Next Link, and buyer/supplier workflows remain authoritative in their application/BFF and providers. Complete UI migrations and browser accessibility gates remain future separate acceptance, not inferred from dependency installation.
