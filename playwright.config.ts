@@ -10,9 +10,7 @@ export default defineConfig({
     // CI runs the already-built app: dev/HMR rebuilds can tear down the
     // browser execution context during axe scans and make screenshots flaky.
     // Developers retain the fast dev server for local exploratory runs.
-    command: process.env.CI
-      ? "pnpm start --hostname 127.0.0.1"
-      : "pnpm dev --hostname 127.0.0.1",
+    command: `pnpm ${process.env.CI ? "start" : "dev"} --hostname 127.0.0.1`,
     env: {
       ...process.env,
       NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://127.0.0.1:3000",
