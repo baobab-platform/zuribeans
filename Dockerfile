@@ -6,7 +6,9 @@ RUN npm install --global corepack@latest && corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 # Registry read token is a transient BuildKit mount, never image ARG/ENV.
 RUN --mount=type=secret,id=npm_token,required=true \
-    NODE_AUTH_TOKEN="$(cat /run/secrets/npm_token)" pnpm install --frozen-lockfile
+    --mount=type=tmpfs,target=/tmp/bxs-npm-auth \
+    sh -eu -c 'printf "//npm.pkg.github.com/:_authToken=%s\n" "$(cat /run/secrets/npm_token)" > /tmp/bxs-npm-auth/.npmrc; \
+      NPM_CONFIG_USERCONFIG=/tmp/bxs-npm-auth/.npmrc pnpm install --frozen-lockfile'
 
 FROM dependencies AS build
 COPY . .
