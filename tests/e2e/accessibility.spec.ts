@@ -32,10 +32,14 @@ test("public pages expose a single named primary heading and main landmark", asy
   ]
 
   for (const route of routes) {
-    await page.goto(route)
-    await expect(page.getByRole("main")).toHaveCount(1)
-    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1)
-    await expect(page.getByRole("heading", { level: 1 })).not.toBeEmpty()
+    const response = await page.goto(route)
+    // An error or unexpected redirect can leave a layout shell with no H1.
+    // Report the actual route and HTTP status before checking its semantics.
+    expect(response?.status(), `HTTP status for ${route}`).toBe(200)
+    await expect(page.getByRole("main"), `Main landmark: ${route}`).toHaveCount(1)
+    const heading = page.getByRole("heading", { level: 1 })
+    await expect(heading, `Primary heading: ${route}`).toHaveCount(1)
+    await expect(heading, `Named heading: ${route}`).not.toBeEmpty()
   }
 })
 
