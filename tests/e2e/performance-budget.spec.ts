@@ -57,11 +57,16 @@ test("public routes satisfy reproducible Lighthouse lab budgets", async ({ page 
         Math.round((value as { score: number }).score * 100),
       ]),
     )
+    const scriptBytes = report.audits["resource-summary"].details.items.find(
+      (item: { resourceType: string }) => item.resourceType === "script",
+    ).transferSize
+    expect(scriptBytes, route + " transferred JavaScript").toBeLessThanOrEqual(250 * 1024)
     console.log(
       JSON.stringify({
         route,
         profile: "CI_LAB_PRODUCTION_BUILD",
         scores,
+        transferredScriptBytes: scriptBytes,
         lcp: report.audits["largest-contentful-paint"].numericValue,
         cls: report.audits["cumulative-layout-shift"].numericValue,
       }),

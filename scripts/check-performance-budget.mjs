@@ -3,7 +3,10 @@ import { join, relative } from "node:path"
 
 const root = process.cwd()
 const limits = {
-  totalJavaScript: 700 * 1024,
+  // Whole-build inventory includes independently split authenticated form
+  // components. Public startup is separately capped at 250 KiB transferred
+  // JavaScript and Lighthouse >=90 in the production-route browser profile.
+  totalJavaScript: 800 * 1024,
   largestJavaScriptChunk: 250 * 1024,
   totalCss: 64 * 1024,
   largestPublicImage: 250 * 1024,
