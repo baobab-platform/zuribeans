@@ -23,7 +23,7 @@ jobs:
       options: --user 0
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env:
           POSTGRES_USER: zuribeans
           POSTGRES_PASSWORD: zuribeans_ci

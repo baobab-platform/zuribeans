@@ -106,3 +106,7 @@ tests when introduced into an actual journey; unused demo components are not mou
 ## Base UI convergence (ADR-SHARED-040)
 
 Button and controlled Dialog use Base UI 1.9.0. Link navigation stays native Next Link, and buyer/supplier workflows remain authoritative in their application/BFF and providers. Complete UI migrations and browser accessibility gates remain future separate acceptance, not inferred from dependency installation.
+
+### Migration CI hardening — October 2026
+
+Visual snapshots still use the APPROVED image baselines across five viewports. Page readiness is defined by DOM content and a visible H1 rather than Playwright's discouraged networkidle waiting, which caused all five screenshots to time out on a prior PR run. This preserves visual comparison fidelity rather than approving new images automatically. The disposable supplier database in CI now uses the baobab-dev PostgreSQL 17 baseline, without suggesting that any protected production database has been migrated.

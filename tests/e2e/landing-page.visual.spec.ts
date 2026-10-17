@@ -8,7 +8,10 @@ const viewports = [
   { name: "1440", width: 1440, height: 1000 },
 ] as const
 
+// Visual acceptance waits for a real visible landmark, never indefinite
+// network-idle silence (Next dev/HMR and CMS fetches may remain active).
 test.describe("landing page visual regression", () => {
+  test.setTimeout(60_000)
   test.beforeEach(({}, testInfo) => {
     test.skip(
       testInfo.project.name !== "chromium-desktop",
@@ -19,7 +22,7 @@ test.describe("landing page visual regression", () => {
   for (const viewport of viewports) {
     test(`matches the ${viewport.name}px landing-page baseline`, async ({ page }) => {
       await page.setViewportSize({ width: viewport.width, height: viewport.height })
-      await page.goto("/", { waitUntil: "networkidle" })
+      await page.goto("/", { waitUntil: "domcontentloaded" })
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
       await page.evaluate(() => document.fonts?.ready)
       await expect(page).toHaveScreenshot(`landing-page-${viewport.name}.png`, {
