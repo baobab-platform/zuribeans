@@ -114,3 +114,7 @@ Visual snapshots still use the APPROVED image baselines across five viewports. P
 ### Deterministic accessibility browser server
 
 BXS-05 migration acceptance runs all CI Playwright journeys, axe WCAG checks and approved visual snapshots against the **already-built Next.js production server** rather than Next dev/HMR. Recompilation/refresh in a shared dev server can destroy the axe browser execution context and trigger false navigation failures. Local development retains `pnpm dev`; CI uses `pnpm start` after the existing `pnpm build`. All five browsers remain included, no accessibility tags, reference screenshots or real domain assertions are disabled.
+
+## Shared Experience System 0.2.0 consumer proof
+
+Shared publication and SHA512 verification have passed. ZuriBeans pins `experience-tokens` and `experience-ui` at exactly 0.2.0, using BXS native Disclosure only on the public Help page. Namespaced theme CSS is scoped under `data-bx-theme=zuribeans`; corporate Tailwind roles remain authoritative. Help content explicitly distinguishes enquiries from orders and supplier applications from approvals. Registry credentials are passed via ephemeral CI environment and Docker BuildKit secrets, never committed to source or runtime images. Buyer/supplier, Medusa, IAM and CP authority boundaries are unchanged. Browser, axe, golden and frozen lock acceptance remain mandatory.

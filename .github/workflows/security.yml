@@ -34,7 +34,11 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Authenticate authorised registry for dependency audit
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '//npm.pkg.github.com/:_authToken=%s\n' "$NODE_AUTH_TOKEN" > "$HOME/.npmrc"
+          pnpm install --frozen-lockfile
       - name: Audit production dependencies
         run: pnpm audit --prod --audit-level high
