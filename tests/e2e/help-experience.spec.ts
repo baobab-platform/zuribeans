@@ -10,6 +10,6 @@ test("BXS disclosure remains keyboard-accessible and never implies approval", as
   await expect(page.locator('[data-bx-theme="zuribeans"]')).toHaveCount(1)
   await expect(page.locator('[data-bx-theme="zuribeans"]')).toHaveCSS(
     "--bx-color-primary",
-    "#c9a227",
+    "#0f2c24",
   )
 })

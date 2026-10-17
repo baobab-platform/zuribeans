@@ -15,3 +15,9 @@ allowBuilds:
 auditConfig:
   ignoreGhsas:
     - GHSA-vfj7-8cjw-p6xm
+
+# Explicit fresh-package exceptions, approved by successful Shared SHA512
+# registry verification. Limited to these fixed BXS 0.2.0 versions only.
+minimumReleaseAgeExclude:
+  - "@baobab-platform/experience-tokens@0.2.0"
+  - "@baobab-platform/experience-ui@0.2.0"
