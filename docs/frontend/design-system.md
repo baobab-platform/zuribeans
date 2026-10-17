@@ -110,3 +110,7 @@ Button and controlled Dialog use Base UI 1.9.0. Link navigation stays native Nex
 ### Migration CI hardening — October 2026
 
 Visual snapshots still use the APPROVED image baselines across five viewports. Page readiness is defined by DOM content and a visible H1 rather than Playwright's discouraged networkidle waiting, which caused all five screenshots to time out on a prior PR run. This preserves visual comparison fidelity rather than approving new images automatically. The disposable supplier database in CI now uses the baobab-dev PostgreSQL 17 baseline, without suggesting that any protected production database has been migrated.
+
+### Deterministic accessibility browser server
+
+BXS-05 migration acceptance runs all CI Playwright journeys, axe WCAG checks and approved visual snapshots against the **already-built Next.js production server** rather than Next dev/HMR. Recompilation/refresh in a shared dev server can destroy the axe browser execution context and trigger false navigation failures. Local development retains `pnpm dev`; CI uses `pnpm start` after the existing `pnpm build`. All five browsers remain included, no accessibility tags, reference screenshots or real domain assertions are disabled.

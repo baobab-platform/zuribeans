@@ -7,13 +7,19 @@ export default defineConfig({
   workers: process.env.CI ? 2 : undefined,
   use: { baseURL: "http://127.0.0.1:3000", trace: "on-first-retry" },
   webServer: {
-    command: "pnpm dev --hostname 127.0.0.1",
+    // CI runs the already-built app: dev/HMR rebuilds can tear down the
+    // browser execution context during axe scans and make screenshots flaky.
+    // Developers retain the fast dev server for local exploratory runs.
+    command: process.env.CI
+      ? "pnpm start --hostname 127.0.0.1"
+      : "pnpm dev --hostname 127.0.0.1",
     env: {
       ...process.env,
       NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://127.0.0.1:3000",
     },
     url: "http://127.0.0.1:3000/api/health",
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
+    timeout: 90_000,
   },
   projects: [
     { name: "chromium-desktop", use: { ...devices["Desktop Chrome"] } },
