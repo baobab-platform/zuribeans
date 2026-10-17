@@ -60,6 +60,10 @@ export function Select({
     if (seen.has(option.value)) throw new TypeError("Select option values must be unique")
     seen.add(option.value)
   }
+  // Base UI treats the empty scalar as no selection. Preserve the audited
+  // native <option value=""> prompt so supplier onboarding fields never
+  // appear blank before the user makes a required choice.
+  const placeholder = options.find((option) => option.value === "")?.label
   return (
     <BaseSelect.Root
       items={options}
@@ -77,7 +81,7 @@ export function Select({
           className,
         )}
       >
-        <BaseSelect.Value />
+        <BaseSelect.Value placeholder={placeholder} />
         <BaseSelect.Icon aria-hidden="true">▾</BaseSelect.Icon>
       </BaseSelect.Trigger>
       <BaseSelect.Portal>
