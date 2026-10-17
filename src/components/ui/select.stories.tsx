@@ -30,7 +30,6 @@ export const Country: Story = {
   },
 }
 
-
 /**
  * Regression for native <option value=""> prompts retained by the Base UI
  * adapter. A blank required supplier category must visibly ask for a choice;
