@@ -52,6 +52,7 @@ export const RequiredSupplierCategory: Story = {
     const canvas = within(canvasElement.ownerDocument.body)
     const trigger = canvas.getByRole("combobox", { name: "Supplier category" })
     await expect(trigger).toHaveTextContent("Select a category…")
+    await expect(trigger).toHaveAttribute("aria-required", "true")
     const form = canvas.getByRole("form", {
       name: "Synthetic supplier application",
     }) as HTMLFormElement
