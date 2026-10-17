@@ -4,7 +4,9 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 RUN npm install --global corepack@latest && corepack enable
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-RUN pnpm install --frozen-lockfile
+# Registry read token is a transient BuildKit mount, never image ARG/ENV.
+RUN --mount=type=secret,id=npm_token,required=true \
+    NODE_AUTH_TOKEN="$(cat /run/secrets/npm_token)" pnpm install --frozen-lockfile
 
 FROM dependencies AS build
 COPY . .
