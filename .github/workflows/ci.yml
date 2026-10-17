@@ -99,6 +99,8 @@ jobs:
           NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm test:e2e:visual
+      - name: Real-browser component stories
+        run: pnpm test:storybook
       - name: Validate architecture declarations
         run: pnpm architecture:validate
 

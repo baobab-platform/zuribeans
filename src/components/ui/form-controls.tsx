@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } from "react"
+import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react"
 import { classNames } from "@/lib/ui/classnames"
 
 const controlClass =
@@ -14,9 +14,7 @@ export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTex
   )
 }
 
-export function Select({ className, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={classNames(controlClass, className)} {...props} />
-}
+export { Select } from "./select"
 
 export function FieldDescription({ id, children }: { id?: string; children: React.ReactNode }) {
   return (
