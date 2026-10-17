@@ -29,3 +29,37 @@ export const Country: Story = {
     await expect(trigger).toHaveFocus()
   },
 }
+
+
+/**
+ * Regression for native <option value=""> prompts retained by the Base UI
+ * adapter. A blank required supplier category must visibly ask for a choice;
+ * selecting a concrete value must still submit under the original field name.
+ */
+export const RequiredSupplierCategory: Story = {
+  render: () => (
+    <form aria-label="Synthetic supplier application">
+      <label>
+        Supplier category
+        <Select name="category" defaultValue="" required>
+          <option value="">Select a category…</option>
+          <option value="coffee">Coffee</option>
+          <option value="vanilla">Vanilla</option>
+        </Select>
+      </label>
+    </form>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body)
+    const trigger = canvas.getByRole("combobox", { name: "Supplier category" })
+    await expect(trigger).toHaveTextContent("Select a category…")
+    const form = canvas.getByRole("form", {
+      name: "Synthetic supplier application",
+    }) as HTMLFormElement
+    await expect(new FormData(form).get("category") ?? "").toBe("")
+    await userEvent.click(trigger)
+    await userEvent.keyboard("{End}{Enter}")
+    await expect(trigger).toHaveTextContent("Vanilla")
+    await expect(new FormData(form).get("category")).toBe("vanilla")
+  },
+}
