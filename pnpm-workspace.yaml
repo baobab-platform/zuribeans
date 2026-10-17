@@ -16,8 +16,7 @@ auditConfig:
   ignoreGhsas:
     - GHSA-vfj7-8cjw-p6xm
 
-# Explicit fresh-package exceptions, approved by successful Shared SHA512
-# registry verification. Limited to these fixed BXS verified 2026-10-17 versions only.
+# Immutable, publisher-verified Experience registry releases only.
 # Fixed-version exceptions are allowed only after independently verified
 # GitHub Packages SHA512/export run 39073362603 (2026-10-17).
 minimumReleaseAgeExclude:
