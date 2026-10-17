@@ -56,8 +56,11 @@ export const RequiredSupplierCategory: Story = {
       name: "Synthetic supplier application",
     }) as HTMLFormElement
     await expect(new FormData(form).get("category") ?? "").toBe("")
+    // Pointer selection verifies the previously blank required choice and the
+    // preserved native FormData name/value contract. Keyboard interaction is
+    // exercised separately by the Country story.
     await userEvent.click(trigger)
-    await userEvent.keyboard("{End}{Enter}")
+    await userEvent.click(canvas.getByRole("option", { name: "Vanilla" }))
     await expect(trigger).toHaveTextContent("Vanilla")
     await expect(new FormData(form).get("category")).toBe("vanilla")
   },
