@@ -17,8 +17,6 @@ describe("Base UI Button", () => {
 
   it("keeps disabled native semantics", () => {
     render(<Button disabled>Unavailable</Button>)
-    expect(screen.getByRole("button", { name: "Unavailable" }).hasAttribute("disabled")).toBe(
-      true,
-    )
+    expect(screen.getByRole("button", { name: "Unavailable" }).hasAttribute("disabled")).toBe(true)
   })
 })
