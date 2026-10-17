@@ -1,9 +1,14 @@
 "use client"
 
-import { useEffect, useId, useRef, type ReactNode } from "react"
+import type { ReactNode } from "react"
+import { Dialog as BaseDialog } from "@base-ui/react/dialog"
 import { X } from "lucide-react"
-import { Button } from "./button"
+import { buttonClassName } from "./button"
 
+/**
+ * Controlled Base UI dialog. Focus trap, Escape and focus restoration are
+ * provided by Base UI. Closing never executes a privileged workflow action.
+ */
 export function Dialog({
   open,
   title,
@@ -17,45 +22,38 @@ export function Dialog({
   children: ReactNode
   onClose: () => void
 }) {
-  const ref = useRef<HTMLDialogElement>(null)
-  const titleId = useId()
-  const descriptionId = useId()
-
-  useEffect(() => {
-    const dialog = ref.current
-    if (!dialog) return
-    if (open && !dialog.open) dialog.showModal()
-    if (!open && dialog.open) dialog.close()
-  }, [open])
-
   return (
-    <dialog
-      ref={ref}
-      aria-labelledby={titleId}
-      aria-describedby={description ? descriptionId : undefined}
-      onClose={onClose}
-      onCancel={onClose}
-      className="w-[min(36rem,calc(100%-2rem))] rounded-panel bg-surface p-0 text-ink shadow-overlay backdrop:bg-ink/60"
+    <BaseDialog.Root
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) onClose()
+      }}
     >
-      <div className="p-6 md:p-8">
-        <div className="flex items-start justify-between gap-6">
-          <div>
-            <h2 id={titleId} className="font-display text-2xl">
-              {title}
-            </h2>
-            {description ? (
-              <p id={descriptionId} className="mt-2 text-sm leading-6 text-muted">
-                {description}
-              </p>
-            ) : null}
+      <BaseDialog.Portal>
+        <BaseDialog.Backdrop className="fixed inset-0 z-50 bg-ink/60" />
+        <BaseDialog.Popup className="fixed left-1/2 top-1/2 z-[51] w-[min(36rem,calc(100%-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-panel bg-surface p-0 text-ink shadow-overlay outline-none">
+          <div className="p-6 md:p-8">
+            <div className="flex items-start justify-between gap-6">
+              <div>
+                <BaseDialog.Title className="font-display text-2xl">{title}</BaseDialog.Title>
+                {description ? (
+                  <BaseDialog.Description className="mt-2 text-sm leading-6 text-muted">
+                    {description}
+                  </BaseDialog.Description>
+                ) : null}
+              </div>
+              <BaseDialog.Close
+                className={buttonClassName({ variant: "ghost", size: "sm" })}
+                aria-label={"Close " + title}
+              >
+                <X aria-hidden="true" strokeWidth={1.75} className="size-5" />
+                Close
+              </BaseDialog.Close>
+            </div>
+            <div className="mt-6">{children}</div>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose} aria-label={`Close ${title}`}>
-            <X aria-hidden="true" strokeWidth={1.75} className="size-5" />
-            Close
-          </Button>
-        </div>
-        <div className="mt-6">{children}</div>
-      </div>
-    </dialog>
+        </BaseDialog.Popup>
+      </BaseDialog.Portal>
+    </BaseDialog.Root>
   )
 }

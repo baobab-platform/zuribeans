@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { Button as BaseButton } from "@base-ui/react/button"
 import type { ButtonHTMLAttributes, ReactNode } from "react"
 import { classNames } from "@/lib/ui/classnames"
 
@@ -47,7 +48,9 @@ export function Button({
   variant?: ButtonVariant
   size?: ButtonSize
 }) {
-  return <button type={type} className={buttonClassName({ variant, size, className })} {...props} />
+  return (
+    <BaseButton type={type} className={buttonClassName({ variant, size, className })} {...props} />
+  )
 }
 
 export function ButtonLink({
