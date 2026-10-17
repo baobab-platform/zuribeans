@@ -12,7 +12,7 @@ export function TradeMap({ locations }: { locations: readonly TradeMapLocation[]
       <div className="flex flex-col gap-4 border-b border-white/10 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p id="trade-map-title" className="font-display text-lg text-white">
-            Initial operating contexts
+            Proposed sourcing and market contexts
           </p>
           <p className="mt-1 text-xs text-white/70">
             Capability shown by role, not speculative routes
@@ -74,8 +74,8 @@ export function TradeMap({ locations }: { locations: readonly TradeMapLocation[]
       </div>
 
       <figcaption className="border-t border-white/10 px-5 py-3 text-xs leading-5 text-white/70">
-        Geography: Natural Earth public-domain data. Markers describe current ZuriBeans operating
-        roles; they do not represent live shipments, inventory or confirmed trade lanes.
+        Geography: Natural Earth public-domain data. Markers describe proposed editorial contexts,
+        not verified operating presence, live shipments, inventory or confirmed trade lanes.
       </figcaption>
     </figure>
   )
