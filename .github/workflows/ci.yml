@@ -19,7 +19,10 @@ jobs:
     name: Quality gates
     runs-on: ubuntu-26.04
     container:
-      image: ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend-e2e
+      image: ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend-e2e@sha256:eb9c401cea16c4f333c28b250dd455e505752dfc6d11e9779a182a02bc207213
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
       options: --user 0
     services:
       postgres:
