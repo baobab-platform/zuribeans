@@ -1,4 +1,5 @@
 # ZuriBeans — secure Codespaces registry access
+
 The image is digest pinned to [baobab-dev v1.4.4](https://github.com/baobab-platform/baobab-dev/releases/tag/v1.4.4).
 GitHub pulls the **private GHCR image before devcontainer commands**. A token
 inside the container cannot repair an image permission denial.
@@ -21,11 +22,13 @@ read-only secret) or the approved `GITHUB_TOKEN`. Never put raw tokens in
 source, URLs, build args or .env.
 
 After **new** Codespace creation:
+
 ```bash
 node scripts/codespaces/bootstrap.mjs
 baobab-verify --contract
 pnpm dev
 ```
+
 Expected: Node 24.19+, pnpm 11.24.0, all exact Shared package versions,
 frozen lockfile installation and private port 3000. 401 is missing/denied
 authentication; 403 is package/SSO admission; 404 may conceal private-package

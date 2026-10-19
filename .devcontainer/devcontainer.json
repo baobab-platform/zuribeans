@@ -14,10 +14,7 @@
     "NEXT_TELEMETRY_DISABLED": "1",
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0"
   },
-  "forwardPorts": [
-    3000,
-    6006
-  ],
+  "forwardPorts": [3000, 6006],
   "portsAttributes": {
     "3000": {
       "label": "ZuriBeans Next.js",
@@ -54,9 +51,7 @@
           }
         }
       },
-      "openFiles": [
-        "README.md"
-      ]
+      "openFiles": ["README.md"]
     },
     "vscode": {
       "extensions": [
