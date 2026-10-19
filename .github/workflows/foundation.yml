@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   foundation:
-    uses: baobab-platform/shared/.github/workflows/foundation-repository-gates.yml@756892fbdbcf0eb89bf62f720c372bad53748dea # BXS-05 verified private-registry Foundation increment
+    uses: baobab-platform/shared/.github/workflows/foundation-repository-gates.yml@2229fee5c2f12a93935c88877aee21e0a5d73e51 # BXS-05 verified private-registry Foundation increment
     with:
       foundation_ref: "756892fbdbcf0eb89bf62f720c372bad53748dea"
       dependency_review_enabled: true
