@@ -1,4 +1,5 @@
 # ZuriBeans Go-Live Masterplan v2.0
+
 ## Independent, governed, multi-market B2B cross-border trade
 
 **ID:** ZB-GOLIVE-MP-001  
@@ -34,12 +35,12 @@ Shared EA Gates A–E apply separately to architecture/contract, developer unfre
 
 ## 4. Releases — independent outcomes
 
-| Release | Minimum accepted business outcome | Not inferred |
-| --- | --- | --- |
-| **R0 Public Presence** | Approved market-aware public website, buyer/supplier information and qualified CMS publication/withdrawal; accessibility, SEO, performance, brand and operations; no false live trade claims | R1 order or legal seller permission |
-| **R1 Domestic B2B Foundation** | Approved buyer/supplier identity/KYB, legally authorised seller in **one explicitly named qualified market**, product eligibility, procurement/inventory ownership, commercial RFQ/quotation/order, ERP consequences, required settlements and domestic tax | Both markets or cross-border |
-| **R2 Cross-Border Corridor** | Specific directional product-class lane, verified exporter/importer actors, qualified transport/customs/docs/tax/FX/payment/ERP reconciliation, source and independently accepted provider evidence | Any other corridor, alcohol or product class |
-| **R3 Multi-market Expansion** | Additional independently authorised markets/lane directions, approved branch/intercompany flows, advanced warehousing and provenance-backed intelligence/reporting | Parent-level universal portfolio access |
+| Release                        | Minimum accepted business outcome                                                                                                                                                                                                                           | Not inferred                                 |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| **R0 Public Presence**         | Approved market-aware public website, buyer/supplier information and qualified CMS publication/withdrawal; accessibility, SEO, performance, brand and operations; no false live trade claims                                                                | R1 order or legal seller permission          |
+| **R1 Domestic B2B Foundation** | Approved buyer/supplier identity/KYB, legally authorised seller in **one explicitly named qualified market**, product eligibility, procurement/inventory ownership, commercial RFQ/quotation/order, ERP consequences, required settlements and domestic tax | Both markets or cross-border                 |
+| **R2 Cross-Border Corridor**   | Specific directional product-class lane, verified exporter/importer actors, qualified transport/customs/docs/tax/FX/payment/ERP reconciliation, source and independently accepted provider evidence                                                         | Any other corridor, alcohol or product class |
+| **R3 Multi-market Expansion**  | Additional independently authorised markets/lane directions, approved branch/intercompany flows, advanced warehousing and provenance-backed intelligence/reporting                                                                                          | Parent-level universal portfolio access      |
 
 Feature flags **withhold** unqualified capabilities; they never create market/legal authority. R0 may proceed separately. R1 is evaluated market by market; R2 lane, direction, product class, provider and effective date; R3 adds no automatic group grants. Partial approval must be explicit.
 
@@ -47,22 +48,22 @@ Feature flags **withhold** unqualified capabilities; they never create market/le
 
 These new programme gates **organise**, not delete, original ZB-00..29; consult [crosswalk](migration-crosswalk.md) for preserved original obligations. Implement independent safe tracks in parallel, but fail closed wherever a real upstream authority or provider is absent.
 
-| Gate | Work and proof | Primary owners |
-| --- | --- | --- |
-| ZB-G00 | Accepted programme, ADR/contract and original-gate crosswalk, live register, evidence policy, dependencies; no unresolved P0 semantic ambiguity silently resolved in code | ZuriBeans, Shared |
-| ZB-G01 | ZA/UG actual legal identities/mandates, independent documentary provenance, Organisation-first admission, corporate relationships, legal-actor/source separation | CP, IAM, legal reviewers |
-| ZB-G02 | Demand census, canonical version lock, seller/buyer/counterparty/product/market/corridor/event/finance ownership and compatibility; registry proposals go through owners | Shared, CP, domain teams |
-| ZB-G03 | Human Kratos/Keycloak federation where authorised, Hydra workloads, CP live grants/context, passkey/step-up for high risk, execution-point IAM/CP/PEP, revocation/SoD | IAM, CP, Trade, ERP |
-| ZB-G04 | Public, Buyer, Supplier and authorised staff estates, Figma IA alignment, BXS Shared Base UI/tokens package pins, WCAG 2.2 AA, mobile/keyboard/E2E/performance; CMS canonical content and bootstrap migration | ZuriBeans, CMS, Shared |
-| ZB-G05 | Buyer and supplier independent applications, KYB/qualification, staff review, canonical references, documents/custody/retention, approval/non-self-approval | ZuriBeans, CP, IAM, ERP |
-| ZB-G06 | Canonical product, origin, vanilla/coffee lots, classification/HS/UOM, market assortments, price and tax provenance, customer-specific visibility, bans/recalls | Trade, ERP, Regulations |
-| ZB-G07 | RFQ/quote, negotiated terms, maker/checker commitments, procurement/PO/receipt/three-way-match, native Trade seller authority, replay/reversal | Trade, ERP |
-| ZB-G08 | Owner/title/in-transit trace, availability, durable allocations, batches/quality, ERP-native AD_Client/AD_Org mapping, posting veto, balance/tie-out/reconciliation, legal-entity/intercompany correctness | ERP, Trade, CP |
-| ZB-G09 | Effective-dated lane rules and Incoterms, transport quotes/bookings/events/POD in qualified TMS, Trade Docs issuer state, independent customs, import/export/holds, insurance and traceability | TMS, Trade Docs, Regulations, Trade |
-| ZB-G10 | Invoicing/AR/AP/FX/credit, separate billing/payment/PSP bank and settlement outcomes, merchant eligibility and approvals, refunds/disputes, GL posting/reconciliation | ERP, Payments, Subscriptions |
-| ZB-G11 | Real-component integration receipts, negative/replay/failure injection, scenario proof domestic/export/import/intercompany/partial damage/customs hold, no assumed certification | Infrastructure, all owners |
-| ZB-G12 | Supported Foundation/toolchains, threat model, SLO/alerts, signed digests/SBOM, secrets/KMS, backups and recovery, POPIA/cross-border retention, protected staging, rollback/runbooks | Infrastructure, Security |
-| ZB-G13 | Per-release, tenant, market, actor, product/corridor and capability GO/NO-GO; external approvals, business UAT, operational signoff, CP production activation and post-release observation | Business, Legal, Security, Operations, CP |
+| Gate   | Work and proof                                                                                                                                                                                                | Primary owners                            |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| ZB-G00 | Accepted programme, ADR/contract and original-gate crosswalk, live register, evidence policy, dependencies; no unresolved P0 semantic ambiguity silently resolved in code                                     | ZuriBeans, Shared                         |
+| ZB-G01 | ZA/UG actual legal identities/mandates, independent documentary provenance, Organisation-first admission, corporate relationships, legal-actor/source separation                                              | CP, IAM, legal reviewers                  |
+| ZB-G02 | Demand census, canonical version lock, seller/buyer/counterparty/product/market/corridor/event/finance ownership and compatibility; registry proposals go through owners                                      | Shared, CP, domain teams                  |
+| ZB-G03 | Human Kratos/Keycloak federation where authorised, Hydra workloads, CP live grants/context, passkey/step-up for high risk, execution-point IAM/CP/PEP, revocation/SoD                                         | IAM, CP, Trade, ERP                       |
+| ZB-G04 | Public, Buyer, Supplier and authorised staff estates, Figma IA alignment, BXS Shared Base UI/tokens package pins, WCAG 2.2 AA, mobile/keyboard/E2E/performance; CMS canonical content and bootstrap migration | ZuriBeans, CMS, Shared                    |
+| ZB-G05 | Buyer and supplier independent applications, KYB/qualification, staff review, canonical references, documents/custody/retention, approval/non-self-approval                                                   | ZuriBeans, CP, IAM, ERP                   |
+| ZB-G06 | Canonical product, origin, vanilla/coffee lots, classification/HS/UOM, market assortments, price and tax provenance, customer-specific visibility, bans/recalls                                               | Trade, ERP, Regulations                   |
+| ZB-G07 | RFQ/quote, negotiated terms, maker/checker commitments, procurement/PO/receipt/three-way-match, native Trade seller authority, replay/reversal                                                                | Trade, ERP                                |
+| ZB-G08 | Owner/title/in-transit trace, availability, durable allocations, batches/quality, ERP-native AD_Client/AD_Org mapping, posting veto, balance/tie-out/reconciliation, legal-entity/intercompany correctness    | ERP, Trade, CP                            |
+| ZB-G09 | Effective-dated lane rules and Incoterms, transport quotes/bookings/events/POD in qualified TMS, Trade Docs issuer state, independent customs, import/export/holds, insurance and traceability                | TMS, Trade Docs, Regulations, Trade       |
+| ZB-G10 | Invoicing/AR/AP/FX/credit, separate billing/payment/PSP bank and settlement outcomes, merchant eligibility and approvals, refunds/disputes, GL posting/reconciliation                                         | ERP, Payments, Subscriptions              |
+| ZB-G11 | Real-component integration receipts, negative/replay/failure injection, scenario proof domestic/export/import/intercompany/partial damage/customs hold, no assumed certification                              | Infrastructure, all owners                |
+| ZB-G12 | Supported Foundation/toolchains, threat model, SLO/alerts, signed digests/SBOM, secrets/KMS, backups and recovery, POPIA/cross-border retention, protected staging, rollback/runbooks                         | Infrastructure, Security                  |
+| ZB-G13 | Per-release, tenant, market, actor, product/corridor and capability GO/NO-GO; external approvals, business UAT, operational signoff, CP production activation and post-release observation                    | Business, Legal, Security, Operations, CP |
 
 ### G04 experience boundaries
 
@@ -96,7 +97,7 @@ Positive and negative proof for: market-isolated public articles and private cat
 
 ## 8. Engineering policy and implementation evidence
 
-Accepted Shared ADR-041 requires research against proven alternatives, lawful source/licence handling, re-engineering fit for Africa, maintainable comments for *nontrivial invariants*, narrow tested changes, threat models, idiomatic secure code and reproducible provenance. ADR-040 owns Shared Experience packages; pin exact published version/integrity before consumer CI. Match baobab-dev Foundation versions without unsafe blanket bumps: Node 24+ under approved app baseline, PostgreSQL 17 where qualified with explicit PG16 migration plan and retained rollback, native ERP Java/runtime evidence; no manual deletion of old database volumes. Codespaces package/GHCR authentication proof is separate from production workload credentials.
+Accepted Shared ADR-041 requires research against proven alternatives, lawful source/licence handling, re-engineering fit for Africa, maintainable comments for _nontrivial invariants_, narrow tested changes, threat models, idiomatic secure code and reproducible provenance. ADR-040 owns Shared Experience packages; pin exact published version/integrity before consumer CI. Match baobab-dev Foundation versions without unsafe blanket bumps: Node 24+ under approved app baseline, PostgreSQL 17 where qualified with explicit PG16 migration plan and retained rollback, native ERP Java/runtime evidence; no manual deletion of old database volumes. Codespaces package/GHCR authentication proof is separate from production workload credentials.
 
 Each PR must declare: gates, accepted ADR/contract versions, exact source SHA, test and browser/native receipts, negative cases, external provider/legal approval where applicable, isolation and privacy impact, migration and rollback, current blocker and independent approver. A passed unit check never means Gate D/E.
 
