@@ -7,7 +7,9 @@ consumer:
 sources:
   shared:
     repository: "baobab-platform/shared"
-    commit: "c1acb318d55ce3ea87e8e13f780c92a62725b730"
+    # Accepted EA v2.3 baseline: ADR-SHARED-039/040/041 and the #354 INT-03
+    # CMS proof-bootstrap decision are on this commit.
+    commit: "409d780d05f7825ab1228649541032d42a7b0b13"
     legal_entity_registry: "contracts/legal-entity/registry.yaml"
     development_environment: "contracts/development-environment/schema.yaml"
     supplier_onboarding:
@@ -16,16 +18,44 @@ sources:
         Estate-owned pre-approval intake (system-of-record: hosting-estate).
         Status vocabulary and rejection_reason_code align with domain.schema.json.
         ERP Supplier remains canonical_owner erp; this package does not replace it.
+        Since the previous pin the package only added KYB evidence/decision
+        events (kyb.evidence-recorded.v1, kyb.decision-recorded.v1); the four
+        events and twelve rejection codes this estate emits are unchanged.
+        The KYB events are not yet produced here (ZB-G05).
     buyer_organisation:
       path: "contracts/buyer-organisation/v1"
       note: >-
         Platform buyer-organisation resource and lifecycle events published.
         Estate HTTP surface for buyers remains Trade-mediated (Gate ZB-04).
+        No estate code validates against this package yet; its v1 events grew
+        since the previous pin and must be reviewed before any estate consumer
+        is added.
+    trade_b2b:
+      path: "contracts/trade/v1"
+      note: >-
+        Provider-neutral buyer-context, quick-order, RFQ and quotation schemas
+        and the canonical commerce.cart.manage, commercial.rfq.manage and
+        commercial.quotation.manage capabilities. Business authority stays with
+        Trade under a server-resolved CP context; the browser never asserts one.
+    trade_order_authority:
+      path: "contracts/trade/v2"
+      note: >-
+        ADR-SHARED-039 order-operation catalogue and CP-owned Seller Operating
+        Bindings. Informational for this estate: Trade enforces it at the
+        native execution point, and only Trade-A classes are activatable.
+    content:
+      path: "contracts/content/v1"
+      note: >-
+        Canonical content.entry.resolve (POST /v1/content/resolve) under a
+        trusted CP context_id. Not yet consumed: the estate still reads the
+        ADR-0014 file projection (ZB-G04).
   trade:
+    # Unchanged pending a Store API compatibility review (see gaps).
     repository: "baobab-platform/baobab-trade"
     commit: "bd4074c050183cdca4f3831d9e47524c26a4677e"
     api: "Medusa v2 Store API"
   cms:
+    # Unchanged; the pinned ADR paths are still present on baobab-cms main.
     repository: "baobab-platform/baobab-cms"
     commit: "1d742586d1de39e34ace7ac9948a462838b924fd"
     authority_decisions:
@@ -37,14 +67,15 @@ sources:
       versioned estate delivery contract from this source; the current file adapter is a temporary
       read-only projection under estate ADR-0014, not a transfer of canonical ownership.
 gaps:
-  - "Shared has not published a canonical commerce Store API package."
-  - "Trade publishes Medusa Store API and B2B module models; buyer apply/admission HTTP contracts beyond stock Medusa remain engine-local until a Shared OpenAPI package is published."
-  - "Shared has not published purchasing, RFQ or quotation schemas."
-  - "Control Plane implements Market and capability-resolution domains, but ZuriBeans has not locked a canonical UG/ZA Market and buyer-capability resolution contract that Trade exposes to this frontend."
+  - "Shared publishes provider-neutral B2B wire schemas (trade/v1) but no ZuriBeans-specific Store API OpenAPI; buyer apply/admission HTTP beyond stock Medusa remains engine-local."
+  - "The Trade pin predates Medusa 2.21.2 (estate SDK is 2.21.0) and ADR-SHARED-039 Trade-A, which governs /store/carts and /store/orders in protected runtimes. Re-pin only after a Store API and denial-path compatibility review."
+  - "The estate consumes no signed server-derived CP PlatformContext yet; Masterplan v2.0 §2 requires one at every API and native execution point (ZB-G03)."
+  - "Control Plane implements Market and capability-resolution domains, but ZuriBeans has not locked a canonical UG/ZA Market and buyer-capability resolution contract that Trade exposes to this frontend. The legal-entity registry still lists ZURIBEANS markets as empty and incorporation_claim NOT_INCORPORATED."
   - "IAM ADR-0010 defines the intended ZuriBeans B2B identity and organisation-access model but remains Proposed; the approved end-to-end identity-to-Trade buyer-context contract is not published."
-  - "Baobab CMS is the accepted authority for editorial content and its architecture revision is pinned above, but no versioned ZuriBeans article/taxonomy delivery schema, API profile or Control Plane capability binding is published for runtime consumption. Estate ADR-0014 confines the current file content to a temporary read-only projection behind InsightContentProvider."
+  - "Shared content/v1 defines content.entry.resolve, but there is no ZuriBeans caller identity, CMS provider binding or estate consumer; the CMS provider is PARTIAL and the INT-03 registry activation hold applies. Estate ADR-0014 confines current content to a temporary read-only projection behind InsightContentProvider."
 notes:
   - "Resolved: shared's ADR-0001 classifies Zuribeans as B2B/Next.js (contracts/legal-entity/registry.yaml)."
   - "Resolved (ZB-05): contracts/supplier-onboarding/v1 is published on Shared and locked above; estate owns Supplier Application pre-approval per system-of-record.yaml."
   - "Resolved (partial): contracts/buyer-organisation/v1 is published on Shared; full buyer command OpenAPI remains a gap tracked under Trade/Shared coordination."
-  - "Contract audit 2026-09-20 pins Shared c1acb318d55ce3ea87e8e13f780c92a62725b730 for supplier-onboarding and buyer-organisation packages."
+  - "Corrected 2026-10-21: the previous gap 'Shared has not published purchasing, RFQ or quotation schemas' was already untrue at c1acb318 (procurement/v1, rfq/v1, quotation/v1 and trade/v1 were present); they are not yet consumed by this estate."
+  - "Contract audit 2026-10-21 (ZB-G02) re-pins Shared from c1acb318d55ce3ea87e8e13f780c92a62725b730 (2026-09-20) to 409d780d05f7825ab1228649541032d42a7b0b13. A pin records which contract text this estate reviewed; it is not provider qualification or activation."
