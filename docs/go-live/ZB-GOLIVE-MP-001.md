@@ -4,7 +4,7 @@
 
 **ID:** ZB-GOLIVE-MP-001  
 **Version:** 2.0  
-**Status:** Accepted — programme governance baseline, 21 October 2026; publication subject to this PR passing repository acceptance  
+**Status:** Accepted — programme governance baseline, 21 October 2026; published by #126  
 **Owner:** ZuriBeans business sponsor and digital-estate delivery owner  
 **Supersedes:** [Original unversioned plan](../adr/ZuriBeans%20Go-Live%20Implementation%20Plan%20%E2%80%94%20Multi-Market%20B2B%20Cross-Border%20Trading.md), retained as historical requirements and gate inventory  
 **Governing:** [Shared EA v2.3](https://github.com/baobab-platform/shared/blob/main/docs/architecture/EA-implementation-plan-v2.3-2026-10-20.md), Accepted Shared ADRs and contracts, including the retained [EA v2.2 L4 scenario ID matrix](https://github.com/baobab-platform/shared/blob/main/docs/architecture/ea-v2.2-integration-acceptance-matrix.md); [Nabhold Go-Live v2.0](https://github.com/baobab-platform/nabhold/blob/main/docs/go-live/NAB-GOLIVE-MP-001.md) for corporate relationships only.
