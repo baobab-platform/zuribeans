@@ -30,8 +30,8 @@ export default async function AccountLayout({ children }: { children: React.Reac
             : { tone: "warning" as const, label: "Trading review pending" }
 
   return (
-    <section className="page-container py-12 lg:py-16">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Buyer account" }]} />
+    <section className="min-h-[65vh] bg-surface-muted py-10 lg:py-14">
+      <div className="page-container"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Buyer account" }]} />
       <div className="mt-8 flex flex-col gap-6 border-b border-line pb-7 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="flex flex-wrap items-center gap-3">
@@ -48,18 +48,18 @@ export default async function AccountLayout({ children }: { children: React.Reac
           </Button>
         </form>
       </div>
-      <nav className="mt-6 flex gap-2 border-b border-line" aria-label="Buyer account navigation">
+      <nav className="mt-6 flex gap-2 overflow-x-auto border-b border-line pb-1" aria-label="Buyer account navigation">
         {navigation.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="border-b-2 border-transparent px-3 py-3 text-sm font-semibold hover:border-ink"
+            className="min-h-12 shrink-0 whitespace-nowrap border-b-2 border-transparent px-3 py-3 text-sm font-semibold hover:border-ink"
           >
             {item.label}
           </Link>
         ))}
       </nav>
-      <div className="mt-10">{children}</div>
+      <div className="mt-10 rounded-panel border border-line bg-surface p-5 shadow-panel sm:p-8">{children}</div></div>
     </section>
   )
 }
