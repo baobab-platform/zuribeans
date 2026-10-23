@@ -78,12 +78,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const currentPage = Math.min(query.page, totalPages)
 
   return (
-    <section className="page-container py-12 lg:py-16">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
+    <section className="bg-canvas py-12 lg:py-16">
+      <div className="page-container"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Products" }]} />
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_24rem] lg:items-end">
         <div>
           <p className="eyebrow">Current catalogue</p>
-          <h1 className="mt-4 max-w-4xl font-display text-5xl leading-tight text-balance md:text-7xl">
+          <h1 className="mt-4 max-w-4xl font-display text-5xl font-normal leading-[1.08] tracking-tight text-balance md:text-7xl">
             Products for professional procurement.
           </h1>
         </div>
@@ -214,6 +214,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           />
         </div>
       )}
-    </section>
+    </div></section>
   )
 }
