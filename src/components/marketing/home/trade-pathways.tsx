@@ -15,13 +15,13 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
   }
 
   return (
-    <section className="page-container py-24 lg:py-32" aria-label="Ways to trade with ZuriBeans">
-      <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+    <section className="bg-ink py-20 text-white lg:py-28" aria-label="Ways to trade with ZuriBeans">
+      <div className="page-container"><div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
         <SectionHeading
           eyebrow="Ready to trade?"
-          title="Choose the conversation that fits your role."
+          title="Two ways to work with ZuriBeans."
         />
-        <p className="max-w-xl justify-self-end text-base leading-7 text-muted">
+        <p className="max-w-xl justify-self-end text-base leading-7 text-white/70">
           Good trade starts with the right information. Buyers define a requirement; suppliers begin
           a qualification process. Each path has a clear next step.
         </p>
@@ -97,7 +97,7 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
             </article>
           )
         })}
-      </div>
+      </div></div>
     </section>
   )
 }
