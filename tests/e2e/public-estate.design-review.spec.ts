@@ -56,9 +56,14 @@ test.describe("full public estate design review", () => {
         })
 
         if (size.label === "desktop") {
-          const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()
+          const axe = await new AxeBuilder({ page })
+            .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+            .analyze()
           expect(
-            axe.violations.map((violation) => `${violation.id}: ${violation.nodes.map(n => n.target.join(" ")).join(", ")}`),
+            axe.violations.map(
+              (violation) =>
+                `${violation.id}: ${violation.nodes.map((n) => n.target.join(" ")).join(", ")}`,
+            ),
           ).toEqual([])
         }
       })
@@ -68,7 +73,9 @@ test.describe("full public estate design review", () => {
 
 test.describe("protected portal presentation boundary", () => {
   for (const route of ["/account", "/supplier"]) {
-    test(`unauthenticated ${route} is not rendered as an authenticated portal`, async ({ page }) => {
+    test(`unauthenticated ${route} is not rendered as an authenticated portal`, async ({
+      page,
+    }) => {
       await page.goto(route, { waitUntil: "domcontentloaded" })
       await expect(page).not.toHaveURL(new RegExp(`${route}/?$`))
       await expect(page.getByRole("button", { name: "Sign out" })).toHaveCount(0)
