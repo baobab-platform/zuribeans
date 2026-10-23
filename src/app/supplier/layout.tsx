@@ -14,8 +14,8 @@ export default async function SupplierLayout({ children }: { children: React.Rea
   const customer = await requireCustomer("/supplier")
 
   return (
-    <section className="page-container py-12 lg:py-16">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Supplier account" }]} />
+    <section className="min-h-[65vh] bg-surface-muted py-10 lg:py-14">
+      <div className="page-container"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Supplier account" }]} />
       <div className="mt-8 flex flex-col gap-6 border-b border-line pb-7 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="eyebrow">Supplier account</p>
@@ -29,7 +29,7 @@ export default async function SupplierLayout({ children }: { children: React.Rea
         </form>
       </div>
       <SupplierNavigation />
-      <div className="mt-10">{children}</div>
+      <div className="mt-10 rounded-panel border border-line bg-surface p-5 shadow-panel sm:p-8">{children}</div></div>
     </section>
   )
 }
