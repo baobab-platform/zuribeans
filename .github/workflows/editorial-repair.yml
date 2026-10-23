@@ -60,7 +60,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .github/workflows/editorial-repair.yml package.json pnpm-lock.yaml docs/design/figma-make-editorial-migration.md src/app/account/layout.tsx src/app/insights/page.tsx src/app/products/page.tsx src/app/supplier/layout.tsx src/components/layout/site-footer.tsx src/components/marketing/corporate-hero.tsx src/components/marketing/home/featured-commodities.tsx src/components/marketing/home/home-hero.tsx src/components/marketing/home/home-insights.tsx src/components/marketing/home/trade-pathways.tsx src/components/marketing/home/trade-process.tsx src/components/marketing/section-heading.tsx tests/e2e/figma-estate.responsive.spec.ts
+          git add package.json pnpm-lock.yaml docs/design/figma-make-editorial-migration.md src/app/account/layout.tsx src/app/insights/page.tsx src/app/products/page.tsx src/app/supplier/layout.tsx src/components/layout/site-footer.tsx src/components/marketing/corporate-hero.tsx src/components/marketing/home/featured-commodities.tsx src/components/marketing/home/home-hero.tsx src/components/marketing/home/home-insights.tsx src/components/marketing/home/trade-pathways.tsx src/components/marketing/home/trade-process.tsx src/components/marketing/section-heading.tsx tests/e2e/figma-estate.responsive.spec.ts
           if ! git diff --cached --quiet; then
             git commit -m "fix(ui): format estate migration and patch Next.js [ui-repair-complete]"
             git push origin HEAD:feat/figma-make-editorial-estate
