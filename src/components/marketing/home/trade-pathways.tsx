@@ -38,7 +38,7 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
               <article
                 key={pathway.tone}
                 className={classNames(
-                  "flex min-h-80 flex-col p-7 sm:p-10 lg:p-12",
+                  "flex min-h-80 flex-col px-5 py-5 sm:p-10 lg:p-12",
                   buyer ? "bg-ink-soft text-white" : "bg-surface text-ink",
                 )}
               >
@@ -62,12 +62,12 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
                     {pathway.audience}
                   </span>
                 </div>
-                <h3 className="mt-9 max-w-md font-display text-3xl font-normal leading-tight sm:text-4xl">
+                <h3 className="mt-4 max-w-md font-display text-2xl font-normal leading-tight sm:mt-9 sm:text-4xl">
                   {pathway.title}
                 </h3>
                 <p
                   className={classNames(
-                    "mt-5 max-w-lg leading-7",
+                    "mt-3 max-w-lg text-sm leading-6 sm:mt-5 sm:text-base sm:leading-7",
                     buyer ? "text-white/75" : "text-muted",
                   )}
                 >
@@ -75,7 +75,7 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
                 </p>
                 <p
                   className={classNames(
-                    "mt-6 border-t pt-4 text-sm leading-6",
+                    "mt-3 border-t pt-3 text-xs leading-5 sm:mt-6 sm:pt-4 sm:text-sm sm:leading-6",
                     buyer ? "border-white/15 text-white/70" : "border-line text-muted",
                   )}
                 >
@@ -85,7 +85,7 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
                   href={pathway.href}
                   variant={buyer ? "primary" : "outline"}
                   className={classNames(
-                    "mt-8 min-h-12 self-start",
+                    "mt-4 min-h-11 self-start sm:mt-8 sm:min-h-12",
                     buyer && "bg-clay text-ink hover:bg-clay-inverse",
                   )}
                 >
