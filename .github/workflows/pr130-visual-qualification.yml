@@ -50,6 +50,15 @@ jobs:
           pnpm format:check
           pnpm lint
           pnpm typecheck
+      - name: Commit verified dependency patch before browser qualification
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml
+          if ! git diff --cached --quiet; then
+            git commit -m "fix(security): update Storybook suite [pr130-verified-repair]"
+            git push origin HEAD:feat/figma-make-editorial-estate
+          fi
       - name: Build candidate
         run: pnpm build
       - name: Generate visual candidate images
@@ -65,13 +74,3 @@ jobs:
           path: |
             tests/e2e/landing-page.visual.spec.ts-snapshots/
             test-results/
-      - name: Commit dependency patches only, leave screenshot candidates for review
-        if: success()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package.json pnpm-lock.yaml
-          if ! git diff --cached --quiet; then
-            git commit -m "fix(security): update Storybook suite [pr130-verified-repair]"
-            git push origin HEAD:feat/figma-make-editorial-estate
-          fi
