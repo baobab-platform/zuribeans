@@ -25,12 +25,6 @@ test.describe("landing page visual regression", () => {
       await page.goto("/", { waitUntil: "domcontentloaded" })
       await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
       await page.evaluate(() => document.fonts?.ready)
-      // Wait for image decoding before pixel comparison to avoid transient captures.
-      await page.evaluate(async () => {
-        await Promise.all(
-          Array.from(document.images).map((image) => image.decode().catch(() => undefined)),
-        )
-      })
       await expect(page).toHaveScreenshot(`landing-page-${viewport.name}.png`, {
         animations: "disabled",
         caret: "hide",
