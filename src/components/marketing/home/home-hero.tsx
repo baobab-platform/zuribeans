@@ -5,36 +5,45 @@ import { ButtonLink } from "@/components/ui/button"
 import type { HomeHeroContent } from "@/lib/content/homepage"
 import type { ZuribeansMarket } from "@/lib/market/markets"
 
-type HomeHeroProps = {
-  content: HomeHeroContent
-  market: ZuribeansMarket
-}
-
-export function HomeHero({ content, market }: HomeHeroProps) {
+/**
+ * The Figma Make editorial hero: a single immersive image, deliberate dark
+ * gradient, left-aligned message and an evidence cue. Content, market context
+ * and destinations remain owned by the existing public estate.
+ */
+export function HomeHero({ content, market }: { content: HomeHeroContent; market: ZuribeansMarket }) {
   return (
-    <section className="relative overflow-hidden bg-ink text-white">
-      <div className="page-container grid min-h-[calc(100svh-var(--header-utility-height)-var(--header-main-height))] items-center gap-10 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:py-20">
-        <div className="relative z-10 lg:py-10">
-          <p className="eyebrow-inverse">{content.eyebrow}</p>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl leading-[0.98] tracking-tight text-balance sm:text-6xl lg:text-7xl">
-            {content.title} <span className="text-clay">{content.accent}</span>
+    <section className="relative isolate flex min-h-[min(48rem,calc(100svh-var(--header-utility-height)-var(--header-main-height)))] items-end overflow-hidden bg-ink text-white lg:min-h-[45rem]">
+      <Image
+        src={content.image.src}
+        alt={content.image.alt}
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,36,29,.94)_0%,rgba(8,36,29,.74)_43%,rgba(8,36,29,.30)_100%)] max-sm:bg-[linear-gradient(0deg,rgba(8,36,29,.96)_0%,rgba(8,36,29,.68)_65%,rgba(8,36,29,.42)_100%)]"
+      />
+      <div className="page-container relative z-10 grid gap-10 pb-16 pt-28 sm:pb-20 lg:grid-cols-12 lg:pb-24 lg:pt-36">
+        <div className="lg:col-span-9 xl:col-span-8">
+          <div className="mb-7 flex flex-wrap items-center gap-3">
+            <span className="eyebrow-inverse">{content.eyebrow}</span>
+            <span className="h-px w-9 bg-clay" aria-hidden="true" />
+            <span className="text-xs tracking-[.12em] text-white/70 uppercase">Professional B2B sourcing</span>
+          </div>
+          <h1 className="max-w-[14ch] font-display text-[clamp(2.65rem,6.6vw,5.25rem)] font-normal leading-[1.06] tracking-[-.025em] text-balance">
+            {content.title} <em className="font-normal text-sand">{content.accent}</em>
           </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-8 text-white/75">{content.description}</p>
+          <p className="mt-7 max-w-xl text-base leading-8 font-light text-white/80 sm:text-lg">
+            {content.description}
+          </p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <ButtonLink
-              href={content.primaryCta.href}
-              size="lg"
-              className="bg-clay text-ink hover:bg-clay-inverse"
-            >
+            <ButtonLink href={content.primaryCta.href} size="lg" className="bg-clay font-semibold text-ink hover:bg-clay-inverse">
               {content.primaryCta.label}
               <ArrowRight className="size-4" aria-hidden="true" />
             </ButtonLink>
-            <ButtonLink
-              href={content.secondaryCta.href}
-              variant="outline"
-              size="lg"
-              className="border-white/30 text-white hover:bg-white/10"
-            >
+            <ButtonLink href={content.secondaryCta.href} variant="outline" size="lg" className="border-white/50 text-white hover:bg-white/10">
               {content.secondaryCta.label}
             </ButtonLink>
           </div>
@@ -42,25 +51,10 @@ export function HomeHero({ content, market }: HomeHeroProps) {
             <MarketContextBadge market={market} tone="inverse" />
           </div>
         </div>
-
-        <div className="relative min-h-[28rem] overflow-hidden rounded-[2rem] border border-white/10 bg-ink-soft shadow-panel sm:min-h-[34rem]">
-          <Image
-            src={content.image.src}
-            alt={content.image.alt}
-            fill
-            priority
-            sizes="(min-width: 1280px) 704px, (min-width: 1024px) 55vw, 100vw"
-            className="object-cover"
-          />
-          <div
-            className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/5 to-transparent"
-            aria-hidden="true"
-          />
-          <div className="absolute inset-x-5 bottom-5 rounded-panel border border-white/20 bg-ink/80 p-5 text-white backdrop-blur-sm sm:inset-x-7 sm:bottom-7 sm:p-6">
+        <div className="flex items-end lg:col-span-3 xl:col-span-4 lg:justify-end">
+          <div className="max-w-xs border-l-2 border-clay pl-5">
             <p className="eyebrow-inverse">{content.evidence.eyebrow}</p>
-            <p className="mt-2 max-w-xl font-display text-2xl sm:text-3xl">
-              {content.evidence.statement}
-            </p>
+            <p className="mt-3 font-display text-xl leading-snug text-white/90 sm:text-2xl">{content.evidence.statement}</p>
           </div>
         </div>
       </div>
