@@ -12,7 +12,10 @@ export function FeaturedCommodities({ commodities }: FeaturedCommoditiesProps) {
   }
 
   return (
-    <section className="border-t border-line bg-canvas py-20 lg:py-28" aria-label="Featured commodities">
+    <section
+      className="border-t border-line bg-canvas py-20 lg:py-28"
+      aria-label="Featured commodities"
+    >
       <div className="page-container grid gap-8 lg:grid-cols-[0.65fr_1.35fr] lg:items-end">
         <SectionHeading
           eyebrow="Featured commodities"

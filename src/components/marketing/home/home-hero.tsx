@@ -10,7 +10,13 @@ import type { ZuribeansMarket } from "@/lib/market/markets"
  * gradient, left-aligned message and an evidence cue. Content, market context
  * and destinations remain owned by the existing public estate.
  */
-export function HomeHero({ content, market }: { content: HomeHeroContent; market: ZuribeansMarket }) {
+export function HomeHero({
+  content,
+  market,
+}: {
+  content: HomeHeroContent
+  market: ZuribeansMarket
+}) {
   return (
     <section className="relative isolate flex min-h-[min(48rem,calc(100svh-var(--header-utility-height)-var(--header-main-height)))] items-end overflow-hidden bg-ink text-white lg:min-h-[45rem]">
       <Image
@@ -30,7 +36,9 @@ export function HomeHero({ content, market }: { content: HomeHeroContent; market
           <div className="mb-7 flex flex-wrap items-center gap-3">
             <span className="eyebrow-inverse">{content.eyebrow}</span>
             <span className="h-px w-9 bg-clay" aria-hidden="true" />
-            <span className="text-xs tracking-[.12em] text-white/70 uppercase">Professional B2B sourcing</span>
+            <span className="text-xs tracking-[.12em] text-white/70 uppercase">
+              Professional B2B sourcing
+            </span>
           </div>
           <h1 className="max-w-[14ch] font-display text-[clamp(2.65rem,6.6vw,5.25rem)] font-normal leading-[1.06] tracking-[-.025em] text-balance">
             {content.title} <em className="font-normal text-sand">{content.accent}</em>
@@ -39,11 +47,20 @@ export function HomeHero({ content, market }: { content: HomeHeroContent; market
             {content.description}
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <ButtonLink href={content.primaryCta.href} size="lg" className="bg-clay font-semibold text-ink hover:bg-clay-inverse">
+            <ButtonLink
+              href={content.primaryCta.href}
+              size="lg"
+              className="bg-clay font-semibold text-ink hover:bg-clay-inverse"
+            >
               {content.primaryCta.label}
               <ArrowRight className="size-4" aria-hidden="true" />
             </ButtonLink>
-            <ButtonLink href={content.secondaryCta.href} variant="outline" size="lg" className="border-white/50 text-white hover:bg-white/10">
+            <ButtonLink
+              href={content.secondaryCta.href}
+              variant="outline"
+              size="lg"
+              className="border-white/50 text-white hover:bg-white/10"
+            >
               {content.secondaryCta.label}
             </ButtonLink>
           </div>
@@ -54,7 +71,9 @@ export function HomeHero({ content, market }: { content: HomeHeroContent; market
         <div className="flex items-end lg:col-span-3 xl:col-span-4 lg:justify-end">
           <div className="max-w-xs border-l-2 border-clay pl-5">
             <p className="eyebrow-inverse">{content.evidence.eyebrow}</p>
-            <p className="mt-3 font-display text-xl leading-snug text-white/90 sm:text-2xl">{content.evidence.statement}</p>
+            <p className="mt-3 font-display text-xl leading-snug text-white/90 sm:text-2xl">
+              {content.evidence.statement}
+            </p>
           </div>
         </div>
       </div>

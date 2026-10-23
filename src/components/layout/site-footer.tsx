@@ -63,7 +63,11 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
   const footerGroups = getFooterGroups(marketContext)
 
   return (
-    <footer className="bg-ink-utility text-white" data-tone="inverse" aria-labelledby="footer-heading">
+    <footer
+      className="bg-ink-utility text-white"
+      data-tone="inverse"
+      aria-labelledby="footer-heading"
+    >
       <h2 id="footer-heading" className="sr-only">
         Footer navigation
       </h2>

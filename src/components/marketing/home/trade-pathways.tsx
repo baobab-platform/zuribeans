@@ -26,8 +26,8 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
             tone="inverse"
           />
           <p className="max-w-xl text-base leading-7 text-white/75 lg:justify-self-end">
-            Good trade starts with the right information. Buyers define a requirement;
-            suppliers begin qualification. Each path has an accountable next step.
+            Good trade starts with the right information. Buyers define a requirement; suppliers
+            begin qualification. Each path has an accountable next step.
           </p>
         </div>
         <div className="mt-12 grid gap-px overflow-hidden border border-white/15 bg-white/15 md:grid-cols-2">
@@ -65,7 +65,12 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
                 <h3 className="mt-9 max-w-md font-display text-3xl font-normal leading-tight sm:text-4xl">
                   {pathway.title}
                 </h3>
-                <p className={classNames("mt-5 max-w-lg leading-7", buyer ? "text-white/75" : "text-muted")}>
+                <p
+                  className={classNames(
+                    "mt-5 max-w-lg leading-7",
+                    buyer ? "text-white/75" : "text-muted",
+                  )}
+                >
                   {pathway.description}
                 </p>
                 <p

@@ -15,21 +15,25 @@ export default async function SupplierLayout({ children }: { children: React.Rea
 
   return (
     <section className="min-h-[65vh] bg-surface-muted py-10 lg:py-14">
-      <div className="page-container"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Supplier account" }]} />
-      <div className="mt-8 flex flex-col gap-6 border-b border-line pb-7 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="eyebrow">Supplier account</p>
-          <h1 className="mt-3 font-display text-4xl">Supplier workspace</h1>
-          <p className="mt-2 text-sm text-muted">Signed in as {customer.email}</p>
+      <div className="page-container">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Supplier account" }]} />
+        <div className="mt-8 flex flex-col gap-6 border-b border-line pb-7 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="eyebrow">Supplier account</p>
+            <h1 className="mt-3 font-display text-4xl">Supplier workspace</h1>
+            <p className="mt-2 text-sm text-muted">Signed in as {customer.email}</p>
+          </div>
+          <form action={logoutAction}>
+            <Button type="submit" variant="outline">
+              Sign out
+            </Button>
+          </form>
         </div>
-        <form action={logoutAction}>
-          <Button type="submit" variant="outline">
-            Sign out
-          </Button>
-        </form>
+        <SupplierNavigation />
+        <div className="mt-10 rounded-panel border border-line bg-surface p-5 shadow-panel sm:p-8">
+          {children}
+        </div>
       </div>
-      <SupplierNavigation />
-      <div className="mt-10 rounded-panel border border-line bg-surface p-5 shadow-panel sm:p-8">{children}</div></div>
     </section>
   )
 }

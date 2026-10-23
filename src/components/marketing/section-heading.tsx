@@ -16,7 +16,9 @@ export function SectionHeading({
   return (
     <div className={classNames("max-w-3xl", align === "center" && "mx-auto text-center")}>
       <p className={tone === "inverse" ? "eyebrow-inverse" : "eyebrow"}>{eyebrow}</p>
-      <h2 className="mt-4 font-display text-4xl font-normal leading-[1.12] tracking-tight text-balance md:text-5xl">{title}</h2>
+      <h2 className="mt-4 font-display text-4xl font-normal leading-[1.12] tracking-tight text-balance md:text-5xl">
+        {title}
+      </h2>
       {description ? (
         <p
           className={classNames(
