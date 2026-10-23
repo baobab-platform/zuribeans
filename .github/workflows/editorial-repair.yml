@@ -1,0 +1,56 @@
+name: PR 130 formatting and security repair
+
+on:
+  push:
+    branches:
+      - feat/figma-make-editorial-estate
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zuribeans-editorial-repair
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: github.repository == 'baobab-platform/zuribeans' && github.ref == 'refs/heads/feat/figma-make-editorial-estate' && !contains(github.event.head_commit.message, '[ui-repair-complete]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: feat/figma-make-editorial-estate
+          persist-credentials: true
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Enable pinned pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.24.0 --activate
+      - name: Install immutable baseline dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Upgrade vulnerable Next.js and regenerate authoritative lockfile
+        run: |
+          pnpm add next@16.4.1 --save-exact
+          pnpm install --frozen-lockfile
+      - name: Format actual source files with project Prettier
+        run: pnpm exec prettier --write docs/design/figma-make-editorial-migration.md src/app/account/layout.tsx src/app/insights/page.tsx src/app/products/page.tsx src/app/supplier/layout.tsx src/components/layout/site-footer.tsx src/components/marketing/corporate-hero.tsx src/components/marketing/home/featured-commodities.tsx src/components/marketing/home/home-hero.tsx src/components/marketing/home/home-insights.tsx src/components/marketing/home/trade-pathways.tsx src/components/marketing/home/trade-process.tsx src/components/marketing/section-heading.tsx tests/e2e/figma-estate.responsive.spec.ts
+      - name: Validate format and dependency lock
+        run: |
+          pnpm format:check
+          pnpm audit --prod --audit-level high
+          pnpm typecheck
+      - name: Commit only repaired artifacts to this PR branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml docs/design/figma-make-editorial-migration.md src/app/account/layout.tsx src/app/insights/page.tsx src/app/products/page.tsx src/app/supplier/layout.tsx src/components/layout/site-footer.tsx src/components/marketing/corporate-hero.tsx src/components/marketing/home/featured-commodities.tsx src/components/marketing/home/home-hero.tsx src/components/marketing/home/home-insights.tsx src/components/marketing/home/trade-pathways.tsx src/components/marketing/home/trade-process.tsx src/components/marketing/section-heading.tsx tests/e2e/figma-estate.responsive.spec.ts
+          if ! git diff --cached --quiet; then
+            git commit -m "fix(ui): format estate migration and patch Next.js [ui-repair-complete]"
+            git push origin HEAD:feat/figma-make-editorial-estate
+          fi
