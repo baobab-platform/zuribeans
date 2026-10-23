@@ -38,7 +38,7 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
               <article
                 key={pathway.tone}
                 className={classNames(
-                  "flex min-h-80 flex-col px-5 py-5 sm:p-10 lg:p-12",
+                  "flex min-h-[360px] flex-col px-5 py-5 sm:p-10 lg:p-12",
                   buyer ? "bg-ink-soft text-white" : "bg-surface text-ink",
                 )}
               >
