@@ -1,0 +1,77 @@
+name: PR130 Storybook security and visual candidates
+on:
+  push:
+    branches:
+      - feat/figma-make-editorial-estate
+  workflow_dispatch:
+permissions:
+  contents: write
+  packages: read
+jobs:
+  repair:
+    if: "!contains(github.event.head_commit.message, '[pr130-verified-repair]')"
+    runs-on: ubuntu-26.04
+    container:
+      image: ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend-e2e@sha256:eb9c401cea16c4f333c28b250dd455e505752dfc6d11e9779a182a02bc207213
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      options: --user 0
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /root/.cache/ms-playwright
+      CI: "true"
+      MEDUSA_BACKEND_URL: http://localhost:9000
+      NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+      NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
+      NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/figma-make-editorial-estate
+          persist-credentials: true
+      - name: Authenticate npm package registry
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '//npm.pkg.github.com/:_authToken=%s\n' "$NODE_AUTH_TOKEN" > "$HOME/.npmrc"
+      - name: Install frozen baseline
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm install --frozen-lockfile
+      - name: Patch Storybook suite and regenerate lock
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pnpm add -D -E storybook@10.6.2 @storybook/addon-a11y@10.6.2 @storybook/addon-docs@10.6.2 @storybook/addon-vitest@10.6.2 @storybook/nextjs-vite@10.6.2 eslint-plugin-storybook@10.6.2
+          pnpm install --frozen-lockfile
+      - name: Verify security and source
+        run: |
+          pnpm audit --audit-level high
+          pnpm format:check
+          pnpm lint
+          pnpm typecheck
+      - name: Build candidate
+        run: pnpm build
+      - name: Generate visual candidate images
+        run: pnpm test:e2e:visual --update-snapshots
+      - name: Confirm responsive and accessibility behavior
+        run: pnpm exec playwright test tests/e2e/figma-estate.responsive.spec.ts tests/e2e/trade-pathways.spec.ts tests/e2e/landing-page.accessibility.spec.ts --project=chromium-desktop
+      - name: Save visual evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: pr130-visual-candidates
+          if-no-files-found: warn
+          path: |
+            tests/e2e/landing-page.visual.spec.ts-snapshots/
+            test-results/
+      - name: Commit dependency patches only, leave screenshot candidates for review
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json pnpm-lock.yaml
+          if ! git diff --cached --quiet; then
+            git commit -m "fix(security): update Storybook suite [pr130-verified-repair]"
+            git push origin HEAD:feat/figma-make-editorial-estate
+          fi
