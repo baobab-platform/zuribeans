@@ -28,10 +28,10 @@ export function BrandLockup() {
         className="size-9 shrink-0 transition-[width,height] duration-200 sm:size-12 [.is-header-scrolled_&]:size-10"
       />
       <span className="flex flex-col leading-none">
-        <span className="font-display text-xl font-bold tracking-tight text-white sm:text-[28px] lg:text-3xl">
+        <span className="font-display text-xl font-normal tracking-tight text-ink sm:text-[28px] lg:text-3xl">
           Zuribeans
         </span>
-        <span className="mt-1 hidden text-[10px] font-bold tracking-[0.18em] text-white/70 uppercase sm:block lg:text-[11px]">
+        <span className="mt-1 hidden text-[10px] font-bold tracking-[0.18em] text-muted uppercase sm:block lg:text-[11px]">
           Commodities. Connected.
         </span>
       </span>
