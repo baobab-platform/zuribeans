@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
 
 concurrency:
   group: zuribeans-editorial-repair
@@ -32,9 +33,19 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@11.24.0 --activate
+      - name: Prepare transient npm authentication
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '//npm.pkg.github.com/:_authToken=%s\n' "$NODE_AUTH_TOKEN" > "$HOME/.npmrc"
+          chmod 600 "$HOME/.npmrc"
       - name: Install immutable baseline dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm install --frozen-lockfile
       - name: Upgrade vulnerable Next.js and regenerate authoritative lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pnpm add next@16.4.1 --save-exact
           pnpm install --frozen-lockfile
