@@ -9,95 +9,88 @@ const PATHWAY_ICONS: Record<TradePathwayTone, LucideIcon> = {
   supplier: Sprout,
 }
 
+/**
+ * Both procurement and supplier onboarding remain linked to their real route
+ * and policy. These are presentation cards, not mock transaction controls.
+ */
 export function TradePathways({ pathways }: { pathways: readonly TradePathway[] }) {
-  if (pathways.length === 0) {
-    return null
-  }
+  if (pathways.length === 0) return null
 
   return (
     <section className="bg-ink py-20 text-white lg:py-28" aria-label="Ways to trade with ZuriBeans">
-      <div className="page-container"><div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-        <SectionHeading
-          eyebrow="Ready to trade?"
-          title="Two ways to work with ZuriBeans."
-        />
-        <p className="max-w-xl justify-self-end text-base leading-7 text-white/70">
-          Good trade starts with the right information. Buyers define a requirement; suppliers begin
-          a qualification process. Each path has a clear next step.
-        </p>
+      <div className="page-container">
+        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+          <SectionHeading
+            eyebrow="Trade pathways"
+            title="Two ways to work with ZuriBeans."
+            tone="inverse"
+          />
+          <p className="max-w-xl text-base leading-7 text-white/75 lg:justify-self-end">
+            Good trade starts with the right information. Buyers define a requirement;
+            suppliers begin qualification. Each path has an accountable next step.
+          </p>
+        </div>
+        <div className="mt-12 grid gap-px overflow-hidden border border-white/15 bg-white/15 md:grid-cols-2">
+          {pathways.map((pathway) => {
+            const Icon = PATHWAY_ICONS[pathway.tone]
+            const buyer = pathway.tone === "buyer"
+            return (
+              <article
+                key={pathway.tone}
+                className={classNames(
+                  "flex min-h-80 flex-col p-7 sm:p-10 lg:p-12",
+                  buyer ? "bg-ink-soft text-white" : "bg-surface text-ink",
+                )}
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <span
+                    className={classNames(
+                      "inline-flex size-12 items-center justify-center border",
+                      buyer
+                        ? "border-clay/50 text-clay-inverse"
+                        : "border-line-strong text-clay-on-light",
+                    )}
+                  >
+                    <Icon className="size-6" strokeWidth={1.5} aria-hidden="true" />
+                  </span>
+                  <span
+                    className={classNames(
+                      "text-xs font-semibold uppercase tracking-[0.14em]",
+                      buyer ? "text-clay-inverse" : "text-clay-on-light",
+                    )}
+                  >
+                    {pathway.audience}
+                  </span>
+                </div>
+                <h3 className="mt-9 max-w-md font-display text-3xl font-normal leading-tight sm:text-4xl">
+                  {pathway.title}
+                </h3>
+                <p className={classNames("mt-5 max-w-lg leading-7", buyer ? "text-white/75" : "text-muted")}>
+                  {pathway.description}
+                </p>
+                <p
+                  className={classNames(
+                    "mt-6 border-t pt-4 text-sm leading-6",
+                    buyer ? "border-white/15 text-white/70" : "border-line text-muted",
+                  )}
+                >
+                  {pathway.note}
+                </p>
+                <ButtonLink
+                  href={pathway.href}
+                  variant={buyer ? "primary" : "outline"}
+                  className={classNames(
+                    "mt-8 min-h-12 self-start",
+                    buyer && "bg-clay text-ink hover:bg-clay-inverse",
+                  )}
+                >
+                  {pathway.actionLabel}
+                </ButtonLink>
+              </article>
+            )
+          })}
+        </div>
       </div>
-
-      <div className="mt-12 grid gap-6 lg:grid-cols-2">
-        {pathways.map((pathway) => {
-          const Icon = PATHWAY_ICONS[pathway.tone]
-          const inverse = pathway.tone === "buyer"
-
-          return (
-            <article
-              key={pathway.tone}
-              className={classNames(
-                "group relative flex min-h-[360px] flex-col overflow-hidden rounded-panel border p-6 shadow-panel sm:min-h-[420px] sm:p-8 md:p-10",
-                inverse ? "border-ink bg-ink text-white" : "border-line bg-surface-raised text-ink",
-              )}
-            >
-              <div
-                className={classNames(
-                  "absolute -right-20 -top-20 size-64 rounded-full transition-transform duration-500 group-hover:scale-110",
-                  inverse ? "bg-white/5" : "bg-sand/60",
-                )}
-                aria-hidden="true"
-              />
-              <div
-                className={classNames(
-                  "relative flex size-12 items-center justify-center rounded-full border sm:size-14",
-                  inverse
-                    ? "border-white/15 bg-white/10 text-clay-inverse"
-                    : "border-clay/30 bg-clay/10 text-clay-on-light",
-                )}
-              >
-                <Icon className="size-5 sm:size-6" strokeWidth={1.6} aria-hidden="true" />
-              </div>
-              <p
-                className={classNames(
-                  "relative mt-6 text-xs font-bold uppercase tracking-[0.18em] sm:mt-9",
-                  inverse ? "text-clay-inverse" : "text-clay-on-light",
-                )}
-              >
-                {pathway.audience}
-              </p>
-              <h3 className="relative mt-3 max-w-lg font-display text-3xl leading-tight sm:mt-4 sm:text-4xl md:text-5xl">
-                {pathway.title}
-              </h3>
-              <p
-                className={classNames(
-                  "relative mt-4 max-w-xl leading-6 sm:mt-5 sm:leading-7",
-                  inverse ? "text-white/75" : "text-muted",
-                )}
-              >
-                {pathway.description}
-              </p>
-              <p
-                className={classNames(
-                  "relative mt-5 border-t pt-3 text-xs leading-5 sm:mt-7 sm:pt-4",
-                  inverse ? "border-white/10 text-white/65" : "border-line text-muted",
-                )}
-              >
-                {pathway.note}
-              </p>
-              <ButtonLink
-                href={pathway.href}
-                variant={inverse ? "primary" : "outline"}
-                className={classNames(
-                  "relative mt-auto self-start",
-                  inverse && "bg-clay text-ink hover:bg-clay-inverse",
-                )}
-              >
-                {pathway.actionLabel}
-              </ButtonLink>
-            </article>
-          )
-        })}
-      </div></div>
     </section>
   )
 }
