@@ -44,11 +44,11 @@ export default async function InsightsPage({ searchParams }: InsightsPageProps) 
   })
 
   return (
-    <section className="page-container py-12 lg:py-16">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Insights" }]} />
+    <section className="bg-canvas py-12 lg:py-16">
+      <div className="page-container"><Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Insights" }]} />
       <div className="mt-8 max-w-3xl">
         <p className="eyebrow">Insights</p>
-        <h1 className="mt-4 font-display text-5xl leading-tight text-balance md:text-7xl">
+        <h1 className="mt-4 font-display text-5xl font-normal leading-[1.08] tracking-tight text-balance md:text-7xl">
           Sourcing and trade notes for {market.displayName}.
         </h1>
         <p className="mt-6 text-lg leading-8 text-muted">
@@ -82,7 +82,7 @@ export default async function InsightsPage({ searchParams }: InsightsPageProps) 
       ) : null}
 
       {articles.length ? (
-        <div className="mt-10 grid gap-x-7 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-10 grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 xl:grid-cols-3">
           {articles.map((article) => (
             <InsightCard key={article.slug} article={article} />
           ))}
@@ -96,6 +96,6 @@ export default async function InsightsPage({ searchParams }: InsightsPageProps) 
           />
         </div>
       )}
-    </section>
+    </div></section>
   )
 }
