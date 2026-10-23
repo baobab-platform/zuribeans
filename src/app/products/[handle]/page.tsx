@@ -142,7 +142,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <Badge key={category}>{category}</Badge>
             ))}
           </div>
-          <h1 className="mt-6 font-display text-5xl leading-tight text-balance md:text-6xl">
+          <h1 className="mt-6 font-display font-normal text-5xl leading-tight text-balance md:text-6xl">
             {product.title}
           </h1>
           {product.subtitle ? <p className="mt-4 text-lg text-muted">{product.subtitle}</p> : null}

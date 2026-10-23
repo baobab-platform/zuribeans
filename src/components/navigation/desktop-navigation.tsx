@@ -4,7 +4,7 @@ import type { MarketContext } from "@/lib/market/request"
 import { NavDisclosure, type NavDisclosureItem } from "./nav-disclosure"
 
 const navLinkClassName =
-  "whitespace-nowrap rounded-control px-3 py-2 text-white/85 transition-colors hover:bg-white/5 hover:text-clay-inverse"
+  "whitespace-nowrap rounded-control px-3 py-2 text-ink/85 transition-colors hover:bg-ink/5 hover:text-clay-on-light"
 
 /**
  * Grouped in place of the old seven flat links. Commodities reuses the same

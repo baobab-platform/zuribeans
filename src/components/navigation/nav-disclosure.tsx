@@ -24,7 +24,7 @@ export function NavDisclosure({
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
         type="button"
-        className="flex items-center gap-1.5 whitespace-nowrap rounded-control px-3 py-2 text-white/85 transition-colors hover:bg-white/5 hover:text-clay-inverse"
+        className="flex items-center gap-1.5 whitespace-nowrap rounded-control px-3 py-2 text-ink/85 transition-colors hover:bg-ink/5 hover:text-clay-on-light"
       >
         {label}
         <ChevronDown aria-hidden="true" strokeWidth={2} className="size-3.5" />

@@ -63,12 +63,16 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
   const footerGroups = getFooterGroups(marketContext)
 
   return (
-    <footer className="bg-ink text-white" data-tone="inverse" aria-labelledby="footer-heading">
+    <footer
+      className="bg-ink-utility text-white"
+      data-tone="inverse"
+      aria-labelledby="footer-heading"
+    >
       <h2 id="footer-heading" className="sr-only">
         Footer navigation
       </h2>
       <div className="page-container py-14 lg:py-16">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2.2fr)] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.5fr)] lg:gap-16">
           <div>
             <Link
               href="/"
@@ -102,7 +106,7 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
                 <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-clay">
                   {group.title}
                 </h2>
-                <ul className="mt-3 space-y-1 text-sm text-white/65">
+                <ul className="mt-3 space-y-1 text-sm text-white/70">
                   {group.links.map((item) => (
                     <li key={`${group.title}-${item.href}-${item.label}`}>
                       <Link
