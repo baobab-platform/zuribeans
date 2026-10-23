@@ -13,13 +13,13 @@ export function FeaturedCommodities({ commodities }: FeaturedCommoditiesProps) {
 
   return (
     <section
-      className="border-t border-line bg-canvas py-20 lg:py-28"
+      className="bg-canvas py-14 sm:py-20 lg:py-24"
       aria-label="Featured commodities"
     >
       <div className="page-container grid gap-8 lg:grid-cols-[0.65fr_1.35fr] lg:items-end">
         <SectionHeading
-          eyebrow="Featured commodities"
-          title="Specified for decisions, not dressed for a shelf."
+          eyebrow="Procurement catalogue"
+          title="Origin-led commodities. Grade-documented for trade."
           description="Professional product discovery with origin and specification context. Commercially sensitive prices, availability and terms remain behind the authoritative trading boundary."
         />
         <p className="max-w-xl text-base leading-7 text-muted lg:justify-self-end">
@@ -30,7 +30,7 @@ export function FeaturedCommodities({ commodities }: FeaturedCommoditiesProps) {
       </div>
       <div
         id="featured-commodities"
-        className="page-container mt-12 grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2 xl:auto-cols-fr xl:grid-flow-col"
+        className="page-container mt-9 grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2 xl:auto-cols-fr xl:grid-flow-col"
       >
         {commodities.map((commodity) => (
           <CommodityCard key={commodity.id} commodity={commodity} />
