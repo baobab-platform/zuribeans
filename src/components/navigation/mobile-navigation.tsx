@@ -39,7 +39,7 @@ export function MobileNavigation({
         size="sm"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="border border-white/25 text-white hover:bg-white/10 hover:text-white"
+        className="border border-line-strong text-ink hover:bg-surface-muted hover:text-ink"
       >
         <Menu aria-hidden="true" strokeWidth={1.75} className="size-5" />
         Menu
