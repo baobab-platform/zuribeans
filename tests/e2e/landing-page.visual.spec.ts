@@ -27,7 +27,9 @@ test.describe("landing page visual regression", () => {
       await page.evaluate(() => document.fonts?.ready)
       // Wait for image decoding before pixel comparison to avoid transient captures.
       await page.evaluate(async () => {
-        await Promise.all(Array.from(document.images).map((image) => image.decode().catch(() => undefined)))
+        await Promise.all(
+          Array.from(document.images).map((image) => image.decode().catch(() => undefined)),
+        )
       })
       await expect(page).toHaveScreenshot(`landing-page-${viewport.name}.png`, {
         animations: "disabled",
