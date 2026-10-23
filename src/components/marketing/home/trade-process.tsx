@@ -19,8 +19,8 @@ export function TradeProcess({ steps }: TradeProcessProps) {
   }
 
   return (
-    <section className="page-container py-24 lg:py-32" aria-label="How ZuriBeans trades">
-      <SectionHeading
+    <section className="bg-surface-muted py-20 lg:py-28" aria-label="How ZuriBeans trades">
+      <div className="page-container"><SectionHeading
         eyebrow="How ZuriBeans trades"
         title="Simple to follow. Disciplined in execution."
         description="A clear commercial path from a defined requirement to accountable delivery and a preserved transaction record."
@@ -32,7 +32,7 @@ export function TradeProcess({ steps }: TradeProcessProps) {
           return (
             <li
               key={step.number}
-              className="relative rounded-panel border border-line bg-surface-raised p-7 shadow-control"
+              className="relative border border-line bg-canvas p-7"
             >
               {index < steps.length - 1 ? (
                 <span
@@ -53,7 +53,7 @@ export function TradeProcess({ steps }: TradeProcessProps) {
             </li>
           )
         })}
-      </ol>
+      </ol></div>
     </section>
   )
 }
