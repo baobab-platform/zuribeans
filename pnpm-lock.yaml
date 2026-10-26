@@ -27,8 +27,8 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0(react@19.3.0)
       '@medusajs/js-sdk':
-        specifier: 2.21.0
-        version: 2.21.0
+        specifier: 2.21.2
+        version: 2.21.2
       '@redis/client':
         specifier: 6.3.0
         version: 6.3.0
@@ -1118,8 +1118,8 @@ packages:
       '@types/react': '>=16'
       react: '>=16'
 
-  '@medusajs/js-sdk@2.21.0':
-    resolution: {integrity: sha512-57xt2wBgk6IJCYyBV+MwrhSTFbad/YZ7ytoQ/BN8H3ChRXDxzGzMt19N9jNlfoyFSoDxcGKgItPL2WQqtFQlHQ==}
+  '@medusajs/js-sdk@2.21.2':
+    resolution: {integrity: sha512-Oa4Yk+9ZrP+yQ7cFoHMVIEhdP5D+pjlv4t/FIN9KHuu6Wx0KuxW1S/eFOG3RZtukUpp+dzlg5YT5cRv+q9dXzw==}
     engines: {node: '>=20'}
 
   '@medusajs/types@2.21.1':
@@ -5132,7 +5132,7 @@ snapshots:
       '@types/react': 19.3.0
       react: 19.3.0
 
-  '@medusajs/js-sdk@2.21.0':
+  '@medusajs/js-sdk@2.21.2':
     dependencies:
       fetch-event-stream: 0.1.6
       qs: 6.16.0
