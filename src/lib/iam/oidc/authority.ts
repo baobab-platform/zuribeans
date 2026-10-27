@@ -37,9 +37,10 @@ export async function requireCurrentIamSession(
         active: z.literal(true),
         iss: z.literal(settings.issuer),
         sub: z.literal(session.subject),
-        aud: z
-          .union([z.string(), z.array(z.string())])
-          .refine((v) => (Array.isArray(v) ? v : [v]).includes(TRADE_AUDIENCE)),
+        aud: z.union([z.string(), z.array(z.string())]).refine((v) => {
+          const values = Array.isArray(v) ? v : [v]
+          return values.length === 1 && values[0] === TRADE_AUDIENCE
+        }),
         exp: z.number().int().positive().safe(),
         client_id: z.literal(settings.clientId),
         scope: z.string().refine((v) => v.split(" ").includes(TRADE_BUY_SCOPE)),

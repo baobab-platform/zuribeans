@@ -56,7 +56,10 @@ export function readAuthSettings(
     if (env.BAOBAB_IAM_AUDIENCE !== TRADE_AUDIENCE) throw new Error()
     const origin = secureUrl(env.ZURIBEANS_IAM_ORIGIN ?? "")
     if (origin.pathname !== "/") throw new Error()
-    const issuer = secureUrl(env.BAOBAB_IAM_ISSUER ?? "").href
+    // Issuer identifiers compare exactly; URL.href would add a slash to Hydra.
+    const issuer = env.BAOBAB_IAM_ISSUER ?? ""
+    secureUrl(issuer)
+    if (issuer.trim() !== issuer) throw new Error()
     const introspection = secureUrl(env.BAOBAB_IAM_INTROSPECTION_ENDPOINT ?? "")
     if (introspection.origin !== new URL(issuer).origin || origin.origin === new URL(issuer).origin)
       throw new Error()
