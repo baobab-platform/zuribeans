@@ -1,0 +1,20 @@
+name: ZuriBeans Store API 2.21.2 Static Compatibility
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inventory:
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout consumer source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Node 24 (aligned with frontend runtime)
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24.20.0"
+      - name: Inventory core Medusa Store callers (NO runtime certification)
+        run: node scripts/verify-medusa-2212-consumer.mjs

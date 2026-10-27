@@ -8,6 +8,9 @@ import { StructuredData } from "@/components/seo/structured-data"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
 import { getOrganizationStructuredData } from "@/lib/seo/structured-data"
 import "./globals.css"
+import "@baobab-platform/experience-tokens/base.css"
+import "@baobab-platform/experience-tokens/themes/zuribeans.css"
+import "@baobab-platform/experience-ui/styles.css"
 
 const siteUrl = new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000")
 const siteDescription =

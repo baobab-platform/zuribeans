@@ -1,5 +1,28 @@
 # Frontend production readiness
 
+## Current implementation addendum — 2026-09-27
+
+This addendum supersedes stale implementation claims in the September 14 assessment below.
+It does not change the full B2B NO-GO decision or certify production deployment.
+
+- Buyer onboarding, company/team management and invitation consumption are merged in PR #91;
+  a server-only buyer relationship/capability adapter now exists.
+- Supplier review, information-request resubmission, document references and ERP handoff are
+  merged in PR #90. Secure document upload and event delivery remain separate dependencies.
+- Insights and its CMS-authority corrections are merged in PRs #83, #93 and #94.
+  Runtime content remains a temporary file-backed projection under ADR-0014.
+- Frontend Gates 11–12 remain outstanding: purchasing and RFQ/quotation routes do not exist.
+- Main at d04d5e91022579c1d7ca42ae689c7508d3b5c9e2 passed CI, including migrations,
+  browser tests, accessibility, visual regression and deployable-image build.
+- Shared, Control Plane and IAM are undergoing implementation. Historical provider absence
+  claims below require a fresh provider audit; they are not current upstream findings.
+
+Release evidence still must cover strict assortment configuration, approved public policy copy,
+workforce actor attribution, live integrations, operational telemetry and deployment prerequisites.
+See the updated buyer, supplier and purchasing documents for estate implementation scope.
+
+## Historical assessment — 2026-09-14
+
 Status: Gate 18 **outstanding** — readiness assessment is No-Go
 
 Reviewed: 2026-09-14

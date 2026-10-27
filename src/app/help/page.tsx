@@ -1,4 +1,5 @@
 import { CorporateHero } from "@/components/marketing/corporate-hero"
+import { Disclosure } from "@baobab-platform/experience-ui"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
@@ -76,6 +77,27 @@ export default async function HelpPage() {
             {hasSession ? "Open account" : "Sign in"}
           </ButtonLink>
         </Card>
+      </section>
+      <section
+        data-bx-theme="zuribeans"
+        className="page-container pb-20 lg:pb-24"
+        aria-labelledby="help-faq-title"
+      >
+        <div className="max-w-3xl">
+          <h2 id="help-faq-title" className="font-display text-3xl">
+            Before you contact our team
+          </h2>
+          <div className="mt-7 grid gap-3">
+            <Disclosure summary="Does a sourcing enquiry confirm an order?">
+              No. A sourcing enquiry starts a conversation; any formal quotation, approval and
+              purchase must follow the agreed trade process.
+            </Disclosure>
+            <Disclosure summary="Does supplier registration mean approval?">
+              No. Submitting details starts the verification process. Approval and trading
+              eligibility require an authorised decision.
+            </Disclosure>
+          </div>
+        </div>
       </section>
     </>
   )

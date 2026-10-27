@@ -1,5 +1,25 @@
 # ZuriBeans go-live critical-path implementation plan
 
+## Merge-train reconciliation — 2026-09-27
+
+This update supersedes the historical immediate merge train below.
+
+- Buyer PRs #75 and #89 are closed; their replacement integration PR #91 is merged.
+- Secure invitation PR #77 is merged.
+- Supplier PR #76 is closed; replacement integration PR #90 is merged.
+- Insights PRs #83, #93 and #94 are merged, including CMS authority and ADR numbering fixes.
+- The audit baseline main SHA is d04d5e91022579c1d7ca42ae689c7508d3b5c9e2.
+- PR #95 is the remaining open dependency upgrade at this review. Its browser-test failure
+  is a Playwright/runtime-image mismatch, not an Actions billing blocker.
+
+Waves 1–2 have merged estate implementations; their full cross-repository and deployed exit
+criteria are not certified by this reconciliation. Shared, Control Plane and IAM work is ongoing.
+Audit provider main and open PRs before adopting new contracts or declaring a dependency absent.
+Keep provider-first sequencing for dependent changes. Estate-local navigation safeguards,
+documentation and presentation fixes may proceed independently.
+
+The historical merge train is retained for provenance, not as executable instructions.
+
 Status: Execution baseline  
 Reviewed: 2026-09-26  
 Authority: ZuriBeans Go-Live Implementation Plan, accepted repository ADRs, and current cross-repository contracts

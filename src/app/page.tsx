@@ -1,4 +1,5 @@
 import { FeaturedCommodities } from "@/components/marketing/home/featured-commodities"
+import { HomeInsights } from "@/components/marketing/home/home-insights"
 import { HomeHero } from "@/components/marketing/home/home-hero"
 import { QualityEvidence } from "@/components/marketing/home/quality-evidence"
 import { TradeProcess } from "@/components/marketing/home/trade-process"
@@ -33,6 +34,7 @@ export default async function HomePage() {
       <TradeProcess steps={TRADE_STEPS} />
 
       <QualityEvidence items={QUALITY_EVIDENCE_ITEMS} />
+      <HomeInsights marketKey={market.marketKey} />
       <TradePathways pathways={TRADE_PATHWAYS} />
     </>
   )

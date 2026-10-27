@@ -1,37 +1,35 @@
 # Buyer portal
 
-Status: Gate ZB-04 onboarding surface (application slice in progress)
-Reviewed: 2026-09-20
+Status: Masterplan ZB-04 estate onboarding implementation merged; programme certification outstanding
+Reviewed: 2026-09-27
 
-## ADR constraints observed
+## Implemented on main
 
-- ADR-0005: session = Medusa customer identity only; never trading approval
-- ADR-0017: org membership, roles, approved delivery sites; address ≠ organisation identity
-- zuribeans-tax / ADR-0018: tax registrations PENDING until staff VERIFIED; membership alone grants no treatment
-- ADR-BCP-016: Control Plane verifies the bounded canonical organisation link; it does not own the full buyer admission lifecycle
-- Estate holds no duplicate Trade domain tables — all org/profile data via Trade store APIs
+PR #91 integrates buyer application/status, company profile, team roster, tax registrations,
+delivery sites and secure invitation consumption. PR #77 also supplied invitation lifecycle UI.
 
-## Implemented in the open ZB-04 sequence
+The server-only Trade adapter consumes organisation relationships and capability snapshots.
+Authentication remains customer identity, not approval or purchasing authority (ADR-0005).
+The estate keeps no duplicate Trade organisation tables and uses private, uncached requests.
 
-- Buyer application capture with server-authoritative tenant context and idempotency
-- Application status displayed separately from organisation status
-- Company, team roster, tax-registration, and delivery-site surfaces consume Trade APIs
-- Invitation creation is fail-closed until secure email delivery exists; no bearer token is returned to or displayed by the browser
-- Catalogue, orders, and documents remain closed (Gates 11–12)
+Navigation requires both an implemented estate route and an explicit Trade capability grant.
+Company and team routes exist. Account catalogue, orders and documents routes do not yet exist;
+even a positive upstream capability must not expose a broken link. This route-availability check
+does not grant permission or replace server-side Trade authorization.
 
-## Not yet certified
+## Remaining acceptance work
 
-- Staff review and immutable admission decision workflow
-- Atomic organisation, initial membership, role, and outbox creation after approval
-- Secure invitation delivery adapter
-- ERP projection and end-to-end certification
+- Qualify application, review, KYB, ERP commercial decision and activation in deployed composition.
+- Verify invitation email delivery, expiry, acceptance and revocation against the deployed provider.
+- Reconcile contract pins with merged Shared, Control Plane and IAM work before adopting changes.
+- Retain buyer isolation and end-to-end evidence on one immutable release candidate.
+- Implement purchasing and RFQ/quotation journeys under Frontend Gates 11–12.
 
-No ZB-04 work is mergeable while required CI workflows cannot start because of Actions billing.
+Provider implementation status must be checked in its repository. Missing estate integration
+evidence does not mean the provider has no implementation.
 
-### Secure member invitations
+## Secure member invitations
 
-Account admins invite a permitted buyer role through the Trade-owned members API. The estate
-generates an idempotency key but never receives, renders, logs, or stores the bearer token.
-Trade queues email delivery and returns only membership and delivery status. INVITED members
-have nullable customer and Principal identifiers until acceptance; the one-time token expires
-after 48 hours.
+Account admins invite a permitted buyer role through Trade. The estate generates an idempotency
+key and receives membership/delivery status, never the newly issued bearer token.
+Invitation acceptance submits the token to Trade; Trade owns validation and lifecycle decisions.

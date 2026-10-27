@@ -20,7 +20,7 @@ export function SiteHeader({
   hasSession: boolean
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/95 text-white backdrop-blur supports-backdrop-filter:bg-ink/85">
+    <header className="sticky top-0 z-40 border-b border-line bg-canvas/95 text-ink backdrop-blur supports-backdrop-filter:bg-canvas/90">
       <UtilityBar marketContext={marketContext} hasSession={hasSession} />
 
       <div className="page-container flex h-(--header-main-height) items-center gap-4 transition-[height] duration-200 lg:gap-6 [.is-header-scrolled]:h-(--header-sticky-height)">
@@ -32,7 +32,7 @@ export function SiteHeader({
           <ButtonLink
             href="/contact"
             size="md"
-            className="min-w-[11rem] justify-center rounded-[11px] bg-clay font-bold text-ink hover:bg-clay-inverse"
+            className="min-w-[11rem] justify-center rounded-control bg-ink font-semibold text-white hover:bg-ink-soft"
           >
             Request a Quote
             <ArrowRight aria-hidden="true" strokeWidth={1.75} className="size-4.5" />

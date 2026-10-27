@@ -11,10 +11,10 @@ export function CommodityCard({ commodity }: CommodityCardProps) {
   return (
     <Link
       href={commodity.href}
-      className="group block h-full rounded-panel focus-visible:outline-offset-4"
+      className="group block h-full focus-visible:outline-offset-4"
       aria-label={`${commodity.actionLabel}: ${commodity.name}`}
     >
-      <article className="h-full overflow-hidden rounded-panel border border-line bg-surface-raised shadow-panel transition-transform group-hover:-translate-y-1">
+      <article className="h-full overflow-hidden bg-canvas transition-colors group-hover:bg-surface">
         <div className="relative aspect-[16/10] overflow-hidden bg-sand">
           <Image
             src={commodity.image.src}
@@ -32,7 +32,7 @@ export function CommodityCard({ commodity }: CommodityCardProps) {
             {commodity.contextLabel}
           </span>
         </div>
-        <div className="p-7 md:p-8">
+        <div className="p-5 md:p-6">
           <p className="eyebrow">{commodity.eyebrow}</p>
           <h3 className="mt-4 font-display text-3xl">{commodity.name}</h3>
           <p className="mt-4 leading-7 text-muted">{commodity.description}</p>

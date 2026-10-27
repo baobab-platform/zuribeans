@@ -17,6 +17,14 @@ export type BuyerPortalSection = {
   description: string
 }
 
+// Route availability is estate-owned; trading permission remains Trade-owned.
+const IMPLEMENTED_BUYER_SECTIONS: readonly BuyerCapabilityKey[] = ["organisation", "team"]
+
+const isBuyerSectionAvailable = (
+  key: BuyerCapabilityKey,
+  capabilities: BuyerCapabilitySnapshot | null,
+): boolean => IMPLEMENTED_BUYER_SECTIONS.includes(key) && capabilities?.[key] === true
+
 const BUYER_PORTAL_SECTIONS: readonly BuyerPortalSection[] = [
   {
     key: "organisation",
@@ -59,7 +67,7 @@ export const getBuyerNavigation = (
   capabilities: BuyerCapabilitySnapshot | null,
 ): readonly BuyerNavigationItem[] => [
   { label: "Overview", href: "/account" },
-  ...BUYER_PORTAL_SECTIONS.filter(({ key }) => capabilities?.[key] === true).map(
+  ...BUYER_PORTAL_SECTIONS.filter(({ key }) => isBuyerSectionAvailable(key, capabilities)).map(
     ({ label, href }) => ({ label, href }),
   ),
 ]
@@ -67,4 +75,4 @@ export const getBuyerNavigation = (
 export const getUnavailableBuyerSections = (
   capabilities: BuyerCapabilitySnapshot | null,
 ): readonly BuyerPortalSection[] =>
-  BUYER_PORTAL_SECTIONS.filter(({ key }) => capabilities?.[key] !== true)
+  BUYER_PORTAL_SECTIONS.filter(({ key }) => !isBuyerSectionAvailable(key, capabilities))

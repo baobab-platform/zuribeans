@@ -69,7 +69,7 @@ subset, preload and Core Web Vitals assessment.
 | Empty/Error/Restricted State | `components/ui/state-panel.tsx`   | Intentional route/domain states with optional action.              |
 | Breadcrumbs                  | `components/ui/breadcrumbs.tsx`   | Semantic nav/list and current-page state.                          |
 | Table                        | `components/ui/table.tsx`         | Server-friendly table primitives inside safe horizontal container. |
-| Dialog                       | `components/ui/dialog.tsx`        | Native modal behaviour in an isolated client component.            |
+| Dialog                       | `components/ui/dialog.tsx`        | Base UI controlled modal with focus/escape/portal semantics.       |
 
 Checkboxes and radios use native inputs styled at the form-composite level until a repeated design
 need justifies dedicated wrappers. Combobox, tooltip, popover, menu, tabs, accordion, pagination,
@@ -102,3 +102,19 @@ avoids shipping an unused component catalogue and dependencies merely to satisfy
 The foundation is covered by type-checking, linting, the existing build, and a unit test for the
 dependency-free class combiner. High-value interactive primitives receive component and browser
 tests when introduced into an actual journey; unused demo components are not mounted in production.
+
+## Base UI convergence (ADR-SHARED-040)
+
+Button and controlled Dialog use Base UI 1.9.0. Link navigation stays native Next Link, and buyer/supplier workflows remain authoritative in their application/BFF and providers. Complete UI migrations and browser accessibility gates remain future separate acceptance, not inferred from dependency installation.
+
+### Migration CI hardening — October 2026
+
+Visual snapshots still use the APPROVED image baselines across five viewports. Page readiness is defined by DOM content and a visible H1 rather than Playwright's discouraged networkidle waiting, which caused all five screenshots to time out on a prior PR run. This preserves visual comparison fidelity rather than approving new images automatically. The disposable supplier database in CI now uses the baobab-dev PostgreSQL 17 baseline, without suggesting that any protected production database has been migrated.
+
+### Deterministic accessibility browser server
+
+BXS-05 migration acceptance runs all CI Playwright journeys, axe WCAG checks and approved visual snapshots against the **already-built Next.js production server** rather than Next dev/HMR. Recompilation/refresh in a shared dev server can destroy the axe browser execution context and trigger false navigation failures. Local development retains `pnpm dev`; CI uses `pnpm start` after the existing `pnpm build`. All five browsers remain included, no accessibility tags, reference screenshots or real domain assertions are disabled.
+
+## Shared Experience System 0.3.1 consumer proof
+
+Shared publication [run 39073176845](https://github.com/baobab-platform/shared/actions/runs/39073176845) and SHA512/export verification [run 39073362603](https://github.com/baobab-platform/shared/actions/runs/39073362603) have passed. ZuriBeans pins `experience-tokens` and `experience-ui` at exactly 0.3.1 (with transitive `experience-geo-core@0.3.1`), using BXS native Disclosure only on the public Help page. Namespaced theme CSS is scoped under `data-bx-theme=zuribeans`; corporate Tailwind roles remain authoritative. Help content explicitly distinguishes enquiries from orders and supplier applications from approvals. Registry credentials are passed via ephemeral CI environment and Docker BuildKit secrets, never committed to source or runtime images. Buyer/supplier, Medusa, IAM and CP authority boundaries are unchanged. Browser, axe, golden and frozen lock acceptance remain mandatory.

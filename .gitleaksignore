@@ -1,0 +1,6 @@
+# False positives: generic-api-key matched the env var NAME MEDUSA_2212_CUSTOMER_TOKEN
+# (no secret value). The variable is now MEDUSA_2212_CUSTOMER_SESSION; these entries
+# cover the already-pushed history on PR #107.
+78ba02737bdda695f6f1e8ea1fe4bd474aa2fa47:scripts/verify-medusa-2212-consumer.mjs:generic-api-key:59
+cdbdc52b7e5722177180af2e107367d29b4d9fb7:scripts/verify-medusa-2212-consumer.mjs:generic-api-key:59
+8dc0525d2b69bd43a22b44bba248641e824cf674:scripts/verify-medusa-2212-consumer.mjs:generic-api-key:84
