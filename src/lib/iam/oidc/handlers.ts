@@ -1,4 +1,11 @@
 import "server-only"
+import { z } from "zod"
+import {
+  buyerSelection,
+  readBuyerHandoffSettings,
+  resolveBuyerHandoff,
+  type BuyerHandoffSettings,
+} from "../buyer/handoff"
 import { timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
 import { newOpaqueHandle, type ConfidentialSessionStore } from "../store/confidential-store"
@@ -82,6 +89,7 @@ export interface AuthDependencies {
   settings: () => AuthSettings | null
   store: () => ConfidentialSessionStore | null
   fetcher?: typeof fetch
+  buyerSettings?: () => BuyerHandoffSettings | null
 }
 const production: AuthDependencies = {
   settings: readAuthSettings,
@@ -190,6 +198,40 @@ export function authHandlers(deps: AuthDependencies = production) {
           { authenticated: true, expiresAt: current.expiresAt, csrfToken: session.csrfToken },
           { headers },
         )
+      } catch {
+        return denied()
+      }
+    },
+    /** Company/country are selection requests, never browser-supplied authority. */
+    async buyerContext(request: NextRequest) {
+      try {
+        const ctx = context(request, true)
+        if (!ctx) return denied(404)
+        const target = (deps.buyerSettings ?? readBuyerHandoffSettings)()
+        if (!target) return denied(404)
+        const value = handle(request, SESSION)
+        if (!value || request.headers.get("content-type") !== "application/json")
+          throw new AuthenticationDenied()
+        const session = await ctx.store.readSession(value)
+        if (!session) throw new AuthenticationDenied()
+        const bytes = await limitedBody(request.body, AbortSignal.timeout(5000), 2048)
+        const body = buyerSelection
+          .extend({ csrfToken: z.string().regex(opaque) })
+          .strict()
+          .parse(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)))
+        if (!timingSafeEqual(Buffer.from(body.csrfToken), Buffer.from(session.csrfToken)))
+          throw new AuthenticationDenied()
+        const buyer = await resolveBuyerHandoff(
+          session,
+          ctx.settings,
+          target,
+          {
+            organisationId: body.organisationId,
+            countryCode: body.countryCode,
+          },
+          deps.fetcher,
+        )
+        return NextResponse.json({ buyer }, { headers })
       } catch {
         return denied()
       }
