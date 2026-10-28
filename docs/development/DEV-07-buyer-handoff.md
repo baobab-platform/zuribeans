@@ -11,6 +11,13 @@ store, and `ZURIBEANS_BUYER_HANDOFF_ENABLED=true`. Set
 legacy Medusa URL, customer cookie, browser parameters and identity claims
 cannot supply this destination or purchasing authority.
 
+Set `ZURIBEANS_TRADE_PUBLISHABLE_KEY` to the actual Trade instance's native
+publishable Store key. Medusa 2.21.2's global Store router requires this header
+before the custom buyer handler runs. It identifies Store routing only: it is
+not a Medusa buyer session, CP estate binding, company grant or buyer authority.
+Only Trade receives it; it is never sent to IAM or selected by the browser.
+Missing or malformed configuration refuses the handoff without a fallback.
+
 `POST /api/buyer/context` accepts only JSON containing `organisationId`,
 `countryCode` and the current session's `csrfToken`. Organisation/country are
 explicit selection requests. The route checks exact origin, duplicate-cookie

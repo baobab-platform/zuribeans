@@ -15,6 +15,7 @@ import { fetchJson } from "../oidc/transport"
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const RESOURCE = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/
 const HANDOFF_SCOPE = "trade:buyer-handoff"
+const PUBLISHABLE_KEY = z.string().regex(/^pk_[A-Za-z0-9_-]{16,512}$/)
 export const buyerSelection = z
   .object({
     organisationId: z.string().regex(UUID),
@@ -22,7 +23,7 @@ export const buyerSelection = z
   })
   .strict()
 export type BuyerSelection = z.infer<typeof buyerSelection>
-export type BuyerHandoffSettings = { endpoint: string }
+export type BuyerHandoffSettings = { endpoint: string; publishableKey: string }
 
 /** Separate opt-in from login. Only a deployment-owned HTTPS origin receives
  * credentials; legacy MEDUSA_BACKEND_URL and browser URLs cannot select it. */
@@ -33,7 +34,10 @@ export function readBuyerHandoffSettings(
   try {
     const base = secureUrl(env.ZURIBEANS_TRADE_BASE_URL ?? "")
     if (base.pathname !== "/") throw new Error()
-    return { endpoint: new URL("/store/b2b/buyer-context", base).href }
+    return {
+      endpoint: new URL("/store/b2b/buyer-context", base).href,
+      publishableKey: PUBLISHABLE_KEY.parse(env.ZURIBEANS_TRADE_PUBLISHABLE_KEY),
+    }
   } catch {
     throw new AuthenticationDenied()
   }
@@ -91,6 +95,7 @@ export async function resolveBuyerHandoff(
 ) {
   try {
     selection = buyerSelection.parse(selection)
+    const publishableKey = PUBLISHABLE_KEY.parse(target.publishableKey)
     const endpoint = secureUrl(target.endpoint)
     if (
       endpoint.pathname !== "/store/b2b/buyer-context" ||
@@ -170,6 +175,9 @@ export async function resolveBuyerHandoff(
             Authorization: `Bearer ${token.access_token}`,
             "Content-Type": "application/json",
             "X-Correlation-ID": correlation,
+            // Required by Medusa's Store router. This is instance routing,
+            // never estate provenance, buyer identity or permission to buy.
+            "x-publishable-api-key": publishableKey,
           },
           body: JSON.stringify({
             subject_token: session.accessToken,

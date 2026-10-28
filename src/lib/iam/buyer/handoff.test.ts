@@ -19,7 +19,10 @@ const settings: AuthSettings = {
   introspectionEndpoint: "https://iam.example.test/introspect",
   algorithm: "RS256",
 }
-const target = { endpoint: "https://trade.example.test/store/b2b/buyer-context" }
+const target = {
+  endpoint: "https://trade.example.test/store/b2b/buyer-context",
+  publishableKey: "pk_synthetic_store_key_00001",
+}
 const selection = { organisationId: ORG, countryCode: "UG" }
 const session = (): ConfidentialSession => ({
   issuer: settings.issuer,
@@ -53,6 +56,7 @@ function peer(
         token_endpoint_auth_methods_supported: ["client_secret_basic"],
       })
     if (url.endsWith("/token")) {
+      expect(headers.has("x-publishable-api-key")).toBe(false)
       expect(new URLSearchParams(body).get("grant_type")).toBe("client_credentials")
       expect(new URLSearchParams(body).get("scope")).toBe("trade:buyer-handoff")
       expect(new URLSearchParams(body).get("audience")).toBe("baobab-trade")
@@ -66,6 +70,7 @@ function peer(
       })
     }
     if (url.endsWith("/introspect")) {
+      expect(headers.has("x-publishable-api-key")).toBe(false)
       const human = new URLSearchParams(body).get("token") === "private-human-evidence"
       return Response.json({
         active: true,
@@ -81,6 +86,7 @@ function peer(
     expect(url).toBe(target.endpoint)
     if (change.failTrade) return Response.json({ private_token: "never-release" }, { status: 503 })
     expect(headers.get("authorization")).toBe("Bearer private-bff-evidence")
+    expect(headers.get("x-publishable-api-key")).toBe(target.publishableKey)
     expect(headers.get("authorization")).not.toContain("human")
     const request = JSON.parse(body)
     expect(request.subject_token).toBe("private-human-evidence")
@@ -171,8 +177,21 @@ describe("confidential buyer handoff (source tests, not native qualification)", 
       readBuyerHandoffSettings({
         ZURIBEANS_BUYER_HANDOFF_ENABLED: "true",
         ZURIBEANS_TRADE_BASE_URL: "https://trade.test",
+        ZURIBEANS_TRADE_PUBLISHABLE_KEY: target.publishableKey,
       }),
-    ).toEqual({ endpoint: "https://trade.test/store/b2b/buyer-context" })
+    ).toEqual({
+      endpoint: "https://trade.test/store/b2b/buyer-context",
+      publishableKey: target.publishableKey,
+    })
+    for (const key of [undefined, "", "sk_not_a_store_key", "pk_short"]) {
+      expect(() =>
+        readBuyerHandoffSettings({
+          ZURIBEANS_BUYER_HANDOFF_ENABLED: "true",
+          ZURIBEANS_TRADE_BASE_URL: "https://trade.test",
+          ZURIBEANS_TRADE_PUBLISHABLE_KEY: key,
+        }),
+      ).toThrow()
+    }
     const auth = readAuthSettings({
       ZURIBEANS_IAM_BFF_ENABLED: "true",
       ZURIBEANS_IAM_ENVIRONMENT: "development",
