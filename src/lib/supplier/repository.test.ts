@@ -1,11 +1,17 @@
-import { sql } from "drizzle-orm"
-import { afterAll, beforeEach, describe, expect, it } from "vitest"
+import { eq, sql } from "drizzle-orm"
+import { afterAll, afterEach, beforeEach, describe, expect, it } from "vitest"
 import { getDb } from "@/lib/db/client"
-import { supplierOrganisations, supplierStatusEvents } from "@/lib/db/schema"
+import {
+  supplierCapabilities,
+  supplierEventOutbox,
+  supplierOrganisations,
+  supplierStatusEvents,
+} from "@/lib/db/schema"
 import {
   getSupplierApplicationById,
   getSupplierApplicationForCustomer,
   listSupplierApplications,
+  resubmitSupplierApplication,
   setCapabilityVerification,
   setSupplierCanonicalOrganisationId,
   submitSupplierApplication,
@@ -21,6 +27,7 @@ const truncateAll = () =>
       supplier_certifications,
       supplier_capabilities,
       supplier_contacts,
+      supplier_event_outbox,
       supplier_organisations
     cascade
   `)
@@ -55,6 +62,140 @@ describe.runIf(hasDatabase)("supplier repository", () => {
 
   afterAll(async () => {
     await truncateAll()
+  })
+
+  afterEach(async () => {
+    await getDb().execute(
+      sql`DROP TRIGGER IF EXISTS test_refuse_supplier_outbox ON supplier_event_outbox`,
+    )
+    await getDb().execute(sql`DROP FUNCTION IF EXISTS test_refuse_supplier_outbox()`)
+  })
+
+  const refuseOutbox = async () => {
+    await getDb().execute(sql`CREATE FUNCTION test_refuse_supplier_outbox() RETURNS trigger
+      LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'test outbox insert refused'; END $$`)
+    await getDb().execute(sql`CREATE TRIGGER test_refuse_supplier_outbox BEFORE INSERT
+      ON supplier_event_outbox FOR EACH ROW EXECUTE FUNCTION test_refuse_supplier_outbox()`)
+  }
+
+  it("rolls back the whole application when its durable handoff cannot be inserted", async () => {
+    await refuseOutbox()
+    await expect(submitSupplierApplication("cus_outbox_failure", validInput)).rejects.toThrow()
+    expect(await getSupplierApplicationForCustomer("cus_outbox_failure")).toBeNull()
+    expect(await getDb().select().from(supplierStatusEvents)).toHaveLength(0)
+    expect(await getDb().select().from(supplierEventOutbox)).toHaveLength(0)
+  })
+
+  it("rolls back a staff decision and its history when the outbox fails", async () => {
+    const created = await submitSupplierApplication("cus_decision_failure", validInput)
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "under_review",
+      actor: "staff:alice",
+    })
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "qualification",
+      actor: "staff:alice",
+    })
+    const before = await getSupplierApplicationById(created.id)
+    const events = await getDb().select().from(supplierEventOutbox)
+    await refuseOutbox()
+    await expect(
+      transitionSupplierStatus({
+        supplierOrganisationId: created.id,
+        toStatus: "approved",
+        actor: "staff:bob",
+      }),
+    ).rejects.toThrow()
+    const after = await getSupplierApplicationById(created.id)
+    expect(after?.organisation.status).toBe("qualification")
+    expect(after?.statusEvents).toEqual(before?.statusEvents)
+    expect(await getDb().select().from(supplierEventOutbox)).toEqual(events)
+  })
+
+  it("rolls back applicant edits, replacement children and history when the outbox fails", async () => {
+    const created = await submitSupplierApplication("cus_resubmit_failure", validInput)
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "under_review",
+      actor: "staff:alice",
+    })
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "more_information_required",
+      actor: "staff:alice",
+    })
+    const before = await getSupplierApplicationById(created.id)
+    const events = await getDb().select().from(supplierEventOutbox)
+    await refuseOutbox()
+    await expect(
+      resubmitSupplierApplication("cus_resubmit_failure", {
+        ...validInput,
+        legalName: "Changed",
+        capabilities: [],
+        certifications: [],
+      }),
+    ).rejects.toThrow()
+    expect(await getSupplierApplicationById(created.id)).toEqual(before)
+    expect(await getDb().select().from(supplierEventOutbox)).toEqual(events)
+  })
+
+  it("rolls back capability verification if its event insert fails", async () => {
+    const created = await submitSupplierApplication("cus_capability_failure", validInput)
+    const detail = await getSupplierApplicationById(created.id)
+    const capability = detail!.capabilities[0]
+    await refuseOutbox()
+    await expect(
+      setCapabilityVerification({
+        supplierOrganisationId: created.id,
+        capabilityId: capability.id,
+        status: "verified",
+        verifiedBy: "staff:alice",
+      }),
+    ).rejects.toThrow()
+    const [after] = await getDb()
+      .select()
+      .from(supplierCapabilities)
+      .where(eq(supplierCapabilities.id, capability.id))
+    expect(after).toEqual(capability)
+    expect(await getDb().select().from(supplierEventOutbox)).toHaveLength(1)
+  })
+
+  it("serializes competing terminal decisions with exactly one matching durable event", async () => {
+    const created = await submitSupplierApplication("cus_competing_decisions", validInput)
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "under_review",
+      actor: "staff:alice",
+    })
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "qualification",
+      actor: "staff:alice",
+    })
+    const results = await Promise.allSettled([
+      transitionSupplierStatus({
+        supplierOrganisationId: created.id,
+        toStatus: "approved",
+        actor: "staff:bob",
+      }),
+      transitionSupplierStatus({
+        supplierOrganisationId: created.id,
+        toStatus: "rejected",
+        actor: "staff:carol",
+      }),
+    ])
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1)
+    expect(results.filter((r) => r.status === "rejected")).toHaveLength(1)
+    const detail = await getSupplierApplicationById(created.id)
+    const events = await getDb().select().from(supplierEventOutbox)
+    const decisions = events
+      .map((event) => JSON.parse(event.payload))
+      .filter((event) => event.type.endsWith("application.decided.v1"))
+    expect(decisions).toHaveLength(1)
+    expect(decisions[0].data.decision).toBe(detail?.organisation.status)
+    expect(detail?.statusEvents).toHaveLength(4)
   })
 
   it("submits an application and reads it back", async () => {

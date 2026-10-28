@@ -1,6 +1,6 @@
 import "server-only"
 import { randomUUID } from "node:crypto"
-import { getDb } from "@/lib/db/client"
+import type { getDb } from "@/lib/db/client"
 import { supplierEventOutbox } from "@/lib/db/schema"
 
 /**
@@ -17,11 +17,17 @@ export const SUPPLIER_EVENT_TYPES = {
 export const estateApplicationId = (organisationUuid: string): string =>
   `sup_${organisationUuid.replace(/-/g, "").slice(0, 24)}`
 
-export const enqueueSupplierOutboxEvent = async (input: {
-  eventType: string
-  subject: string
-  data: Record<string, unknown>
-}) => {
+/** The caller supplies the transaction that changes the supplier record.
+ * A failed insert must roll back both the mutation and its durable handoff.
+ */
+export const enqueueSupplierOutboxEvent = async (
+  input: {
+    eventType: string
+    subject: string
+    data: Record<string, unknown>
+  },
+  transaction: Pick<ReturnType<typeof getDb>, "insert">,
+) => {
   const envelope = {
     specversion: "1.0",
     id: randomUUID(),
@@ -37,7 +43,7 @@ export const enqueueSupplierOutboxEvent = async (input: {
     data: input.data,
   }
 
-  const [row] = await getDb()
+  const [row] = await transaction
     .insert(supplierEventOutbox)
     .values({
       eventType: input.eventType,
