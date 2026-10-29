@@ -201,18 +201,25 @@ export async function resolveBuyerHandoff(
       expires <= now ||
       expires <= evaluated ||
       expires > evaluated + 60000 ||
-      expires > human.expiresAt ||
-      expires > callerExpiry ||
+      expires > human.tokenExpiresAt ||
+      expires > current.exp * 1000 ||
       new Set(result.roles).size !== result.roles.length
     )
       throw new Error()
+    // expires_in is an integer duration and can conservatively round below
+    // IAM's absolute expiry. Trade independently binds its context to the
+    // absolute issuer bounds. Clip this token-free display summary to our
+    // tighter custody/advertised deadline instead of rejecting that valid
+    // context. The context itself is never returned or extended by the BFF.
+    const summaryExpiry = Math.min(expires, human.expiresAt, callerExpiry)
+    if (summaryExpiry <= now) throw new Error()
     // A narrow display summary only. Never expose either token, provider body,
     // Principal, raw context/decision or an opaque server-side session record.
     return {
       organisationId: result.canonical_organisation_id,
       marketId: result.market_id,
       roles: result.roles,
-      expiresAt: expires,
+      expiresAt: summaryExpiry,
     }
   } catch {
     throw new AuthenticationDenied()

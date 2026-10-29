@@ -61,7 +61,9 @@ export async function requireCurrentIamSession(
       )
     const expiresAt = Math.min(session.expiresAt, token.exp * 1000)
     if (expiresAt <= Date.now()) throw new Error()
-    return { expiresAt }
+    // Keep the actual issuer bound separate from shorter local custody.
+    // Server callers may shorten a display summary; neither value is authority.
+    return { expiresAt, tokenExpiresAt: token.exp * 1000 }
   } catch {
     throw new AuthenticationDenied()
   }
