@@ -12,6 +12,8 @@ import {
 import { assertSupplierStatusTransition, type SupplierStatus } from "./lifecycle"
 import { estateApplicationId, enqueueSupplierOutboxEvent, SUPPLIER_EVENT_TYPES } from "./outbox"
 import type { SupplierApplicationInput } from "@/lib/validation/supplier-application"
+import { publicErpBusinessPartnerId } from "@/lib/erp/public-identifier"
+import { SupplierCanonicalLinkConflict } from "./canonical-link-conflict"
 
 const APPLICANT_EDITABLE: readonly SupplierStatus[] = [
   "more_information_required",
@@ -268,13 +270,35 @@ export const setSupplierCanonicalOrganisationId = async (
   supplierOrganisationId: string,
   canonicalOrganisationId: string,
 ) => {
+  if (
+    typeof canonicalOrganisationId !== "string" ||
+    canonicalOrganisationId.length < 3 ||
+    canonicalOrganisationId.length > 128 ||
+    !/^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(canonicalOrganisationId)
+  )
+    throw new Error("A canonical Organisation reference is required.")
   const db = getDb()
-  const [organisation] = await db
-    .update(supplierOrganisations)
-    .set({ canonicalOrganisationId, updatedAt: new Date() })
-    .where(eq(supplierOrganisations.id, supplierOrganisationId))
-    .returning()
-  return organisation ?? null
+  return db.transaction(async (tx) => {
+    const [organisation] = await tx
+      .select()
+      .from(supplierOrganisations)
+      .where(eq(supplierOrganisations.id, supplierOrganisationId))
+      .limit(1)
+      .for("update")
+    if (!organisation) return null
+    if (organisation.canonicalOrganisationId === canonicalOrganisationId) return organisation
+    if (
+      organisation.canonicalOrganisationId !== null ||
+      ["PENDING", "PROJECTED"].includes(organisation.erpProjectionStatus)
+    )
+      throw new SupplierCanonicalLinkConflict()
+    const [updated] = await tx
+      .update(supplierOrganisations)
+      .set({ canonicalOrganisationId, updatedAt: new Date() })
+      .where(eq(supplierOrganisations.id, supplierOrganisationId))
+      .returning()
+    return updated
+  })
 }
 
 export const listSupplierApplications = async (options?: {
@@ -508,53 +532,73 @@ export const setErpProjectionStatus = async (input: {
   erpBusinessPartnerId?: string
 }) => {
   const db = getDb()
-  const [organisation] = await db
-    .select()
-    .from(supplierOrganisations)
-    .where(eq(supplierOrganisations.id, input.supplierOrganisationId))
-    .limit(1)
+  return db.transaction(async (tx) => {
+    const [organisation] = await tx
+      .select()
+      .from(supplierOrganisations)
+      .where(eq(supplierOrganisations.id, input.supplierOrganisationId))
+      .limit(1)
+      .for("update")
+    if (!organisation) return null
 
-  if (!organisation) return null
-
-  if (input.status === "READY") {
-    const st = organisation.status as SupplierStatus
-    if (st !== "approved" && st !== "active") {
-      throw new Error(
-        "ERP projection READY is only allowed when the supplier is approved or active.",
+    if (input.status === "READY" || input.status === "PENDING") {
+      if (
+        !["approved", "active"].includes(organisation.status) ||
+        !organisation.canonicalOrganisationId
       )
+        throw new Error("ERP handoff requires an approved supplier and an existing canonical link.")
     }
-  }
+    if (input.status === "PROJECTED") {
+      if (!publicErpBusinessPartnerId.safeParse(input.erpBusinessPartnerId).success)
+        throw new Error("ERP projection requires a valid public Business Partner identifier.")
+      if (
+        organisation.erpBusinessPartnerId !== null &&
+        organisation.erpBusinessPartnerId !== input.erpBusinessPartnerId
+      )
+        throw new Error("An existing ERP Business Partner link requires governed reconciliation.")
+      if (
+        organisation.erpProjectionStatus === "PROJECTED" &&
+        organisation.erpBusinessPartnerId === input.erpBusinessPartnerId
+      )
+        return organisation
+    }
+    if (input.status === "READY" && organisation.erpProjectionStatus === "READY")
+      return organisation
 
-  const patch: {
-    erpProjectionStatus: typeof input.status
-    updatedAt: Date
-    erpBusinessPartnerId?: string
-  } = {
-    erpProjectionStatus: input.status,
-    updatedAt: new Date(),
-  }
-  if (input.status === "PROJECTED" && input.erpBusinessPartnerId) {
-    patch.erpBusinessPartnerId = input.erpBusinessPartnerId
-  }
+    const transitions: Record<string, readonly string[]> = {
+      NOT_REQUESTED: ["READY"],
+      READY: ["PENDING"],
+      FAILED: ["READY", "PENDING"],
+      PENDING: ["FAILED", "PROJECTED"],
+      PROJECTED: [],
+    }
+    if (!transitions[organisation.erpProjectionStatus]?.includes(input.status))
+      throw new Error(
+        "ERP projection transition requires owner reconciliation or a current exclusive claim.",
+      )
 
-  const [updated] = await db
-    .update(supplierOrganisations)
-    .set(patch)
-    .where(eq(supplierOrganisations.id, organisation.id))
-    .returning()
-
-  const reason =
-    input.status === "PROJECTED" && input.erpBusinessPartnerId
-      ? `erp_projection_status=${input.status}; erp_business_partner_id=${input.erpBusinessPartnerId}`
-      : `erp_projection_status=${input.status}`
-
-  await db.insert(supplierStatusEvents).values({
-    supplierOrganisationId: organisation.id,
-    fromStatus: organisation.status,
-    toStatus: organisation.status,
-    actor: input.actor,
-    reason,
+    const [updated] = await tx
+      .update(supplierOrganisations)
+      .set({
+        erpProjectionStatus: input.status,
+        updatedAt: new Date(),
+        ...(input.status === "PROJECTED"
+          ? { erpBusinessPartnerId: input.erpBusinessPartnerId }
+          : {}),
+      })
+      .where(eq(supplierOrganisations.id, organisation.id))
+      .returning()
+    const reason =
+      input.status === "PROJECTED"
+        ? `erp_projection_status=PROJECTED; erp_business_partner_id=${input.erpBusinessPartnerId}`
+        : `erp_projection_status=${input.status}`
+    await tx.insert(supplierStatusEvents).values({
+      supplierOrganisationId: organisation.id,
+      fromStatus: organisation.status,
+      toStatus: organisation.status,
+      actor: input.actor,
+      reason,
+    })
+    return updated
   })
-
-  return updated
 }
