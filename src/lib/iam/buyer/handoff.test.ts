@@ -34,7 +34,13 @@ const session = (): ConfidentialSession => ({
 })
 
 function peer(
-  change: { human?: object; caller?: object; context?: object; failTrade?: boolean } = {},
+  change: {
+    human?: object
+    caller?: object
+    context?: object
+    failTrade?: boolean
+    expiresIn?: number
+  } = {},
 ) {
   const calls: Array<{ url: string; headers: Headers; body: string }> = []
   const fetcher = vi.fn<typeof fetch>(async (input, init) => {
@@ -65,7 +71,7 @@ function peer(
       )
       return Response.json({
         access_token: "private-bff-evidence",
-        expires_in: 60,
+        expires_in: change.expiresIn ?? 60,
         token_type: "Bearer",
       })
     }
@@ -122,9 +128,51 @@ function peer(
   })
   return { calls, fetcher }
 }
-afterEach(() => vi.unstubAllEnvs())
+afterEach(() => {
+  vi.unstubAllEnvs()
+  vi.useRealTimers()
+})
 
 describe("confidential buyer handoff (source tests, not native qualification)", () => {
+  it("bounds the display summary when rounded expires_in is slightly earlier than signed IAM expiry", async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date("2026-10-29T00:00:00.950Z"))
+    const signedExpiry = (Math.floor(Date.now() / 1000) + 55) * 1000
+    const p = peer({
+      expiresIn: 54,
+      caller: { exp: signedExpiry / 1000 },
+      context: { expires_at: new Date(signedExpiry).toISOString() },
+    })
+    const result = await resolveBuyerHandoff(session(), settings, target, selection, p.fetcher)
+    expect(result.expiresAt).toBe(Date.now() + 54000)
+    expect(result.expiresAt).toBeLessThan(signedExpiry)
+  })
+
+  it("still refuses a context beyond either independently verified issuer expiry", async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date("2026-10-29T00:00:00.950Z"))
+    const expiry = (Math.floor(Date.now() / 1000) + 55) * 1000
+    const caller = peer({
+      expiresIn: 54,
+      caller: { exp: expiry / 1000 },
+      context: { expires_at: new Date(expiry + 1).toISOString() },
+    })
+    await expect(
+      resolveBuyerHandoff(session(), settings, target, selection, caller.fetcher),
+    ).rejects.toThrow()
+    const human = peer({ human: { exp: Math.floor(Date.now() / 1000) + 10 } })
+    await expect(
+      resolveBuyerHandoff(session(), settings, target, selection, human.fetcher),
+    ).rejects.toThrow()
+  })
+
+  it("never returns a summary beyond shorter BFF custody", async () => {
+    const value = session()
+    value.expiresAt = Date.now() + 10000
+    const p = peer()
+    const result = await resolveBuyerHandoff(value, settings, target, selection, p.fetcher)
+    expect(result.expiresAt).toBe(value.expiresAt)
+  })
   it("uses distinct human and BFF evidence and returns only the selected display summary", async () => {
     const p = peer()
     const result = await resolveBuyerHandoff(session(), settings, target, selection, p.fetcher)
