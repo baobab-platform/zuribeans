@@ -125,23 +125,26 @@ export const submitSupplierApplication = async (
       reason: "Application submitted by applicant.",
     })
 
-    return created
-  })
+    await enqueueSupplierOutboxEvent(
+      {
+        eventType: SUPPLIER_EVENT_TYPES.applicationSubmitted,
+        subject: estateApplicationId(created.id),
+        data: {
+          estate_id: "ZURIBEANS",
+          legal_entity_id: "ZURIBEANS",
+          application_id: estateApplicationId(created.id),
+          canonical_organisation_id: created.canonicalOrganisationId,
+          legal_name: created.legalName,
+          country_code: created.countryCode,
+          product_categories: input.capabilities.map((c) => c.category),
+          submitted_at: created.submittedAt?.toISOString() ?? new Date().toISOString(),
+          revision: 1,
+        },
+      },
+      tx,
+    )
 
-  await enqueueSupplierOutboxEvent({
-    eventType: SUPPLIER_EVENT_TYPES.applicationSubmitted,
-    subject: estateApplicationId(organisation.id),
-    data: {
-      estate_id: "ZURIBEANS",
-      legal_entity_id: "ZURIBEANS",
-      application_id: estateApplicationId(organisation.id),
-      canonical_organisation_id: organisation.canonicalOrganisationId,
-      legal_name: organisation.legalName,
-      country_code: organisation.countryCode,
-      product_categories: input.capabilities.map((c) => c.category),
-      submitted_at: organisation.submittedAt?.toISOString() ?? new Date().toISOString(),
-      revision: 1,
-    },
+    return created
   })
 
   return organisation
@@ -160,6 +163,7 @@ export const resubmitSupplierApplication = async (
       .from(supplierOrganisations)
       .where(eq(supplierOrganisations.medusaCustomerId, medusaCustomerId))
       .limit(1)
+      .for("update")
 
     if (!organisation) return null
 
@@ -239,20 +243,23 @@ export const resubmitSupplierApplication = async (
       reason: note?.trim() || "Applicant resubmitted updated information.",
     })
 
+    if (row) {
+      await enqueueSupplierOutboxEvent(
+        {
+          eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
+          subject: estateApplicationId(row.id),
+          data: {
+            application_id: estateApplicationId(row.id),
+            status: "under_review",
+            reason: note?.trim() || "Applicant resubmitted updated information.",
+          },
+        },
+        tx,
+      )
+    }
+
     return row
   })
-
-  if (updated) {
-    await enqueueSupplierOutboxEvent({
-      eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
-      subject: estateApplicationId(updated.id),
-      data: {
-        application_id: estateApplicationId(updated.id),
-        status: "under_review",
-        reason: note?.trim() || "Applicant resubmitted updated information.",
-      },
-    })
-  }
 
   return updated
 }
@@ -343,6 +350,7 @@ export const transitionSupplierStatus = async (input: {
       .from(supplierOrganisations)
       .where(eq(supplierOrganisations.id, input.supplierOrganisationId))
       .limit(1)
+      .for("update")
 
     if (!organisation) return null
 
@@ -363,32 +371,38 @@ export const transitionSupplierStatus = async (input: {
       reason: input.reason ?? null,
     })
 
+    if (row && DECISION_STATUSES.includes(input.toStatus)) {
+      await enqueueSupplierOutboxEvent(
+        {
+          eventType: SUPPLIER_EVENT_TYPES.applicationDecided,
+          subject: estateApplicationId(row.id),
+          data: {
+            application_id: estateApplicationId(row.id),
+            decision: input.toStatus,
+            actor: input.actor,
+            reason: input.reason ?? null,
+          },
+        },
+        tx,
+      )
+    } else if (row) {
+      await enqueueSupplierOutboxEvent(
+        {
+          eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
+          subject: estateApplicationId(row.id),
+          data: {
+            application_id: estateApplicationId(row.id),
+            status: input.toStatus,
+            actor: input.actor,
+            reason: input.reason ?? null,
+          },
+        },
+        tx,
+      )
+    }
+
     return row
   })
-
-  if (updated && DECISION_STATUSES.includes(input.toStatus)) {
-    await enqueueSupplierOutboxEvent({
-      eventType: SUPPLIER_EVENT_TYPES.applicationDecided,
-      subject: estateApplicationId(updated.id),
-      data: {
-        application_id: estateApplicationId(updated.id),
-        decision: input.toStatus,
-        actor: input.actor,
-        reason: input.reason ?? null,
-      },
-    })
-  } else if (updated) {
-    await enqueueSupplierOutboxEvent({
-      eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
-      subject: estateApplicationId(updated.id),
-      data: {
-        application_id: estateApplicationId(updated.id),
-        status: input.toStatus,
-        actor: input.actor,
-        reason: input.reason ?? null,
-      },
-    })
-  }
 
   return updated
 }
@@ -402,36 +416,41 @@ export const setCapabilityVerification = async (input: {
   verifiedBy: string
 }) => {
   const db = getDb()
-  const [row] = await db
-    .update(supplierCapabilities)
-    .set({
-      verificationStatus: input.status,
-      verifiedAt: new Date(),
-      verifiedBy: input.verifiedBy,
-    })
-    .where(
-      and(
-        eq(supplierCapabilities.id, input.capabilityId),
-        eq(supplierCapabilities.supplierOrganisationId, input.supplierOrganisationId),
-      ),
-    )
-    .returning()
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(supplierCapabilities)
+      .set({
+        verificationStatus: input.status,
+        verifiedAt: new Date(),
+        verifiedBy: input.verifiedBy,
+      })
+      .where(
+        and(
+          eq(supplierCapabilities.id, input.capabilityId),
+          eq(supplierCapabilities.supplierOrganisationId, input.supplierOrganisationId),
+        ),
+      )
+      .returning()
 
-  if (row) {
-    await enqueueSupplierOutboxEvent({
-      eventType: SUPPLIER_EVENT_TYPES.capabilityVerified,
-      subject: estateApplicationId(input.supplierOrganisationId),
-      data: {
-        application_id: estateApplicationId(input.supplierOrganisationId),
-        capability_id: row.id,
-        product_category: row.productCategory,
-        verification_status: input.status,
-        verified_by: input.verifiedBy,
-      },
-    })
-  }
+    if (row) {
+      await enqueueSupplierOutboxEvent(
+        {
+          eventType: SUPPLIER_EVENT_TYPES.capabilityVerified,
+          subject: estateApplicationId(input.supplierOrganisationId),
+          data: {
+            application_id: estateApplicationId(input.supplierOrganisationId),
+            capability_id: row.id,
+            product_category: row.productCategory,
+            verification_status: input.status,
+            verified_by: input.verifiedBy,
+          },
+        },
+        tx,
+      )
+    }
 
-  return row ?? null
+    return row ?? null
+  })
 }
 
 export const setCertificationVerification = async (input: {
