@@ -2,12 +2,13 @@ import "server-only"
 import {
   isErpProjectionConfigured,
   projectSupplierBusinessPartner,
+  publicErpBusinessPartnerId,
 } from "@/lib/erp/business-partner-client"
 import { getSupplierApplicationById, setErpProjectionStatus } from "@/lib/supplier/repository"
 
 /** Shared erp/v1 public identifier only (ADR-ERP-021 / ADR-0013). */
 export const isPublicErpBusinessPartnerId = (value: string): boolean =>
-  /^erp_[a-zA-Z0-9]+$/.test(value)
+  publicErpBusinessPartnerId.safeParse(value).success
 
 /**
  * READY → PENDING → PROJECTED | FAILED handoff (ADR-0012 / ADR-ERP-021).
@@ -58,11 +59,20 @@ export const requestErpBusinessPartnerProjection = async (input: {
     }
   }
 
-  await setErpProjectionStatus({
-    supplierOrganisationId: organisation.id,
-    status: "PENDING",
-    actor: input.actor,
-  })
+  try {
+    const claimed = await setErpProjectionStatus({
+      supplierOrganisationId: organisation.id,
+      status: "PENDING",
+      actor: input.actor,
+    })
+    if (!claimed) return { ok: false as const, error: "not_found" as const }
+  } catch {
+    return {
+      ok: false as const,
+      error: "erp_failed" as const,
+      detail: "Supplier handoff is unavailable or already in progress.",
+    }
+  }
 
   const result = await projectSupplierBusinessPartner({
     canonicalOrganisationId: organisation.canonicalOrganisationId,
@@ -72,11 +82,16 @@ export const requestErpBusinessPartnerProjection = async (input: {
   })
 
   if (!result.ok) {
-    await setErpProjectionStatus({
-      supplierOrganisationId: organisation.id,
-      status: "FAILED",
-      actor: input.actor,
-    })
+    if (["not_configured", "invalid_request", "http_error"].includes(result.reason)) {
+      await setErpProjectionStatus({
+        supplierOrganisationId: organisation.id,
+        status: "FAILED",
+        actor: input.actor,
+      })
+    }
+    // A missing/malformed reply or server/transport failure can follow an
+    // actual native effect. Retain PENDING until owner reconciliation; a UI
+    // retry must not create a second Business Partner.
     return {
       ok: false as const,
       error: "erp_failed" as const,
@@ -86,15 +101,10 @@ export const requestErpBusinessPartnerProjection = async (input: {
 
   const publicId = result.projection.business_partner_id
   if (!isPublicErpBusinessPartnerId(publicId)) {
-    await setErpProjectionStatus({
-      supplierOrganisationId: organisation.id,
-      status: "FAILED",
-      actor: input.actor,
-    })
     return {
       ok: false as const,
       error: "erp_failed" as const,
-      detail: `ERP returned a non-public business_partner_id (expected erp_*): ${publicId.slice(0, 40)}`,
+      detail: "ERP returned no valid public identifier; reconcile before retrying.",
     }
   }
 

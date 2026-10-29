@@ -14,9 +14,11 @@ import {
   resubmitSupplierApplication,
   setCapabilityVerification,
   setSupplierCanonicalOrganisationId,
+  setErpProjectionStatus,
   submitSupplierApplication,
   transitionSupplierStatus,
 } from "./repository"
+import { SupplierCanonicalLinkConflict } from "./canonical-link-conflict"
 
 const hasDatabase = Boolean(process.env.SUPPLIER_DB_URL)
 
@@ -241,6 +243,126 @@ describe.runIf(hasDatabase)("supplier repository", () => {
       "canon-org-123",
     )
     expect(updated).toBeNull()
+  })
+
+  it("keeps the first canonical identity immutable and replays an identical link without rewriting provenance", async () => {
+    const created = await submitSupplierApplication("cus_identity_immutable", validInput)
+    const linked = await setSupplierCanonicalOrganisationId(created.id, "canonical-company-1")
+    expect(await setSupplierCanonicalOrganisationId(created.id, "canonical-company-1")).toEqual(
+      linked,
+    )
+    await expect(
+      setSupplierCanonicalOrganisationId(created.id, "other-company"),
+    ).rejects.toBeInstanceOf(SupplierCanonicalLinkConflict)
+    expect(
+      (await getSupplierApplicationById(created.id))?.organisation.canonicalOrganisationId,
+    ).toBe("canonical-company-1")
+  })
+
+  it("allows exactly one ERP claim and prevents readiness from resetting an uncertain handoff", async () => {
+    const created = await submitSupplierApplication("cus_exclusive_erp", validInput)
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "under_review",
+      actor: "staff:alice",
+    })
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "qualification",
+      actor: "staff:alice",
+    })
+    await transitionSupplierStatus({
+      supplierOrganisationId: created.id,
+      toStatus: "approved",
+      actor: "staff:bob",
+    })
+    await expect(
+      setErpProjectionStatus({
+        supplierOrganisationId: created.id,
+        status: "READY",
+        actor: "staff:bob",
+      }),
+    ).rejects.toThrow()
+    await setSupplierCanonicalOrganisationId(created.id, "canonical-company-1")
+    await setErpProjectionStatus({
+      supplierOrganisationId: created.id,
+      status: "READY",
+      actor: "staff:bob",
+    })
+    const results = await Promise.allSettled([
+      setErpProjectionStatus({
+        supplierOrganisationId: created.id,
+        status: "PENDING",
+        actor: "staff:bob",
+      }),
+      setErpProjectionStatus({
+        supplierOrganisationId: created.id,
+        status: "PENDING",
+        actor: "staff:carol",
+      }),
+    ])
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1)
+    expect(results.filter((r) => r.status === "rejected")).toHaveLength(1)
+    await expect(
+      setErpProjectionStatus({
+        supplierOrganisationId: created.id,
+        status: "READY",
+        actor: "staff:bob",
+      }),
+    ).rejects.toThrow()
+    await expect(
+      setErpProjectionStatus({
+        supplierOrganisationId: created.id,
+        status: "NOT_REQUESTED",
+        actor: "staff:bob",
+      }),
+    ).rejects.toThrow()
+    await expect(
+      setErpProjectionStatus({
+        supplierOrganisationId: created.id,
+        status: "PROJECTED",
+        actor: "staff:bob",
+        erpBusinessPartnerId: "C_BPartner_99",
+      }),
+    ).rejects.toThrow()
+    expect((await getSupplierApplicationById(created.id))?.organisation.erpProjectionStatus).toBe(
+      "PENDING",
+    )
+    await setErpProjectionStatus({
+      supplierOrganisationId: created.id,
+      status: "PROJECTED",
+      actor: "staff:bob",
+      erpBusinessPartnerId: "erp_opaque123",
+    })
+    const projected = await getSupplierApplicationById(created.id)
+    await setErpProjectionStatus({
+      supplierOrganisationId: created.id,
+      status: "PROJECTED",
+      actor: "staff:bob",
+      erpBusinessPartnerId: "erp_opaque123",
+    })
+    expect(await getSupplierApplicationById(created.id)).toEqual(projected)
+    await expect(
+      setErpProjectionStatus({
+        supplierOrganisationId: created.id,
+        status: "READY",
+        actor: "staff:bob",
+      }),
+    ).rejects.toThrow()
+    await expect(
+      setErpProjectionStatus({
+        supplierOrganisationId: created.id,
+        status: "PROJECTED",
+        actor: "staff:bob",
+        erpBusinessPartnerId: "erp_different123",
+      }),
+    ).rejects.toThrow()
+    await expect(
+      setSupplierCanonicalOrganisationId(created.id, "other-company"),
+    ).rejects.toBeInstanceOf(SupplierCanonicalLinkConflict)
+    expect((await getSupplierApplicationById(created.id))?.organisation.erpBusinessPartnerId).toBe(
+      "erp_opaque123",
+    )
   })
 
   it("does not allow staff to skip from submitted to approved", async () => {
