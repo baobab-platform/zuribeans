@@ -1,26 +1,12 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
+import { exactNativeSession } from "@/lib/iam/native-qualification-session"
 
 // The public browser never receives or persists the CP Principal UUID, any
 // OAuth bearer/refresh token, Kratos identity, organisational roles or market.
 // This status UI does NOT consume the separate Next /api/iam/* BFF session.
 type State = "checking" | "unauthenticated" | "authenticated" | "unavailable"
-type NativeSession = { authenticated: true; principal_id: string; csrf: string }
-
-function exactNativeSession(value: unknown): value is NativeSession {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return false
-  const record = value as Record<string, unknown>
-  return (
-    Object.keys(record).sort().join(",") === "authenticated,csrf,principal_id" &&
-    record.authenticated === true &&
-    typeof record.principal_id === "string" &&
-    /^[0-9a-f-]{36}$/i.test(record.principal_id) &&
-    typeof record.csrf === "string" &&
-    /^[A-Za-z0-9_-]{43}$/.test(record.csrf)
-  )
-}
-
 export function NativeIamQualificationClient() {
   const [state, setState] = useState<State>("checking")
   const [csrf, setCsrf] = useState<string | null>(null)
