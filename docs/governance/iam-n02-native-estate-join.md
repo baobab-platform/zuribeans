@@ -74,3 +74,23 @@ spend approval remain independent.
 recovery/AAL2 run, original Chromium receipt or independent CP authorization
 evidence for these latest heads has been provided. No protected activation,
 provider support promotion or merge.
+
+
+## Kratos host-only cookie source correction
+
+The native Go BFF expects a genuine Kratos browser session cookie in
+`/auth/login`, `/auth/consent` and callback AAL2 checks. Separate
+Kratos and estate **hostnames** with host-only cookies prevent that
+cookie from ever reaching the Go BFF; broadening cookie Domain is not
+the default design. Infrastructure #69's source ingress therefore
+routes Kratos public `/self-service/*` and `/sessions/whoami` at
+the exact **same first-party HTTPS origin** as this Next page and
+IAM's `/auth/*` Go BFF, while Hydra stays at a separate HTTPS issuer.
+Kratos Admin is not exposed. Current production Next `/api/iam/*`
+sessions are separate and unchanged.
+
+This route contract does not create or host a Kratos login or recovery
+UI; the real Kratos-issued flow UI and its courier/TOTP remain
+unimplemented as a fully connected estate consumer. The branch stays
+draft until owners deploy the bound TLS topology, prove real cookies
+and AAL2 readbacks, and preserve original browser/CP evidence.
