@@ -73,7 +73,8 @@ export function MobileNavigation({
           <ButtonLink
             href="/contact"
             onClick={() => setOpen(false)}
-            className="w-full bg-clay text-ink hover:bg-clay-inverse hover:text-ink"
+            className="w-full"
+            variant="gold"
             size="lg"
           >
             Request a Quote
