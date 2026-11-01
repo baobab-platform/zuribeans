@@ -4,6 +4,7 @@ import type { ProductDossierData } from "@/lib/commerce/product-dossier-model"
 export type ProductCardVisual = {
   source: "synthetic" | "provider"
   displayName?: string
+  originLabel?: string
   category?: string
   grade?: string
   process?: string
