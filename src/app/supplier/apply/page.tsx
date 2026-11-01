@@ -39,7 +39,8 @@ export default async function SupplierApplyPage({
   const { error } = await searchParams
   const message = error && isErrorCode(error) ? errorMessages[error] : null
   return (
-    <SupplierApplicationJourney heading={<SupplierApplicationHeader mode="apply" />}
+    <SupplierApplicationJourney
+      heading={<SupplierApplicationHeader mode="apply" />}
       mode="apply"
       action={submitSupplierApplicationAction}
       sections={supplierApplicationSections()}
