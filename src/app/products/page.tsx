@@ -85,7 +85,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </div>
       </div>
 
-      <header className="bg-ink text-white" style={{ padding: "clamp(40px, 6vw, 64px) 0 clamp(32px, 5vw, 56px)" }}>
+      <header
+        className="bg-ink text-white"
+        style={{ padding: "clamp(40px, 6vw, 64px) 0 clamp(32px, 5vw, 56px)" }}
+      >
         <div className="page-container">
           <p className="eyebrow-inverse" style={{ marginBottom: "14px" }}>
             Procurement catalogue
@@ -102,26 +105,17 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             African-origin commodities.
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-7 text-white/70">
-            Discover published agricultural products for professional procurement.
-            Product evidence, grades, availability and commercial terms require
-            confirmation by the responsible trading systems.
+            Discover published agricultural products for professional procurement. Product evidence,
+            grades, availability and commercial terms require confirmation by the responsible
+            trading systems.
           </p>
         </div>
       </header>
 
-      <div
-        className="sticky z-30 border-b border-line bg-canvas"
-        style={{ top: "64px" }}
-      >
+      <div className="sticky z-30 border-b border-line bg-canvas" style={{ top: "64px" }}>
         <div className="page-container flex flex-wrap items-center gap-3 py-3">
-          <form
-            action="/products"
-            method="get"
-            className="flex min-w-0 flex-1 items-center gap-2"
-          >
-            {query.category ? (
-              <input type="hidden" name="category" value={query.category} />
-            ) : null}
+          <form action="/products" method="get" className="flex min-w-0 flex-1 items-center gap-2">
+            {query.category ? <input type="hidden" name="category" value={query.category} /> : null}
             <label htmlFor="catalogue-search" className="min-w-0 flex-1">
               <span className="sr-only">Search products or origins</span>
               <Input
@@ -136,10 +130,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <Button type="submit">Search</Button>
           </form>
           {query.query ? (
-            <ButtonLink
-              href={catalogueHref({ category: query.category })}
-              variant="ghost"
-            >
+            <ButtonLink href={catalogueHref({ category: query.category })} variant="ghost">
               Clear
             </ButtonLink>
           ) : null}
@@ -163,9 +154,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                       query: query.query,
                       category: category.handle,
                     })}
-                    aria-current={
-                      selectedCategory?.id === category.id ? "page" : undefined
-                    }
+                    aria-current={selectedCategory?.id === category.id ? "page" : undefined}
                     className="rounded-full border border-line px-4 py-2 text-sm font-semibold aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-white"
                   >
                     {category.name}
@@ -199,9 +188,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                         query: query.query,
                         category: category.handle,
                       })}
-                      aria-current={
-                        selectedCategory?.id === category.id ? "page" : undefined
-                      }
+                      aria-current={selectedCategory?.id === category.id ? "page" : undefined}
                       className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
                     >
                       {category.name}
@@ -219,15 +206,18 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         aria-label="Catalogue results"
         style={{ paddingTop: "clamp(24px, 4vw, 40px)", paddingBottom: "80px" }}
       >
-        <div className="flex flex-wrap items-end justify-between gap-4" style={{ marginBottom: "24px" }}>
+        <div
+          className="flex flex-wrap items-end justify-between gap-4"
+          style={{ marginBottom: "24px" }}
+        >
           <div>
             <h2 className="font-display text-3xl font-normal">
               {selectedCategory?.name ??
                 (query.query ? "Results for “" + query.query + "”" : "All products")}
             </h2>
             <p className="mt-2 text-sm text-muted">
-              Published catalogue for {market.displayName} ({market.currency}).
-              Publication does not itself confirm market sellability or current stock.
+              Published catalogue for {market.displayName} ({market.currency}). Publication does not
+              itself confirm market sellability or current stock.
             </p>
           </div>
           {catalogue ? (
