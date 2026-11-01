@@ -64,8 +64,8 @@ jobs:
       # Temporary formatting diagnostic; no repo write permission or changes to checks.
       - name: Emit canonical formatting candidates
         run: |
-          pnpm exec prettier --write docs/engineering/lessons-learned.md src/components/commerce/product-dossier-tabs.tsx src/components/supplier/supplier-application-header.tsx src/components/supplier/supplier-application-journey.tsx src/components/supplier/supplier-certification-picker.tsx src/app/supplier/apply/page.tsx src/app/supplier/resubmit/page.tsx src/app/dev/supplier/page.tsx src/components/supplier/supplier-application-journey.test.tsx
-          for file in docs/engineering/lessons-learned.md src/components/commerce/product-dossier-tabs.tsx src/components/supplier/supplier-application-header.tsx src/components/supplier/supplier-application-journey.tsx src/components/supplier/supplier-certification-picker.tsx src/app/supplier/apply/page.tsx src/app/supplier/resubmit/page.tsx src/app/dev/supplier/page.tsx src/components/supplier/supplier-application-journey.test.tsx; do
+          pnpm exec prettier --write docs/engineering/lessons-learned.md src/components/commerce/product-dossier-tabs.tsx src/components/supplier/supplier-application-header.tsx src/components/supplier/supplier-application-journey.tsx src/components/supplier/supplier-certification-picker.tsx src/app/supplier/apply/page.tsx src/app/supplier/resubmit/page.tsx src/app/dev/supplier/page.tsx src/components/supplier/supplier-application-journey.test.tsx src/components/supplier/supplier-portal-entry.tsx
+          for file in docs/engineering/lessons-learned.md src/components/commerce/product-dossier-tabs.tsx src/components/supplier/supplier-application-header.tsx src/components/supplier/supplier-application-journey.tsx src/components/supplier/supplier-certification-picker.tsx src/app/supplier/apply/page.tsx src/app/supplier/resubmit/page.tsx src/app/dev/supplier/page.tsx src/components/supplier/supplier-application-journey.test.tsx src/components/supplier/supplier-portal-entry.tsx; do
             echo "ZB_FILE_BEGIN:$file"
             base64 -w0 "$file"
             echo
@@ -91,6 +91,8 @@ jobs:
           NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm build
+      - name: Enforce frontend performance budgets
+        run: pnpm perf:budget
       - name: End-to-end tests
         id: experience_browser
         env:
@@ -130,8 +132,6 @@ jobs:
           NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm test:e2e:visual
-      - name: Enforce frontend performance budgets
-        run: pnpm perf:budget
       - name: Validate architecture declarations
         run: pnpm architecture:validate
 
