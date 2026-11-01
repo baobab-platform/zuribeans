@@ -2,9 +2,6 @@
 @import "tailwindcss";
 
 /* -----   Plugins ------------------------------------- */
-@plugin "@tailwindcss/forms" {
-  strategy: "class";
-}
 
 /* =============================================================================
    Design tokens (source of truth)
