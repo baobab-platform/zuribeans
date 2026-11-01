@@ -12,7 +12,7 @@ import { SupplierPortalEntry } from "@/components/supplier/supplier-portal-entry
 
 export default async function SupplierDashboardPage() {
   const customer = await getCurrentCustomer()
-  if (!customer) redirect("/login?next=/supplier")
+  if (!customer) redirect("/supplier/login?next=/supplier")
 
   let application: Awaited<ReturnType<typeof getSupplierApplicationForCustomer>>
   try {
