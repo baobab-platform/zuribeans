@@ -61,6 +61,18 @@ jobs:
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
+      # Temporary formatting diagnostic. No repository writes or elevated permissions.
+      - name: Emit canonical formatting candidates
+        run: |
+          pnpm exec prettier --write docs/engineering/lessons-learned.md src/components/commerce/product-dossier-tabs.tsx
+          echo 'ZB_FORMAT_DOC_BEGIN'
+          base64 -w0 docs/engineering/lessons-learned.md
+          echo
+          echo 'ZB_FORMAT_DOC_END'
+          echo 'ZB_FORMAT_TSX_BEGIN'
+          base64 -w0 src/components/commerce/product-dossier-tabs.tsx
+          echo
+          echo 'ZB_FORMAT_TSX_END'
       - name: Check formatting
         run: pnpm format:check
       - name: Lint
