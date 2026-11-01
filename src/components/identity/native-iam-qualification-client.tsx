@@ -11,9 +11,9 @@ export function NativeIamQualificationClient() {
   const [state, setState] = useState<State>("checking")
   const [csrf, setCsrf] = useState<string | null>(null)
 
-  const refresh = useCallback(async () => {
-    setCsrf(null)
-    setState("checking")
+  const refresh = useCallback(async (signal?: AbortSignal) => {
+    // The initial render is already "checking"; only commit a state after the
+    // asynchronous request resolves. This avoids sync setState in mount effects.
     try {
       const response = await fetch("/auth/session", {
         method: "GET",
@@ -21,7 +21,10 @@ export function NativeIamQualificationClient() {
         cache: "no-store",
         redirect: "manual",
         headers: { Accept: "application/json" },
+        signal,
       })
+      if (signal?.aborted) return
+      setCsrf(null)
       if (response.status === 401) {
         setState("unauthenticated")
         return
@@ -34,6 +37,7 @@ export function NativeIamQualificationClient() {
         return
       }
       const session: unknown = await response.json()
+      if (signal?.aborted) return
       if (!exactNativeSession(session)) {
         setState("unavailable")
         return
@@ -41,12 +45,16 @@ export function NativeIamQualificationClient() {
       setCsrf(session.csrf)
       setState("authenticated")
     } catch {
+      if (signal?.aborted) return
+      setCsrf(null)
       setState("unavailable")
     }
   }, [])
 
   useEffect(() => {
-    void refresh()
+    const controller = new AbortController()
+    void refresh(controller.signal)
+    return () => controller.abort()
   }, [refresh])
 
   async function logoutAll() {
@@ -114,7 +122,11 @@ export function NativeIamQualificationClient() {
       {state === "unavailable" ? (
         <button
           type="button"
-          onClick={() => void refresh()}
+          onClick={() => {
+            setCsrf(null)
+            setState("checking")
+            void refresh()
+          }}
           className="rounded-control border border-line-strong px-6 py-3 font-semibold"
         >
           Recheck native IAM status
