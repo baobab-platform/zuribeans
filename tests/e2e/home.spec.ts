@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test"
+
 test("visitor can enter the multi-product catalogue from the home page", async ({ page }) => {
   await page.goto("/")
   await expect(page.getByRole("heading", { level: 1 })).toContainText("African origin.")
@@ -12,17 +13,42 @@ test("visitor can enter the multi-product catalogue from the home page", async (
 test("featured commodities expose truthful catalogue routes", async ({ page }) => {
   await page.goto("/")
 
-  const section = page.getByRole("region", { name: "Featured commodities" })
-  await expect(section.getByRole("heading", { name: "Green coffee" })).toBeVisible()
-  await expect(section.getByRole("heading", { name: "Vanilla pods" })).toBeVisible()
-  await expect(section.getByRole("link", { name: "View coffee: Green coffee" })).toHaveAttribute(
-    "href",
-    "/products?category=coffee",
+  // The section's accessible name comes from its editorial heading, which
+  // changes with published products and the explicitly opted-in preview mode.
+  // Its stable landmark ID is the appropriate locator for this route contract.
+  const section = page.locator("section#commodities")
+  await expect(section).toBeVisible()
+  await expect(section.getByRole("heading", { level: 2 })).toBeVisible()
+
+  const cards = section.locator("#featured-commodities article a[href]")
+  await expect(cards.first()).toBeVisible()
+  const hrefs = await cards.evaluateAll((links) =>
+    links.map((link) => link.getAttribute("href") ?? ""),
   )
-  await expect(section.getByRole("link", { name: "View vanilla: Vanilla pods" })).toHaveAttribute(
+
+  if (hrefs.some((href) => href.startsWith("/products?category="))) {
+    // No market-scoped publication: category discovery is the truthful fallback.
+    expect(hrefs).toEqual(["/products?category=coffee", "/products?category=vanilla"])
+    await expect(section.getByRole("heading", { name: "Green coffee" })).toBeVisible()
+    await expect(section.getByRole("heading", { name: "Vanilla pods" })).toBeVisible()
+  } else {
+    // A market-scoped publication (or explicit local demo) links to its own
+    // dossier rather than claiming that a product class is in stock.
+    expect(hrefs.length).toBeGreaterThan(0)
+    for (const href of hrefs) {
+      expect(href).toMatch(/^\/products\/[^/?#]+$/)
+    }
+  }
+
+  await expect(section.getByRole("link", { name: "Full Procurement Catalogue" })).toHaveAttribute(
     "href",
-    "/products?category=vanilla",
+    "/products",
   )
+  if (process.env.CI) {
+    // CI is a production build without synthetic opt-in; no fictional claims.
+    await expect(section.getByText("Sample data", { exact: true })).toHaveCount(0)
+    await expect(section.getByText(/(?:Available|Limited) \(sample\)/)).toHaveCount(0)
+  }
 })
 
 test("trade process presents the four accountable stages in order", async ({ page }) => {
