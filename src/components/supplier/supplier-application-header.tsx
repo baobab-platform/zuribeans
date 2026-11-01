@@ -11,13 +11,19 @@ export function SupplierApplicationHeader({ mode = "apply", preview = false }: P
         <a href="/" className="text-xs font-semibold text-clay-inverse">
           ← ZuriBeans.com
         </a>
-        <p className="mt-5 text-xs font-semibold uppercase text-clay-inverse" style={{ letterSpacing: "0.1em" }}>
+        <p
+          className="mt-5 text-xs font-semibold uppercase text-clay-inverse"
+          style={{ letterSpacing: "0.1em" }}
+        >
           Supplier Programme
         </p>
         <h1 className="mt-3 font-display text-4xl font-light sm:text-5xl">
           {mode === "apply" ? "Supplier Application" : "Supplier Resubmission"}
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7" style={{ color: "color-mix(in srgb, var(--color-canvas) 75%, transparent)" }}>
+        <p
+          className="mt-3 max-w-2xl text-sm leading-7"
+          style={{ color: "color-mix(in srgb, var(--color-canvas) 75%, transparent)" }}
+        >
           Join the ZuriBeans verified supplier network. Complete all sections — your application
           will be reviewed by our sourcing team. Submission does not constitute approval.
         </p>
