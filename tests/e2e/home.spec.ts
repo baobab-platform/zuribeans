@@ -15,8 +15,10 @@ test("featured commodities expose truthful catalogue routes", async ({ page }) =
 
   // The section's accessible name comes from its editorial heading, which
   // changes with published products and the explicitly opted-in preview mode.
-  // Its stable landmark ID is the appropriate locator for this route contract.
-  const section = page.locator("section#commodities")
+  // During streamed Suspense resolution, the hidden fallback and resolved
+  // section can coexist briefly. Interact with the one rendered to users;
+  // never bind this contract to a hidden fallback node.
+  const section = page.locator("section#commodities:visible")
   await expect(section).toBeVisible()
   await expect(section.getByRole("heading", { level: 2 })).toBeVisible()
 
