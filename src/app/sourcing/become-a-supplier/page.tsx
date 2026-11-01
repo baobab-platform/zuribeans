@@ -41,16 +41,19 @@ export default function BecomeASupplierPage() {
 
       <section
         aria-label="Supplier application pathway"
-        className="bg-canvas py-[clamp(48px,7vw,88px)]"
+        className="bg-canvas"
+        style={{ paddingBlock: "clamp(48px, 7vw, 88px)" }}
       >
         <div className="page-container">
           <ol className="grid gap-px border border-line bg-line md:grid-cols-3">
             {stages.map((stage) => (
-              <li key={stage.number} className="min-h-[230px] bg-canvas px-6 py-8 sm:px-7">
+              <li key={stage.number} className="bg-canvas px-6 py-8 sm:px-7"
+                style={{ minHeight: 230 }}>
                 <span className="text-xs font-bold tracking-wider text-clay-on-light">
                   {stage.number}
                 </span>
-                <h2 className="mt-9 font-display text-[27px] font-normal leading-tight text-ink">
+                <h2 className="mt-9 font-display font-normal leading-tight text-ink"
+                  style={{ fontSize: 27 }}>
                   {stage.title}
                 </h2>
                 <p className="mt-3 text-sm leading-7 text-muted">{stage.description}</p>
