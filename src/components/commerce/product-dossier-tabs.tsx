@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { classNames } from "@/lib/ui/classnames"
 import type { ProductDetailModel } from "@/lib/medusa/types"
 
 const tabs = [
@@ -77,11 +78,12 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                 setActiveTab(target.id)
                 document.getElementById(`product-tab-${target.id}`)?.focus()
               }}
-              className={`min-h-12 border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
+              className={classNames(
+                "min-h-12 border-b-2 px-4 py-3 text-sm font-semibold transition-colors",
                 activeTab === tab.id
                   ? "border-ink text-ink"
-                  : "border-transparent text-muted hover:text-ink"
-              }`}
+                  : "border-transparent text-muted hover:text-ink",
+              )}
             >
               {tab.label}
             </button>
