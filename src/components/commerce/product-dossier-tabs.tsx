@@ -77,7 +77,7 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                 setActiveTab(target.id)
                 document.getElementById(`product-tab-${target.id}`)?.focus()
               }}
-              className="min-h-12 border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-ink aria-selected:border-ink aria-selected:text-ink"
+              className="min-h-12 border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-ink aria-selected:border-ink aria-selected:text-ink"
             >
               {tab.label}
             </button>
