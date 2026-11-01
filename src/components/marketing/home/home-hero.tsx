@@ -39,7 +39,7 @@ export function HomeHero({
         aria-hidden="true"
         className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,44,36,.25)_0%,rgba(15,44,36,.60)_45%,rgba(15,44,36,.96)_100%)]"
       />
-      <div className="page-container relative z-10 pb-12 pt-20 sm:pb-16 sm:pt-28 lg:pb-20 lg:pt-36">
+      <div className="page-container relative z-10 min-w-0 max-w-full pb-12 pt-20 sm:pb-16 sm:pt-28 lg:pb-20 lg:pt-36">
         <div className="grid gap-8 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <div className="mb-5 flex items-center gap-3 sm:mb-9">
@@ -71,6 +71,7 @@ export function HomeHero({
               <Link
                 href={content.primaryCta.href}
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-control bg-clay px-6 py-3 text-sm font-bold tracking-[.04em] text-ink transition-opacity hover:opacity-90"
+                style={{ color: "var(--color-ink)" }}
               >
                 {content.primaryCta.label}
                 <ArrowRight aria-hidden="true" className="size-4" />
