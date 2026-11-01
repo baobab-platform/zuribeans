@@ -1,0 +1,66 @@
+name: PR131 One-time reviewed visual baseline import
+
+on:
+  push:
+    branches: [feat/figma-homepage-high-fidelity-v2]
+
+permissions: {}
+
+jobs:
+  approved-import:
+    if: contains(github.event.head_commit.message, '[accept-reviewed-baselines]')
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Check out approved branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/figma-homepage-high-fidelity-v2
+          fetch-depth: 1
+      - name: Download pinned CI screenshot candidates
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          SOURCE_HEAD="$(gh api repos/baobab-platform/zuribeans/actions/runs/41287966782 --jq .head_sha)"
+          test "$SOURCE_HEAD" = 'fc1bb6cb3a3a76e89f671daa5a1f5afe6a9090a8'
+          mkdir -p "$RUNNER_TEMP/visual-review"
+          gh run download 41287966782 -R baobab-platform/zuribeans -n zuribeans-experience-browser-evidence -D "$RUNNER_TEMP/visual-review"
+      - name: Import only five visually reviewed, SHA256-pinned screenshots
+        run: |
+          python3 - <<'PY'
+          import hashlib, os, pathlib, shutil, struct
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'visual-review' / 'tests/e2e/landing-page.visual.spec.ts-snapshots'
+          target = pathlib.Path('tests/e2e/landing-page.visual.spec.ts-snapshots')
+          expected = {
+            320: ('89d2ace9ac2449a4065ea7b7286bad2d7a31ae826df2b5feeacf69881bc0249b', 11455),
+            390: ('912f75fcc89233d0e759d9b810ee9a067dbdf9ccc3f0c0476905e00d479e10bd', 10648),
+            768: ('f17edf48387fe90ebde9fb498bc3ee7fc1344c8c0dab6bb59b2ec994daef0830', 8051),
+            1024: ('8cffafe70d1a94957777be632319db33cfa387ca63cb9b2588a665468aab60b7', 7575),
+            1440: ('c1630e4f80ea62727d8639588b9076505a0b3d434f244109db2c4a6e23ae0b69', 7475),
+          }
+          for width, (digest, height) in expected.items():
+              name = f'landing-page-{width}-chromium-desktop-linux.png'
+              source = root / name
+              data = source.read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n', f'{name}: not PNG'
+              actual_width, actual_height = struct.unpack('>II', data[16:24])
+              assert (actual_width, actual_height) == (width, height), f'{name}: wrong dimensions'
+              assert hashlib.sha256(data).hexdigest() == digest, f'{name}: candidate changed'
+              shutil.copyfile(source, target / name)
+              print(f'Approved: {name} {width}x{height} sha256:{digest}')
+          PY
+      - name: Commit only visual baselines on the review branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tests/e2e/landing-page.visual.spec.ts-snapshots/landing-page-*-chromium-desktop-linux.png
+          if git diff --cached --quiet; then
+            echo 'Existing snapshots already match the reviewed candidates'
+          else
+            git commit -m 'test(visual): accept reviewed Figma homepage baselines for all five widths'
+            git push origin HEAD:refs/heads/feat/figma-homepage-high-fidelity-v2
+          fi
