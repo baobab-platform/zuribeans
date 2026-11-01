@@ -1,0 +1,33 @@
+name: PR 146 one-time canonical Prettier formatting
+on:
+  push:
+    branches: [fix/catalogue-four-across-category-navigation]
+    paths:
+      - .github/workflows/pr146-prettier-once.yml
+permissions:
+  contents: write
+jobs:
+  format:
+    if: ${{ github.repository == 'baobab-platform/zuribeans' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: fix/catalogue-four-across-category-navigation
+          fetch-depth: 0
+      - name: Run exact repository Prettier on changed source and docs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git diff --diff-filter=ACMR --name-only -z origin/main...HEAD -- '*.ts' '*.tsx' '*.md' |
+            xargs -0 -r npx --yes prettier@3.9.8 --write
+          git add -- '*.ts' '*.tsx' '*.md'
+          git diff --cached --check
+          if ! git diff --cached --quiet; then
+            git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "style(zuribeans): canonical Prettier 3.9.8 on portal and catalogue changes"
+            git push origin HEAD:refs/heads/fix/catalogue-four-across-category-navigation
+          fi
