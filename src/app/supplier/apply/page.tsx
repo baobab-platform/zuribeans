@@ -11,8 +11,7 @@ const errorMessages: Record<SupplierApplicationErrorCode, string> = {
   already_applied: "You have already submitted a supplier application.",
   failed: "We could not submit your application. Please try again.",
 }
-const isErrorCode = (value: string): value is SupplierApplicationErrorCode =>
-  value in errorMessages
+const isErrorCode = (value: string): value is SupplierApplicationErrorCode => value in errorMessages
 
 export default async function SupplierApplyPage({
   searchParams,

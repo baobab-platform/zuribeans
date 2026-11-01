@@ -8,11 +8,29 @@ afterEach(() => {
 })
 
 const sections = [
-  <div key="business"><h2>Business Details</h2><input name="legalName" defaultValue="Example Collective" required /><input name="countryCode" defaultValue="UG" required /></div>,
-  <div key="contact"><h2>Primary Contact</h2><input name="contactName" defaultValue="Test Supplier" required /><input name="contactEmail" defaultValue="supplier@example.invalid" type="email" required /></div>,
-  <div key="products"><h2>Products & Capacity</h2><input name="capability_category" defaultValue="coffee" /></div>,
-  <div key="origin"><h2>Origin & Seasonality</h2><input name="capability_origin_country" defaultValue="UG" /><input name="capability_season" defaultValue="October–January" /></div>,
-  <div key="certifications"><h2>Certifications</h2><input name="certification_type" defaultValue="Organic (EU)" /></div>,
+  <div key="business">
+    <h2>Business Details</h2>
+    <input name="legalName" defaultValue="Example Collective" required />
+    <input name="countryCode" defaultValue="UG" required />
+  </div>,
+  <div key="contact">
+    <h2>Primary Contact</h2>
+    <input name="contactName" defaultValue="Test Supplier" required />
+    <input name="contactEmail" defaultValue="supplier@example.invalid" type="email" required />
+  </div>,
+  <div key="products">
+    <h2>Products & Capacity</h2>
+    <input name="capability_category" defaultValue="coffee" />
+  </div>,
+  <div key="origin">
+    <h2>Origin & Seasonality</h2>
+    <input name="capability_origin_country" defaultValue="UG" />
+    <input name="capability_season" defaultValue="October–January" />
+  </div>,
+  <div key="certifications">
+    <h2>Certifications</h2>
+    <input name="certification_type" defaultValue="Organic (EU)" />
+  </div>,
 ]
 
 describe("Figma Make supplier application journey", () => {
@@ -30,7 +48,12 @@ describe("Figma Make supplier application journey", () => {
   })
 
   it("blocks the next step when a required first-party country is absent", () => {
-    render(<SupplierApplicationJourney preview sections={[<input key="country" name="countryCode" />, ...sections.slice(1)]} />)
+    render(
+      <SupplierApplicationJourney
+        preview
+        sections={[<input key="country" name="countryCode" />, ...sections.slice(1)]}
+      />,
+    )
     fireEvent.click(screen.getByRole("button", { name: /continue:/i }))
     expect(screen.getByRole("alert")).toHaveTextContent(
       "Select the country where your organisation is registered.",
@@ -40,7 +63,16 @@ describe("Figma Make supplier application journey", () => {
 
   it("cannot advance without a declared product category", () => {
     vi.stubGlobal("scrollTo", vi.fn())
-    render(<SupplierApplicationJourney preview sections={[...sections.slice(0, 2), <div key="none">No products entered</div>, ...sections.slice(3)]} />)
+    render(
+      <SupplierApplicationJourney
+        preview
+        sections={[
+          ...sections.slice(0, 2),
+          <div key="none">No products entered</div>,
+          ...sections.slice(3),
+        ]}
+      />,
+    )
     fireEvent.click(screen.getByRole("button", { name: /continue:/i }))
     fireEvent.click(screen.getByRole("button", { name: /continue:/i }))
     fireEvent.click(screen.getByRole("button", { name: /continue:/i }))

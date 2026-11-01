@@ -23,8 +23,11 @@ export default async function SupplierResubmitPage({
     application = await getSupplierApplicationForCustomer(customer.id)
   } catch {
     return (
-      <ErrorState title="Unable to load application" description="Please try again shortly."
-        action={{ href: "/supplier/resubmit", label: "Try again" }} />
+      <ErrorState
+        title="Unable to load application"
+        description="Please try again shortly."
+        action={{ href: "/supplier/resubmit", label: "Try again" }}
+      />
     )
   }
   if (!application) redirect("/supplier/apply")
@@ -42,7 +45,7 @@ export default async function SupplierResubmitPage({
     contactRole: contact?.role ?? "",
     contactEmail: contact?.email ?? "",
     contactPhone: contact?.phone ?? "",
-    capabilities: application.capabilities.map(c => ({
+    capabilities: application.capabilities.map((c) => ({
       category: c.productCategory,
       variety: c.variety,
       grade: c.grade,
@@ -51,7 +54,7 @@ export default async function SupplierResubmitPage({
       season: c.season,
       leadTimeDays: c.leadTimeDays,
     })),
-    certifications: application.certifications.map(c => ({
+    certifications: application.certifications.map((c) => ({
       certificationType: c.certificationType,
       issuer: c.issuer,
       referenceNumber: c.referenceNumber,

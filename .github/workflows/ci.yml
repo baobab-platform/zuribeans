@@ -83,28 +83,6 @@ jobs:
           pnpm exec prettier 'src/lib/supplier/repository.ts' | base64 -w0
           echo
           echo 'SUPRUNTIME_FMT_END:src/lib/supplier/repository.ts'
-      - name: Temporary supplier formatter capture
-        run: |
-          echo 'SUPPLIER_FMT_BEGIN:src/app/supplier/apply/page.tsx'
-          pnpm exec prettier 'src/app/supplier/apply/page.tsx' | base64 -w0
-          echo
-          echo 'SUPPLIER_FMT_END:src/app/supplier/apply/page.tsx'
-          echo 'SUPPLIER_FMT_BEGIN:src/app/supplier/page.tsx'
-          pnpm exec prettier 'src/app/supplier/page.tsx' | base64 -w0
-          echo
-          echo 'SUPPLIER_FMT_END:src/app/supplier/page.tsx'
-          echo 'SUPPLIER_FMT_BEGIN:src/app/supplier/resubmit/page.tsx'
-          pnpm exec prettier 'src/app/supplier/resubmit/page.tsx' | base64 -w0
-          echo
-          echo 'SUPPLIER_FMT_END:src/app/supplier/resubmit/page.tsx'
-          echo 'SUPPLIER_FMT_BEGIN:src/components/supplier/supplier-application-journey.test.tsx'
-          pnpm exec prettier 'src/components/supplier/supplier-application-journey.test.tsx' | base64 -w0
-          echo
-          echo 'SUPPLIER_FMT_END:src/components/supplier/supplier-application-journey.test.tsx'
-          echo 'SUPPLIER_FMT_BEGIN:src/lib/supplier/repository.ts'
-          pnpm exec prettier 'src/lib/supplier/repository.ts' | base64 -w0
-          echo
-          echo 'SUPPLIER_FMT_END:src/lib/supplier/repository.ts'
       - name: Check formatting
         run: pnpm format:check
       - name: Lint

@@ -50,7 +50,10 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
       .select()
       .from(supplierDocumentReferences)
       .where(eq(supplierDocumentReferences.supplierOrganisationId, organisation.id)),
-    db.select().from(supplierContacts).where(eq(supplierContacts.supplierOrganisationId, organisation.id)),
+    db
+      .select()
+      .from(supplierContacts)
+      .where(eq(supplierContacts.supplierOrganisationId, organisation.id)),
   ])
 
   return {
