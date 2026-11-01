@@ -61,16 +61,6 @@ jobs:
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
-      # Temporary formatting diagnostic; no repo write permission or changes to checks.
-      - name: Emit canonical formatting candidates
-        run: |
-          pnpm exec prettier --write docs/engineering/lessons-learned.md src/components/commerce/product-dossier-tabs.tsx src/components/supplier/supplier-application-header.tsx src/components/supplier/supplier-application-journey.tsx src/components/supplier/supplier-certification-picker.tsx src/app/supplier/apply/page.tsx src/app/supplier/resubmit/page.tsx src/app/dev/supplier/page.tsx src/components/supplier/supplier-application-journey.test.tsx src/components/supplier/supplier-portal-entry.tsx
-          for file in docs/engineering/lessons-learned.md src/components/commerce/product-dossier-tabs.tsx src/components/supplier/supplier-application-header.tsx src/components/supplier/supplier-application-journey.tsx src/components/supplier/supplier-certification-picker.tsx src/app/supplier/apply/page.tsx src/app/supplier/resubmit/page.tsx src/app/dev/supplier/page.tsx src/components/supplier/supplier-application-journey.test.tsx src/components/supplier/supplier-portal-entry.tsx; do
-            echo "ZB_FILE_BEGIN:$file"
-            base64 -w0 "$file"
-            echo
-            echo "ZB_FILE_END:$file"
-          done
       - name: Check formatting
         run: pnpm format:check
       - name: Lint
