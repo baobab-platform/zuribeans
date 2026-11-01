@@ -23,6 +23,7 @@ type Props = {
 export function SupplierApplicationJourney({ sections, action, mode = "apply", error, preview = false }: Props) {
   const [step, setStep] = useState(0)
   const [snapshot, setSnapshot] = useState<[string, string][]>([])
+  const [previewMessage, setPreviewMessage] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
   const last = SUPPLIER_STEPS.length - 1
 
@@ -58,7 +59,7 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
 
   return (
     <div data-supplier-journey className="min-w-0 bg-canvas">
-      <header className="bg-ink px-5 py-10 text-canvas">
+      <header className="bg-ink px-5 text-canvas" style={{ paddingBlock: "clamp(32px, 5vw, 56px) clamp(24px, 4vw, 40px)" }}>
         <div className="mx-auto max-w-3xl">
           <Link href="/" className="text-xs font-semibold text-clay-inverse">← ZuriBeans.com</Link>
           <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-clay-inverse">Supplier Programme</p>
@@ -66,8 +67,8 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
             {mode === "apply" ? "Supplier Application" : "Supplier Resubmission"}
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-7 text-canvas/75">
-            Join the ZuriBeans supplier network. Complete all sections for sourcing review.
-            Submission does not constitute approval.
+            Join the ZuriBeans verified supplier network. Complete all sections — your application
+            will be reviewed by our sourcing team. Submission does not constitute approval.
           </p>
           {preview ? (
             <p className="mt-3 text-sm font-semibold text-clay-inverse">
@@ -108,7 +109,9 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
           </div>
         </div>
       </div>
-      <form action={action} ref={formRef} className="mx-auto max-w-3xl px-5 pb-32 pt-10" aria-label="Supplier application">
+      <form action={action} ref={formRef} className="mx-auto max-w-3xl px-5 pb-32 pt-10" aria-label="Supplier application" onSubmit={preview ? (event) => { event.preventDefault(); setPreviewMessage(true) } : undefined}>
+        {preview ? <p className="mb-6 rounded-control border border-line bg-sand p-4 text-sm font-semibold">Development preview · the form is interactive but cannot submit a supplier application.</p> : null}
+        {previewMessage ? <p role="status" className="mb-6 rounded-control border border-leaf bg-success-soft p-4 text-sm">Preview complete. No application, supplier principal, approval or documentary record was created.</p> : null}
         {error ? <p role="alert" className="mb-6 rounded-control border border-danger bg-danger-soft p-4 text-danger-strong">{error}</p> : null}
         {sections.map((section, index) => (
           <div key={index} data-supplier-section={index} hidden={step !== index}>
