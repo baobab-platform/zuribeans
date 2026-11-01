@@ -268,7 +268,10 @@ export function ProductDossier({
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas p-3 lg:hidden" style={{ boxShadow: "0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1)" }}>
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas p-3 lg:hidden"
+        style={{ boxShadow: "0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1)" }}
+      >
         <div className="page-container">
           <Link
             href={inquiryHref}
