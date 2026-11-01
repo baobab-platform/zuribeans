@@ -1,0 +1,28 @@
+name: Format PR146 filter contrast guard once
+on:
+  push:
+    branches: [fix/catalogue-four-across-category-navigation]
+    paths:
+      - .github/workflows/pr146-filter-contrast-format-once.yml
+permissions:
+  contents: write
+jobs:
+  format-filter-contrast:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: fix/catalogue-four-across-category-navigation
+          fetch-depth: 0
+      - name: Format only filter contrast repair and regression spec
+        shell: bash
+        run: |
+          set -euo pipefail
+          files=(src/app/products/page.tsx tests/e2e/public-cta-contrast.spec.ts)
+          npm exec --yes --package=prettier@3.9.8 -- prettier --write "${files[@]}"
+          npm exec --yes --package=prettier@3.9.8 -- prettier --check "${files[@]}"
+          git add -- "${files[@]}"
+          git diff --cached --check
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "style(catalogue): format the computed-contrast filter repair"
+          git push origin HEAD:refs/heads/fix/catalogue-four-across-category-navigation
