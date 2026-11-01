@@ -60,6 +60,39 @@ test.describe("buyer and supplier entry journeys", () => {
     await expect(page.locator('form input[name="next"]').first()).toHaveValue("/supplier")
   })
 
+  test("login and registration shells fit the visible viewport with independently scrollable forms", async ({
+    page,
+  }) => {
+    for (const { width, height } of [
+      { width: 390, height: 844 },
+      { width: 1440, height: 900 },
+    ]) {
+      await page.setViewportSize({ width, height })
+      for (const journey of ["buyer", "supplier"] as const) {
+        for (const mode of ["login", "register"] as const) {
+          await page.goto(`/${journey}/${mode}`, { waitUntil: "domcontentloaded" })
+          const shell = page.locator("#main > div").first()
+          const credentials = page.getByRole("region", { name: "Portal credentials" })
+          const bounds = await shell.boundingBox()
+          expect(bounds).not.toBeNull()
+          if (!bounds) throw new Error("Authentication shell is not rendered")
+          expect(bounds.y + bounds.height).toBeLessThanOrEqual(height + 2)
+          await expect(credentials).toBeVisible()
+          const submit = credentials.getByRole("button", {
+            name: mode === "login" ? /sign in to .* workspace/i : /create .* login/i,
+          })
+          await submit.scrollIntoViewIfNeeded()
+          await expect(submit).toBeInViewport()
+          expect(
+            await page.evaluate(
+              () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+            ),
+          ).toBe(true)
+        }
+      }
+    }
+  })
+
   test("captures desktop and mobile portal design review evidence", async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "Capture once in the canonical browser")
     for (const width of [390, 1440]) {
