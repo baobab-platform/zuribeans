@@ -36,8 +36,9 @@ export function UtilityBar({
         </p>
 
         <div className="flex shrink-0 items-center gap-5">
+          <Link href="/sourcing" className="whitespace-nowrap transition-colors hover:text-clay-inverse">Sourcing</Link>
           <Link
-            href="/supplier/register"
+            href="/sourcing/become-a-supplier"
             className="flex items-center gap-1.5 whitespace-nowrap transition-colors hover:text-clay-inverse"
           >
             <Handshake
