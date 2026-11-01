@@ -44,10 +44,10 @@ export function AuthShell({
         </div>
       </section>
       <section
-        className="flex min-h-0 items-start overflow-y-auto overscroll-contain px-5 py-5 sm:px-10 lg:items-center lg:px-[clamp(28px,5vw,64px)] lg:py-6"
+        className="flex min-h-0 flex-col overflow-y-auto overscroll-contain px-5 py-5 sm:px-10 lg:px-[clamp(28px,5vw,64px)] lg:py-6"
         aria-label="Portal credentials"
       >
-        <div className="mx-auto w-full max-w-lg border-t-[3px] border-clay pt-4 lg:pt-5">
+        <div className="my-auto mx-auto w-full max-w-lg border-t-[3px] border-clay pt-4 lg:pt-5">
           <p className="mb-4 text-sm leading-6 text-muted">{description}</p>
           {children}
         </div>
