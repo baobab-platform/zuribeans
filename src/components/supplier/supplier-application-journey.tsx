@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef, useState, type ReactNode } from "react"
-import Link from "next/link"
 
 export const SUPPLIER_STEPS = [
   "Business",
@@ -101,9 +100,9 @@ export function SupplierApplicationJourney({
         style={{ paddingBlock: "clamp(32px, 5vw, 56px) clamp(24px, 4vw, 40px)" }}
       >
         <div className="mx-auto max-w-3xl">
-          <Link href="/" className="text-xs font-semibold text-clay-inverse">
+          <a href="/" className="text-xs font-semibold text-clay-inverse">
             ← ZuriBeans.com
-          </Link>
+          </a>
           <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-clay-inverse">
             Supplier Programme
           </p>
