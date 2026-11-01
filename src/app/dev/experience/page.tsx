@@ -106,7 +106,7 @@ export default function DevelopmentExperiencePage() {
             ))}
           </div>
           <div className="mt-7 overflow-x-auto rounded-panel border border-line" tabIndex={0}>
-            <table className="w-full min-w-[650px] text-left text-sm">
+            <table className="w-full text-left text-sm" style={{ minWidth: "650px" }}>
               <thead className="bg-surface-muted">
                 <tr>
                   <th className="p-4">Example product</th>
