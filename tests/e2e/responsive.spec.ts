@@ -44,7 +44,7 @@ test.describe("responsive shell", () => {
     await page.goto("/sourcing/become-a-supplier")
 
     await expect(page.getByRole("button", { name: "Menu" })).toBeVisible()
-    await expect(page.getByRole("link", { name: "Create supplier login" })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "Begin supplier application" })).toHaveAttribute(
       "href",
       "/supplier/register",
     )
