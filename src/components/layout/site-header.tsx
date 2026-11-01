@@ -32,7 +32,8 @@ export function SiteHeader({
           <ButtonLink
             href="/contact"
             size="md"
-            className="min-w-[11rem] justify-center rounded-control bg-ink font-semibold text-white hover:bg-ink-soft"
+            style={{ color: "var(--color-canvas)" }}
+            className="min-w-[11rem] justify-center rounded-control bg-ink font-semibold text-canvas hover:bg-ink-soft hover:text-canvas"
           >
             Request a Quote
             <ArrowRight aria-hidden="true" strokeWidth={1.75} className="size-4.5" />
