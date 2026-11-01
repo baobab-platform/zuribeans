@@ -102,7 +102,8 @@ export function SupplierApplicationJourney({
       <div className="sticky top-0 border-b border-line bg-surface-muted" style={{ zIndex: 30 }}>
         <div className="mx-auto max-w-3xl px-5">
           <nav
-            className="hidden items-center md:flex" style={{ minHeight: "3.5rem" }}
+            className="hidden items-center md:flex"
+            style={{ minHeight: "3.5rem" }}
             aria-label="Supplier application progress"
           >
             {SUPPLIER_STEPS.map((label, index) => (
@@ -125,7 +126,9 @@ export function SupplierApplicationJourney({
                   </span>
                   <span className={index === step ? "font-bold" : "text-muted"}>{label}</span>
                 </button>
-                {index < last ? <span className="h-px flex-1 bg-line-strong" style={{ minWidth: "0.5rem" }} /> : null}
+                {index < last ? (
+                  <span className="h-px flex-1 bg-line-strong" style={{ minWidth: "0.5rem" }} />
+                ) : null}
               </div>
             ))}
           </nav>
@@ -149,7 +152,8 @@ export function SupplierApplicationJourney({
       <form
         action={action}
         ref={formRef}
-        className="mx-auto max-w-3xl px-5 pt-10" style={{ paddingBottom: "8rem" }}
+        className="mx-auto max-w-3xl px-5 pt-10"
+        style={{ paddingBottom: "8rem" }}
         aria-label="Supplier application"
         onSubmit={
           preview
