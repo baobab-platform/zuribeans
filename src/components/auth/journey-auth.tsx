@@ -74,7 +74,7 @@ export function JourneyAuth({
       title={title}
       description={description}
     >
-      <p className="mb-6 text-xs font-bold uppercase tracking-[0.14em] text-clay-on-light">
+      <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-clay-on-light">
         {mode === "login" ? "Secure sign in" : "Organisation registration"}
       </p>
       {message ? (
@@ -84,7 +84,7 @@ export function JourneyAuth({
       ) : null}
       {mode === "login" ? (
         <>
-          <form action={loginAction} className="space-y-5">
+          <form action={loginAction} className="space-y-3">
             <input type="hidden" name="next" value={next} />
             <input type="hidden" name="journey" value={journey} />
             <label className="block text-sm font-semibold">
@@ -107,7 +107,7 @@ export function JourneyAuth({
           </form>
           {buyer ? (
             <>
-              <div className="my-6 flex items-center gap-3 text-sm text-muted">
+              <div className="my-4 flex items-center gap-3 text-sm text-muted">
                 <span aria-hidden="true" className="h-px flex-1 bg-line-strong" />
                 or
                 <span aria-hidden="true" className="h-px flex-1 bg-line-strong" />
@@ -121,7 +121,7 @@ export function JourneyAuth({
               </form>
             </>
           ) : (
-            <p className="mt-5 text-xs leading-6 text-muted">
+            <p className="mt-3 text-xs leading-5 text-muted">
               Supplier single sign-on is not yet qualified. Use your existing email and password for
               the supplier application and review workspace.
             </p>
@@ -135,7 +135,7 @@ export function JourneyAuth({
             Organisation name
             <Input name="companyName" type="text" required autoComplete="organization" />
           </label>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-sm font-semibold">
               First name
               <Input name="firstName" type="text" required autoComplete="given-name" />
@@ -178,7 +178,7 @@ export function JourneyAuth({
           </Button>
         </form>
       )}
-      <div className="mt-6 space-y-3 border-t border-line pt-5 text-sm">
+      <div className="mt-4 space-y-2 border-t border-line pt-3 text-sm">
         <p className="text-muted">
           {mode === "login" ? "New to ZuriBeans?" : "Already registered?"}{" "}
           <Link
@@ -197,7 +197,7 @@ export function JourneyAuth({
             {buyer ? "Supplier portal" : "Buyer portal"}
           </Link>
         </p>
-        <p className="text-xs leading-6 text-muted">
+        <p className="text-xs leading-5 text-muted">
           Both journeys use the existing secure sign-in provider, but access, organisational
           approval and trading mandates are independently governed.
         </p>
