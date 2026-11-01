@@ -18,10 +18,10 @@ export function AuthShell({
   children: ReactNode
 }) {
   return (
-    <div className="grid min-h-[min(780px,90vh)] bg-canvas lg:grid-cols-2">
+    <div className="grid h-[calc(100svh-4.5rem)] min-h-0 grid-rows-[auto_minmax(0,1fr)] bg-canvas lg:grid-cols-2 lg:grid-rows-1 xl:h-[calc(100svh-6.5rem)]">
       <section
-        className="flex min-h-80 flex-col justify-between bg-ink text-canvas"
-        style={{ padding: "clamp(28px, 6vw, 72px)" }}
+        className="flex min-h-0 flex-col justify-between bg-ink text-canvas"
+        style={{ padding: "clamp(18px, 3.4vw, 48px)" }}
       >
         <Link
           href="/"
@@ -33,22 +33,22 @@ export function AuthShell({
           </span>
           <span className="font-display text-xl">ZuriBeans</span>
         </Link>
-        <div className="mt-16 max-w-xl">
+        <div className="mt-8 max-w-xl lg:mt-10">
           <p className="eyebrow-inverse">{eyebrow}</p>
-          <h1 className="mt-5 font-display text-[clamp(2.4rem,5vw,4rem)] font-light leading-[1.07] tracking-[-.025em] text-canvas text-balance">
+          <h1 className="mt-3 font-display text-[clamp(1.9rem,4vw,3.75rem)] font-light leading-[1.07] tracking-[-.025em] text-canvas text-balance">
             {title}
           </h1>
-          <p className="mt-7 max-w-md text-sm leading-7 text-canvas/80">
+          <p className="mt-4 hidden max-w-md text-sm leading-6 text-canvas/80 lg:block">
             Procurement and sourcing are independently governed journeys.
           </p>
         </div>
       </section>
       <section
-        className="flex items-center px-6 py-12 sm:px-12 lg:px-[clamp(36px,6vw,88px)]"
+        className="flex min-h-0 items-start overflow-y-auto overscroll-contain px-5 py-5 sm:px-10 lg:items-center lg:px-[clamp(28px,5vw,64px)] lg:py-6"
         aria-label="Portal credentials"
       >
-        <div className="mx-auto w-full max-w-lg border-t-4 border-clay pt-8">
-          <p className="mb-9 text-base leading-8 text-muted">{description}</p>
+        <div className="mx-auto w-full max-w-lg border-t-[3px] border-clay pt-4 lg:pt-5">
+          <p className="mb-4 text-sm leading-6 text-muted">{description}</p>
           {children}
         </div>
       </section>
