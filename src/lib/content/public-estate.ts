@@ -6,18 +6,32 @@ export type PublicProductClass = CommodityPresentation
 
 export const PUBLIC_PRODUCT_CLASSES = [
   {
-    id: "green-coffee",
-    name: "Green coffee",
+    id: "robusta-coffee",
+    name: "Robusta coffee",
     description:
-      "Arabica, Robusta and specialty lots presented with origin and trade specifications.",
+      "Robusta green-coffee specifications and origin classes; individual lots require publication.",
     href: "/products?category=coffee",
-    eyebrow: "Core product class",
+    eyebrow: "Coffee product class",
     actionLabel: "View coffee",
     contextLabel: "African origins",
     image: {
       src: "/images/zuribeans-origin-trade-hero-v1.webp",
-      alt: "Green coffee beans prepared for professional commodity evaluation",
+      alt: "Robusta coffee commodity category illustration",
       position: "72% center",
+    },
+  },
+  {
+    id: "arabica-coffee",
+    name: "Arabica coffee",
+    description: "Arabica green-coffee grades and origin information, subject to verified publications.",
+    href: "/products?category=coffee",
+    eyebrow: "Coffee product class",
+    actionLabel: "View coffee",
+    contextLabel: "African origins",
+    image: {
+      src: "/images/zuribeans-origin-trade-hero-v1.webp",
+      alt: "Arabica coffee commodity category illustration",
+      position: "55% center",
     },
   },
   {
@@ -33,6 +47,20 @@ export const PUBLIC_PRODUCT_CLASSES = [
       src: "/images/zuribeans-origin-trade-hero-v1.webp",
       alt: "Vanilla pods alongside export-ready agricultural commodities",
       position: "42% center",
+    },
+  },
+  {
+    id: "sesame-seeds",
+    name: "Sesame seeds",
+    description: "Sesame and oilseed procurement classes; lot grades and stock are confirmed by providers.",
+    href: "/products?category=sesame",
+    eyebrow: "Grains and seeds",
+    actionLabel: "View grains and seeds",
+    contextLabel: "African origins",
+    image: {
+      src: "/images/zuribeans-origin-trade-hero-v1.webp",
+      alt: "Agricultural commodity category illustration for sesame seeds",
+      position: "25% center",
     },
   },
 ] as const satisfies readonly PublicProductClass[]
