@@ -5,6 +5,7 @@ import { getCurrentCustomer } from "@/lib/auth/customer"
 import { getSupplierApplicationForCustomer } from "@/lib/supplier/repository"
 import type { SupplierStatus } from "@/lib/supplier/lifecycle"
 import { SupplierApplicationJourney } from "@/components/supplier/supplier-application-journey"
+import { SupplierApplicationHeader } from "@/components/supplier/supplier-application-header"
 import { supplierApplicationSections } from "@/components/supplier/supplier-application-sections"
 import { resubmitSupplierApplicationAction } from "./actions"
 
@@ -74,7 +75,7 @@ export default async function SupplierResubmitPage({
               : "Please try again."}
         </Alert>
       ) : null}
-      <SupplierApplicationJourney
+      <SupplierApplicationJourney heading={<SupplierApplicationHeader mode="resubmit" />}
         mode="resubmit"
         action={resubmitSupplierApplicationAction}
         sections={sections}
