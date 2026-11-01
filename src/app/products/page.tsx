@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/form-controls"
 import { EmptyState, ErrorState } from "@/components/ui/state-panel"
 import { catalogueHref, parseCatalogueQuery } from "@/lib/catalogue/query"
 import { getMarketContext } from "@/lib/market/request"
+import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { listProductCategories, listProducts } from "@/lib/medusa/products"
 import type { ProductCategoryModel, ProductListModel } from "@/lib/medusa/types"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
@@ -29,6 +30,7 @@ type ProductsPageProps = {
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const query = parseCatalogueQuery(await searchParams)
   const { active: market } = await getMarketContext()
+  const synthetic = isSyntheticExperienceEnabled()
   let categories: ProductCategoryModel[] = []
   let catalogue: ProductListModel | null = null
   let failed = false
@@ -91,7 +93,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       >
         <div className="page-container">
           <p className="eyebrow-inverse" style={{ marginBottom: "14px" }}>
-            Procurement catalogue
+            Procurement catalogue{synthetic ? " · Synthetic preview" : ""}
           </p>
           <h1
             className="max-w-4xl font-display"
@@ -102,12 +104,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               letterSpacing: "-0.02em",
             }}
           >
-            African-origin commodities.
+            {synthetic ? "Origin-certified commodities." : "African-origin commodities."}
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-7 text-white/70">
-            Discover published agricultural products for professional procurement. Product evidence,
-            grades, availability and commercial terms require confirmation by the responsible
-            trading systems.
+            {synthetic
+              ? "Preview commodity grades, certification specimens, indicative stock statuses and sample commercial terms. All records are fictional until the responsible Baobab engines provide verified business facts."
+              : "Discover published agricultural products for professional procurement. Product evidence, grades, availability and commercial terms require confirmation by the responsible trading systems."}
           </p>
         </div>
       </header>
@@ -216,13 +218,14 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 (query.query ? "Results for “" + query.query + "”" : "All products")}
             </h2>
             <p className="mt-2 text-sm text-muted">
-              Published catalogue for {market.displayName} ({market.currency}). Publication does not
-              itself confirm market sellability or current stock.
+              {synthetic
+                ? "Illustrative market context for " + market.displayName + ". No stock or commercial authorisation."
+                : "Published catalogue for " + market.displayName + " (" + market.currency + "). Publication does not itself confirm market sellability or current stock."}
             </p>
           </div>
           {catalogue ? (
             <p className="text-sm font-semibold text-muted" aria-live="polite">
-              {catalogue.count} {catalogue.count === 1 ? "product" : "products"}
+              {catalogue.count} {catalogue.count === 1 ? "product" : "products"}{synthetic ? " · synthetic" : ""}
             </p>
           ) : null}
         </div>
