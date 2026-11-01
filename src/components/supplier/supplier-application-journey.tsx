@@ -64,31 +64,27 @@ export function SupplierApplicationJourney({
     }
     if (step === last - 1 && formRef.current) {
       const data = new FormData(formRef.current)
-      const get = (key: string) => data.get(key)?.toString() || "—"
+      const fields = [
+        ["Organisation", "legalName"],
+        ["Country", "countryCode"],
+        ["Registration", "registrationNumber"],
+        ["Primary contact", "contactName"],
+        ["Email", "contactEmail"],
+      ] as const
+      const collections = [
+        ["Products", "capability_category"],
+        ["Annual capacity", "capability_capacity"],
+        ["Origin", "capability_origin_country"],
+        ["Season", "capability_season"],
+        ["Certifications", "certification_type"],
+      ] as const
       setSnapshot([
-        ["Organisation", get("legalName")],
-        ["Country", get("countryCode")],
-        ["Registration", get("registrationNumber")],
-        ["Primary contact", get("contactName")],
-        ["Email", get("contactEmail")],
-        [
-          "Products",
-          data.getAll("capability_category").map(String).filter(Boolean).join(", ") || "—",
-        ],
-        [
-          "Annual capacity",
-          data.getAll("capability_capacity").map(String).filter(Boolean).join(", ") || "—",
-        ],
-        [
-          "Origin",
-          data.getAll("capability_origin_country").map(String).filter(Boolean).join(", ") || "—",
-        ],
-        ["Season", data.getAll("capability_season").map(String).filter(Boolean).join(", ") || "—"],
-        [
-          "Certifications",
-          data.getAll("certification_type").map(String).filter(Boolean).join(", ") ||
-            "None declared",
-        ],
+        ...fields.map(([label, key]) => [label, data.get(key)?.toString() || "—"] as [string, string]),
+        ...collections.map(([label, key]) => [
+          label,
+          data.getAll(key).filter(Boolean).join(", ") ||
+            (key === "certification_type" ? "None declared" : "—"),
+        ] as [string, string]),
       ])
     }
     setStep((current) => Math.min(last, current + 1))
