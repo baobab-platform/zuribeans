@@ -44,15 +44,15 @@ function getFooterGroups(marketContext: MarketContext) {
       links: [
         { href: "/sourcing", label: "Sourcing" },
         { href: "/sourcing/become-a-supplier", label: "Become a supplier" },
-        { href: "/supplier", label: "Supplier portal" },
+        { href: "/supplier/login", label: "Supplier portal" },
       ],
     },
     {
       title: "Partner",
       links: [
-        { href: "/login", label: "Buyer portal" },
+        { href: "/buyer", label: "Buyer portal" },
         { href: "/contact", label: "Discuss a requirement" },
-        { href: "/register", label: "Register" },
+        { href: "/buyer/register", label: "Buyer registration" },
       ],
     },
   ] as const
