@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest"
+import { isSyntheticExperienceEnabled } from "./enablement"
 import {
   DEMO_PRODUCTS,
   DEMO_PRODUCT_CATEGORIES,
@@ -7,6 +8,12 @@ import {
 } from "./catalogue"
 
 describe("synthetic Figma procurement showcase", () => {
+  it("cannot enable synthetic publication in production", () => {
+    expect(
+      isSyntheticExperienceEnabled({ NODE_ENV: "production", ZB_DEV_DATA_MODE: "synthetic" } as NodeJS.ProcessEnv),
+    ).toBe(false)
+  })
+
   it("shows a varied four-card catalogue with explicit synthetic provenance", () => {
     const featured = getDemoFeaturedProducts()
     expect(featured.items).toHaveLength(4)
