@@ -7,7 +7,9 @@ import type { ProductCategoryModel } from "@/lib/medusa/types"
  *
  * Provider category IDs remain authoritative for actual product filtering.
  */
-export const PUBLIC_CATALOGUE_CATEGORIES: readonly Pick<ProductCategoryModel, "handle" | "name">[] = [
+type NavigationCategory = Pick<ProductCategoryModel, "handle" | "name">
+
+export const PUBLIC_CATALOGUE_CATEGORIES: readonly NavigationCategory[] = [
   { handle: "coffee", name: "Coffee" },
   { handle: "vanilla", name: "Vanilla" },
   { handle: "sesame", name: "Grains & Seeds" },
