@@ -24,6 +24,7 @@ const published: ProductCardModel = {
   title: "Uganda Arabica",
   subtitle: "Fully washed",
   thumbnail: null,
+  cardFacts: { source: "provider" },
   origin: "Mount Elgon, Uganda",
 }
 
