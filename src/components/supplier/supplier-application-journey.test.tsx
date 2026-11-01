@@ -37,7 +37,13 @@ describe("Figma Make supplier application journey", () => {
   it("preserves the six source steps and disables commits in development preview", () => {
     expect(SUPPLIER_STEPS).toHaveLength(6)
     vi.stubGlobal("scrollTo", vi.fn())
-    render(<SupplierApplicationJourney preview heading={<h1>Supplier Application</h1>} sections={sections} />)
+    render(
+      <SupplierApplicationJourney
+        preview
+        heading={<h1>Supplier Application</h1>}
+        sections={sections}
+      />,
+    )
     expect(screen.getByRole("heading", { name: "Supplier Application" })).toBeInTheDocument()
     for (let index = 1; index < SUPPLIER_STEPS.length; index += 1) {
       fireEvent.click(screen.getByRole("button", { name: /continue:/i }))
