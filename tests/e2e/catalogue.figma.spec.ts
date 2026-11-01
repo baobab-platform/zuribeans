@@ -19,6 +19,45 @@ test.describe("Figma-inspired procurement catalogue", () => {
     await expect(page.getByRole("region", { name: "Catalogue results" })).toBeVisible()
   })
 
+  test("keeps every public category filter visible on desktop without Medusa fixtures", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto("/products", { waitUntil: "domcontentloaded" })
+    const filters = page.getByRole("navigation", { name: "Product categories" })
+    for (const label of [
+      "All products",
+      "Coffee",
+      "Vanilla",
+      "Grains & Seeds",
+      "Botanicals",
+      "Sorghum",
+      "Related products",
+    ]) {
+      await expect(filters.getByRole("link", { name: label })).toBeVisible()
+    }
+    await expect(filters.getByRole("link", { name: "Coffee" })).toHaveAttribute(
+      "href",
+      "/products?category=coffee",
+    )
+  })
+
+  test("exposes all category links through mobile filter disclosure", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 720 })
+    await page.goto("/products", { waitUntil: "domcontentloaded" })
+    await page.getByText("Filters", { exact: true }).click()
+    const filters = page.getByRole("navigation", { name: "Mobile product categories" })
+    for (const label of [
+      "All products",
+      "Coffee",
+      "Vanilla",
+      "Grains & Seeds",
+      "Botanicals",
+      "Sorghum",
+      "Related products",
+    ]) {
+      await expect(filters.getByRole("link", { name: label })).toBeVisible()
+    }
+  })
+
   test("keeps catalogue search usable at 320px without horizontal page overflow", async ({
     page,
   }) => {
