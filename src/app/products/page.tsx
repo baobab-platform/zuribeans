@@ -140,7 +140,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           ) : null}
           <nav
                 aria-label="Product categories"
-                className="hidden min-w-0 flex-wrap gap-2 lg:flex"
+                className="hidden min-w-0 flex-wrap gap-2 sm:flex"
               >
                 <Link
                   href={catalogueHref({ query: query.query })}
@@ -163,7 +163,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   </Link>
                 ))}
           </nav>
-          <details className="relative lg:hidden">
+          <details className="relative sm:hidden">
                 <summary className="min-h-11 cursor-pointer rounded-control border border-line-strong bg-surface px-4 py-3 text-sm font-semibold">
                   Filters{selectedCategory ? " · " + selectedCategory.name : ""}
                 </summary>
