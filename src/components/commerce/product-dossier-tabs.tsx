@@ -50,7 +50,7 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                 <h2 className="font-display text-2xl">Product specifications</h2>
                 <FieldGrid fields={product.specifications} />
                 {product.variants.length ? (
-                  <div className="mt-9">
+                  <div style={{ marginTop: "2.25rem" }}>
                     <h3 className="font-display text-xl">Published formats</h3>
                     <dl className="mt-4 divide-y divide-line border-y border-line">
                       {product.variants.map((variant) => (
@@ -102,7 +102,7 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                         >
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <h4 className="font-semibold">{cert.name}</h4>
-                            <span className="rounded-full bg-surface-muted px-2 py-1 text-xs font-semibold capitalize">
+                            <span className="rounded-full bg-surface-muted px-2 py-1 text-xs font-semibold" style={{ textTransform: "capitalize" }}>
                               {cert.status}
                             </span>
                           </div>
@@ -117,7 +117,7 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                             </div>
                             <div>
                               <dt className="text-xs text-muted">Reference</dt>
-                              <dd className="break-all font-mono text-xs">{cert.certificateId}</dd>
+                              <dd className="text-xs" style={{ overflowWrap: "anywhere", fontFamily: "monospace" }}>{cert.certificateId}</dd>
                             </div>
                             <div>
                               <dt className="text-xs text-muted">Valid until</dt>
@@ -144,7 +144,7 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                   <p className="mt-5 text-sm text-muted">No certification records are published.</p>
                 )}
                 {dossier?.documents.length ? (
-                  <section aria-labelledby="dossier-documents" className="mt-9">
+                  <section aria-labelledby="dossier-documents" style={{ marginTop: "2.25rem" }}>
                     <h3 id="dossier-documents" className="font-display text-xl">
                       Document register
                     </h3>
@@ -156,14 +156,14 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                         >
                           <div className="min-w-0">
                             <p className="font-semibold">{doc.title}</p>
-                            <p className="mt-1 break-all text-xs text-muted">
+                            <p className="mt-1 text-xs text-muted" style={{ overflowWrap: "anywhere" }}>
                               {doc.reference} · {doc.issuer}
                             </p>
                             <p className="mt-1 text-xs text-muted">
                               {doc.kind} · {doc.issuedAt || "Issue date pending"}
                             </p>
                           </div>
-                          <span className="w-fit rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold capitalize">
+                          <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold" style={{ width: "fit-content", textTransform: "capitalize" }}>
                             {doc.status}
                           </span>
                         </li>
