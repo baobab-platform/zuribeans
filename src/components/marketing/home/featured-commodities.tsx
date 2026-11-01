@@ -14,10 +14,7 @@ type FeaturedCommoditiesProps = {
  * precedence; unavailable/empty trade data never becomes fictional stock.
  * Curated classes provide a transparent discovery fallback.
  */
-export function FeaturedCommodities({
-  commodities,
-  products = [],
-}: FeaturedCommoditiesProps) {
+export function FeaturedCommodities({ commodities, products = [] }: FeaturedCommoditiesProps) {
   if (commodities.length === 0 && products.length === 0) return null
 
   const hasPublishedProducts = products.length > 0
@@ -29,7 +26,10 @@ export function FeaturedCommodities({
       aria-labelledby="featured-commodities-heading"
     >
       <div className="page-container">
-        <header className="grid gap-6 lg:grid-cols-12" style={{ marginBottom: "clamp(36px, 5vw, 64px)" }}>
+        <header
+          className="grid gap-6 lg:grid-cols-12"
+          style={{ marginBottom: "clamp(36px, 5vw, 64px)" }}
+        >
           <div className="lg:col-span-7">
             <p className="eyebrow" style={{ marginBottom: "14px" }}>
               Procurement catalogue
@@ -65,9 +65,9 @@ export function FeaturedCommodities({
           }}
         >
           {hasPublishedProducts
-            ? products.slice(0, 4).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))
+            ? products
+                .slice(0, 4)
+                .map((product) => <ProductCard key={product.id} product={product} />)
             : commodities.map((commodity) => (
                 <CommodityCard key={commodity.id} commodity={commodity} />
               ))}
