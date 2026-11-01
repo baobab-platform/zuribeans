@@ -26,14 +26,16 @@ export default function SourcingPage() {
 
       <section
         aria-labelledby="sourcing-qualification-title"
-        className="bg-canvas py-[clamp(48px,7vw,88px)]"
+        className="bg-canvas"
+        style={{ paddingBlock: "clamp(48px, 7vw, 88px)" }}
       >
         <div className="page-container grid gap-12 lg:grid-cols-2">
           <div className="max-w-xl">
             <p className="eyebrow mb-5">Before you apply</p>
             <h2
               id="sourcing-qualification-title"
-              className="font-display text-[clamp(30px,4vw,46px)] font-light leading-[1.12] tracking-[-.02em] text-ink"
+              className="font-display font-light text-ink"
+              style={{ fontSize: "clamp(30px, 4vw, 46px)", lineHeight: 1.12, letterSpacing: "-0.02em" }}
             >
               A serious route to a serious supply relationship.
             </h2>
@@ -54,7 +56,8 @@ export default function SourcingPage() {
             {requirements.map((requirement, index) => (
               <li
                 key={requirement}
-                className="flex min-h-[76px] items-center gap-5 border-b border-line py-4"
+                className="flex items-center gap-5 border-b border-line py-4"
+                style={{ minHeight: 76 }}
               >
                 <span className="shrink-0 text-xs font-bold tracking-wider text-clay-on-light">
                   {String(index + 1).padStart(2, "0")}
