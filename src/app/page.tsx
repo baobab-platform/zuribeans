@@ -1,4 +1,6 @@
+import { Suspense } from "react"
 import { FeaturedCommodities } from "@/components/marketing/home/featured-commodities"
+import { MarketFeaturedCommodities } from "@/components/marketing/home/market-featured-commodities"
 import { HomeInsights } from "@/components/marketing/home/home-insights"
 import { HomeHero } from "@/components/marketing/home/home-hero"
 import { QualityEvidence } from "@/components/marketing/home/quality-evidence"
@@ -7,8 +9,6 @@ import { TradePathways } from "@/components/marketing/home/trade-pathways"
 import { TrustEvidenceStrip } from "@/components/marketing/home/trust-evidence-strip"
 import { MarketFootprint } from "@/components/markets/market-footprint"
 import { getVisibleEvidence } from "@/lib/content/evidence"
-import { listProducts } from "@/lib/medusa/products"
-import type { ProductCardModel } from "@/lib/medusa/types"
 import { HOME_HERO, TRUST_EVIDENCE } from "@/lib/content/homepage"
 import { PUBLIC_PRODUCT_CLASSES, TRADE_STEPS } from "@/lib/content/public-estate"
 import { QUALITY_EVIDENCE_ITEMS } from "@/lib/content/quality"
@@ -26,25 +26,15 @@ export const metadata = getPublicPageMetadata({
 export default async function HomePage() {
   const { active: market } = await getMarketContext()
   const visibleEvidence = getVisibleEvidence(TRUST_EVIDENCE)
-  let featuredProducts: ProductCardModel[] = []
-  try {
-    // Only public, market-scoped published products; never synthetic fallback on failure.
-    const catalogue = await listProducts({
-      countryCode: market.countryCode,
-      marketKey: market.marketKey,
-      limit: 4,
-      offset: 0,
-    })
-    featuredProducts = catalogue.items
-  } catch {
-    // The independently curated product-class cards remain visible on provider failure.
-  }
+
 
   return (
     <>
       <HomeHero content={HOME_HERO} market={market} />
       <TrustEvidenceStrip items={visibleEvidence} />
-      <FeaturedCommodities commodities={PUBLIC_PRODUCT_CLASSES} products={featuredProducts} />
+      <Suspense fallback={<FeaturedCommodities commodities={PUBLIC_PRODUCT_CLASSES} />}>
+        <MarketFeaturedCommodities commodities={PUBLIC_PRODUCT_CLASSES} market={market} />
+      </Suspense>
       <MarketFootprint />
       <TradeProcess steps={TRADE_STEPS} />
 
