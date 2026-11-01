@@ -102,7 +102,10 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                         >
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <h4 className="font-semibold">{cert.name}</h4>
-                            <span className="rounded-full bg-surface-muted px-2 py-1 text-xs font-semibold" style={{ textTransform: "capitalize" }}>
+                            <span
+                              className="rounded-full bg-surface-muted px-2 py-1 text-xs font-semibold"
+                              style={{ textTransform: "capitalize" }}
+                            >
                               {cert.status}
                             </span>
                           </div>
@@ -117,7 +120,12 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                             </div>
                             <div>
                               <dt className="text-xs text-muted">Reference</dt>
-                              <dd className="text-xs" style={{ overflowWrap: "anywhere", fontFamily: "monospace" }}>{cert.certificateId}</dd>
+                              <dd
+                                className="text-xs"
+                                style={{ overflowWrap: "anywhere", fontFamily: "monospace" }}
+                              >
+                                {cert.certificateId}
+                              </dd>
                             </div>
                             <div>
                               <dt className="text-xs text-muted">Valid until</dt>
@@ -156,14 +164,20 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                         >
                           <div className="min-w-0">
                             <p className="font-semibold">{doc.title}</p>
-                            <p className="mt-1 text-xs text-muted" style={{ overflowWrap: "anywhere" }}>
+                            <p
+                              className="mt-1 text-xs text-muted"
+                              style={{ overflowWrap: "anywhere" }}
+                            >
                               {doc.reference} · {doc.issuer}
                             </p>
                             <p className="mt-1 text-xs text-muted">
                               {doc.kind} · {doc.issuedAt || "Issue date pending"}
                             </p>
                           </div>
-                          <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold" style={{ width: "fit-content", textTransform: "capitalize" }}>
+                          <span
+                            className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold"
+                            style={{ width: "fit-content", textTransform: "capitalize" }}
+                          >
                             {doc.status}
                           </span>
                         </li>
