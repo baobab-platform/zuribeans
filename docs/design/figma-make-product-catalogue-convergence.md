@@ -1,33 +1,38 @@
-# Figma Make component migration — 03: Homepage commodities and procurement catalogue
+# Figma Make migration 03 — Featured products and procurement catalogue
 
-**Status:** Proposed in ZuriBeans PR #145; **do not merge pending design acceptance**.  
-**Design reference:** [ZuriBeans Figma Make](https://www.figma.com/make/hFXETuzHwQ9cUawGUuPcoj/ZuriBeans-Prototype) — `src/components/Commodities.tsx` and `src/pages/Products.tsx`.
+**Status:** Proposed in ZuriBeans PR #145; **DO NOT MERGE pending design and final-head CI acceptance**.  
+**Source:** [ZuriBeans Figma Make prototype](https://www.figma.com/make/hFXETuzHwQ9cUawGUuPcoj/ZuriBeans-Prototype), `src/components/Commodities.tsx` and `src/pages/Products.tsx`.
 
-## Implemented boundaries
+## Owner decision — synthetic data is part of design parity
 
-1. **Homepage:** Four-slot published product discovery where the market-scoped Medusa/Trade provider supplies them; otherwise, curated product-class cards are displayed as category **discovery**, not substitute stock. A provider failure never produces fictitious inventory. The approved hero and trust ribbon are untouched.
-2. **Product cards:** Shared `CatalogueTile` provides 4:3 media, a small uppercase hierarchy label, serif title, origin and published supporting details, fine dividers, and an explicit product-navigation action. Both the homepage and catalogue use the same presentational primitive.
-3. **Catalogue:** `/products` adopts the dark forest-green editorial header, sticky search/category toolbar, responsive dense card grid, readable empty/error states, and existing paginated product traversal.
-4. **Mobile:** One-column product cards where space demands it, full-width search first, and a keyboard-accessible native `details` filter sheet (no new client JavaScript). Category selection and search remain URL-backed server navigation. Tablet transitions to a two-column grid; desktop uses up to four columns.
+The commercial-grade product UI must show prototype-style **product identity, origin, grade, processing, certificates, stock state, and example terms** before real authoritative engines are ready. We meet that instruction by rendering **clearly marked synthetic facts in explicitly enabled local development mode**, never by merging fictional data into real trade authority.
 
-## What the Figma prototype does NOT authorise
+- `NODE_ENV=development` and `ZB_DEV_DATA_MODE=synthetic` activate the already-adopted ZB-DEV-DATA v1 fixture library. The existing `isSyntheticExperienceEnabled` gate cannot be enabled by a production build.
+- The synthetic homepage's four-card showcase is Robusta Coffee, Arabica Coffee, Vanilla Planifolia and Sesame Seeds; the catalogue includes these plus Rooibos, specialty grades and the full existing synthetic product range.
+- Product cards show category, specimen photography, grade, processing, sample certifications, sample availability indicator, minimum order and EXW/FOB/CIF specimens. Each card states **Sample data** and **fictional preview**; status is explicitly **(sample)**.
+- Product details reuse the existing comprehensive synthetic dossier: illustrative certificate references, quality, available quantities, origins, sample terms and document specimens. No fixture is native inventory, an authorised buyer, a legal mandate, valid certification, a customs ruling, a price, or a binding commercial offer.
+- The fixture photo URLs are exactly the Figma-style source-photo composition and run unoptimized **only for synthetic Unsplash preview assets**. Production continues to use optimised project assets or configured provider media; avoid making live performance dependent on third-party prototype photos.
+- Additional synthetic Sesame (HS 120740) and Rooibos (indicative HS 121299; classification varies by jurisdiction and form) examples are *sample catalogue data only*. Confirm real tariff classification through baobab-regulations/corridor packs. References: [UN Statistics Division, 120740](https://unstats.un.org/unsd/classifications/Econ/Structure/Detail/EN/32/120740); [South African agriculture Rooibos trade profile](https://www.nda.gov.za/images/Branches/Economica%20Development%20Trade%20and%20Marketing/international-trade-and-promotions/trade-facilitation/export-publications/pftsa-2023-24-ebook.pdf).
 
-- Prototype `Robusta Coffee`, `Arabica Coffee`, `Vanilla Planifolia`, `Sesame Seeds`, `Rooibos` and their imagery, 2024 harvest dates, grades, certifications, prices, shipping statuses, or availability are **not real catalogue records** and are not imported into the production store.
-- Product titles, origin, subtitle, and product thumbnails derive exclusively from `listProducts` and the Medusa published projection, with `marketKey` preserving Trade assortment gating; no direct client-side product IDs, mock prices or fake product detail routes.
-- The existing `PUBLIC_PRODUCT_CLASSES` supports an explicitly class-level fallback for discovery. Its two entries link to real catalogue category URLs and do not represent product listings.
-- `listProductCategories`, `parseCatalogueQuery`, `catalogueHref`, market context, page size, canonical category lookup, pagination and failure semantics remain authoritative. Unknown category handles are not promoted to products.
-- The Figma stock dots and certification badges have been omitted because `ProductCardModel` contains no independently qualified stock, certification, grade or processing authority. These must be added later via approved, separately governed provider contracts.
-- Local Next-optimised assets and Medusa-published thumbnails replace Unsplash prototype URLs; no runtime dependency on image hosts in Figma Make is created.
+## Real engine path is authoritative
 
-## Required qualification
+- Outside explicit synthetic mode, `listProducts` uses Medusa publications and market-scoped Trade assortment eligibility. Existing `listProductCategories`, `parseCatalogueQuery`, `catalogueHref`, server request market context, pagination, error states and distinct market rights remain unchanged.
+- `ProductCardModel.cardFacts` carries source provenance. Provider-published grade and processing claims can render from Medusa product metadata. **Certification, lab testing, inventory/status, capacity, quoted prices, Incoterms and contractual terms are only rendered as verified facts once the owning Baobab engine contracts and evidence authorities qualify them.**
+- A provider outage does **not** activate synthetic fixtures; the homepage may show curated product-class discovery links and the catalogue retains its error state. This distinction is deliberate and testable.
+- No order, inventory reservation, quotation, buyer approval, legal permission, payment, or commit is generated by any of these presentation changes.
 
-- Run `pnpm format:check`, type-check, lint, unit tests and `pnpm build`.
-- Enforce existing total emitted CSS <=64 KiB and client JS <=800 KiB; no exemptions or softened limits.
-- Verify homepage and catalogue at 320px, 390px, 768px, 1024px and 1440px. Review the **expected** visual baseline differences for the strip, featured catalogue and catalogue page independently before approving new snapshots.
-- Verify no horizontal clipping; keyboard accessible product links, search, filter disclosure, pagination and empty states; mobile and desktop category-query preservation.
-- Existing E2E must still exercise published/empty/provider-failure modes, isolation between market-scoped assortment and synthetic dev fixtures, and no fake checkout/commitment.
-- Do not merge before owner signs off on design and all final-head required checks pass.
+## Responsive Figma design
 
-## Next
+The approved hero and previously implemented trust strip are preserved. Featured products adopt Figma's section heading, gold eyebrow, 4:3 media, thin-gap bordered cards and underlined product actions. The `/products` page adopts the dark green editorial header, sticky search/category toolbar, responsive catalogue tiles and mobile filter disclosure. Desktop fits four catalogue tiles at common widescreen widths, tablet two columns and mobile one column. Shared `CatalogueTile` avoids divergent home and catalogue designs.
 
-After this combined PR receives visual approval, proceed with `Market Footprint` as the next isolated landing-page component.
+The homepage featured products load in a streaming server component below the hero, preserving hero rendering while product queries resolve.
+
+## Required gates
+
+1. Format, lint, typecheck, unit tests, Storybook, actual Next build and **unchanged** 64 KiB total CSS / 800 KiB client-JS budgets.
+2. Verify synthetic and provider source modes, search, category and pagination routes, and disclosure interaction at 320, 390, 768, 1024 and 1440 pixels.
+3. Check synthetic product images and all Figma visual states with local opt-in mode. Document missing imagery; do not claim image downloads are guaranteed.
+4. Review expected homepage visual snapshot changes independently; update only approved baselines. Never weaken pixel thresholds merely to obtain green CI.
+5. Owner must review the homepage and `/products` against the prototype before approving this PR.
+
+**Next:** Market Footprint as a separate follow-up after catalogue acceptance.
