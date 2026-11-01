@@ -155,9 +155,7 @@ export default async function SupplierDashboardPage() {
         {application.documents.length > 0 ? (
           <Card className="p-8 lg:col-span-2">
             <h3 className="font-display text-xl">Document references</h3>
-            <p className="mt-2 text-sm text-muted">
-              Documents referenced in your application.
-            </p>
+            <p className="mt-2 text-sm text-muted">Documents referenced in your application.</p>
             <ul className="mt-4 space-y-2 text-sm">
               {application.documents.map((doc) => (
                 <li key={doc.id} className="rounded-control bg-surface-muted p-3">

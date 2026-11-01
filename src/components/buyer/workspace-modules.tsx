@@ -3,18 +3,15 @@ import { Card } from "@/components/ui/card"
 const pendingModules = [
   {
     label: "Requests for quotation",
-    description:
-      "Send purchasing enquiries and track responses when this service is available.",
+    description: "Send purchasing enquiries and track responses when this service is available.",
   },
   {
     label: "Quotations",
-    description:
-      "Review quotes and their terms when this service is available.",
+    description: "Review quotes and their terms when this service is available.",
   },
   {
     label: "Orders",
-    description:
-      "View confirmed purchases and track their progress when ordering is available.",
+    description: "View confirmed purchases and track their progress when ordering is available.",
   },
   {
     label: "Shipments",
@@ -26,8 +23,7 @@ const pendingModules = [
   },
   {
     label: "Invoices",
-    description:
-      "View invoices for confirmed purchases when this service is available.",
+    description: "View invoices for confirmed purchases when this service is available.",
   },
 ] as const
 

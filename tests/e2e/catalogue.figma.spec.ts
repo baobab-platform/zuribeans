@@ -25,13 +25,7 @@ test.describe("Figma-inspired procurement catalogue", () => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto("/products", { waitUntil: "domcontentloaded" })
     const filters = page.getByRole("navigation", { name: "Product categories" })
-    for (const label of [
-      "All products",
-      "Coffee",
-      "Vanilla",
-      "Grains & Seeds",
-      "Botanicals",
-    ]) {
+    for (const label of ["All products", "Coffee", "Vanilla", "Grains & Seeds", "Botanicals"]) {
       await expect(filters.getByRole("link", { name: label })).toBeVisible()
     }
     await expect(filters.getByRole("link", { name: "Sorghum" })).toHaveCount(0)
@@ -43,18 +37,14 @@ test.describe("Figma-inspired procurement catalogue", () => {
     )
   })
 
-  test("exposes only the approved four commodity categories in mobile filters", async ({ page }) => {
+  test("exposes only the approved four commodity categories in mobile filters", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 320, height: 720 })
     await page.goto("/products", { waitUntil: "domcontentloaded" })
     await page.getByText("Filters", { exact: true }).click()
     const filters = page.getByRole("navigation", { name: "Mobile product categories" })
-    for (const label of [
-      "All products",
-      "Coffee",
-      "Vanilla",
-      "Grains & Seeds",
-      "Botanicals",
-    ]) {
+    for (const label of ["All products", "Coffee", "Vanilla", "Grains & Seeds", "Botanicals"]) {
       await expect(filters.getByRole("link", { name: label })).toBeVisible()
     }
     await expect(filters.getByRole("link", { name: "Sorghum" })).toHaveCount(0)

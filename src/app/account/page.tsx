@@ -129,8 +129,8 @@ export default async function AccountDashboardPage() {
         <p className="eyebrow">While access is reviewed</p>
         <h2 className="mt-4 font-display text-2xl">Explore public product information.</h2>
         <p className="mt-3 text-sm leading-6 text-muted">
-          Browse products while your application is reviewed. Contact us to confirm availability
-          and commercial terms.
+          Browse products while your application is reviewed. Contact us to confirm availability and
+          commercial terms.
         </p>
         <ButtonLink href="/products" variant="outline" className="mt-6">
           Browse products

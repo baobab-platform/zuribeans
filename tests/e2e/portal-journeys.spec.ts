@@ -53,15 +53,26 @@ test.describe("buyer and supplier entry journeys", () => {
     await expect(page.locator('form input[name="next"]')).toHaveValue("/supplier/apply")
   })
 
-  test("portal copy explains the next step without internal implementation language", async ({ page }) => {
+  test("portal copy explains the next step without internal implementation language", async ({
+    page,
+  }) => {
     for (const journey of ["buyer", "supplier"] as const) {
       for (const mode of ["login", "register"] as const) {
         await page.goto(`/${journey}/${mode}`)
         const credentials = page.getByRole("region", { name: "Portal credentials" })
         await expect(credentials).toBeVisible()
-        await expect(credentials).not.toContainText(/Medusa|mandates|identity provider|Figma|single sign-on is not yet qualified/i)
+        await expect(credentials).not.toContainText(
+          /Medusa|mandates|identity provider|Figma|single sign-on is not yet qualified/i,
+        )
         if (mode === "register") {
-          for (const field of ["companyName", "firstName", "lastName", "email", "password", "confirmPassword"]) {
+          for (const field of [
+            "companyName",
+            "firstName",
+            "lastName",
+            "email",
+            "password",
+            "confirmPassword",
+          ]) {
             await expect(credentials.locator(`input[name="${field}"]`)).toHaveCount(1)
           }
         }

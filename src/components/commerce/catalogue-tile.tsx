@@ -32,9 +32,7 @@ export function CatalogueTile({
 }) {
   const synthetic = cardFacts?.source === "synthetic"
   const status = cardFacts?.supplyStatus
-  const usableSampleImage = Boolean(
-    synthetic && image?.startsWith("https://images.unsplash.com/"),
-  )
+  const usableSampleImage = Boolean(synthetic && image?.startsWith("https://images.unsplash.com/"))
   const rows = [
     { label: "Grade", value: cardFacts?.grade },
     { label: "Process", value: cardFacts?.process },
@@ -60,7 +58,9 @@ export function CatalogueTile({
             />
           ) : (
             <div className="absolute inset-0 grid place-items-center bg-[radial-gradient(circle_at_30%_20%,#d9b88d,transparent_40%),linear-gradient(145deg,#526a4f,#172219)]">
-              <span aria-hidden="true" className="font-display text-5xl text-white/80">Z</span>
+              <span aria-hidden="true" className="font-display text-5xl text-white/80">
+                Z
+              </span>
             </div>
           )}
           {synthetic ? (
@@ -76,7 +76,10 @@ export function CatalogueTile({
           >
             {cardFacts?.category ?? eyebrow}
           </p>
-          <h3 className="font-display font-normal text-ink" style={{ fontSize: "20px", lineHeight: 1.2 }}>
+          <h3
+            className="font-display font-normal text-ink"
+            style={{ fontSize: "20px", lineHeight: 1.2 }}
+          >
             {title}
           </h3>
           <p className="text-sm text-muted" style={{ marginTop: "4px", marginBottom: "14px" }}>
@@ -84,7 +87,11 @@ export function CatalogueTile({
           </p>
           <dl className="flex flex-1 flex-col" style={{ gap: "5px", marginBottom: "14px" }}>
             {rows.map((row) => (
-              <div key={row.label} className="flex gap-2 border-b border-line" style={{ paddingBottom: "5px" }}>
+              <div
+                key={row.label}
+                className="flex gap-2 border-b border-line"
+                style={{ paddingBottom: "5px" }}
+              >
                 <dt className="shrink-0 text-xs text-muted" style={{ width: "64px" }}>
                   {row.label}
                 </dt>
@@ -93,13 +100,18 @@ export function CatalogueTile({
             ))}
             {rows.length === 0 && details ? (
               <div className="flex gap-2 border-b border-line" style={{ paddingBottom: "5px" }}>
-                <dt className="shrink-0 text-xs text-muted" style={{ width: "64px" }}>Details</dt>
+                <dt className="shrink-0 text-xs text-muted" style={{ width: "64px" }}>
+                  Details
+                </dt>
                 <dd className="min-w-0 text-xs font-medium text-ink">{details}</dd>
               </div>
             ) : null}
           </dl>
           {cardFacts?.certification ? (
-            <p className="text-xs font-semibold text-clay-on-light" style={{ marginBottom: "12px" }}>
+            <p
+              className="text-xs font-semibold text-clay-on-light"
+              style={{ marginBottom: "12px" }}
+            >
               {synthetic ? "Sample evidence: " : "Published evidence: "}
               {cardFacts.certification}
             </p>

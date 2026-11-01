@@ -39,9 +39,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
             <h1 className="mt-3 font-display text-3xl font-light sm:text-4xl">
               {organisation?.legal_name || customer.company_name || "Trading account"}
             </h1>
-            <p className="mt-2 text-sm text-canvas/70">
-              Signed in as {customer.email}
-            </p>
+            <p className="mt-2 text-sm text-canvas/70">Signed in as {customer.email}</p>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <Badge tone={badge.tone}>{badge.label}</Badge>
