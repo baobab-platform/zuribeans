@@ -6,7 +6,10 @@ import { Button, ButtonLink } from "@/components/ui/button"
 import { Input } from "@/components/ui/form-controls"
 import { EmptyState, ErrorState } from "@/components/ui/state-panel"
 import { catalogueHref, parseCatalogueQuery } from "@/lib/catalogue/query"
-import { catalogueNavigationCategories } from "@/lib/catalogue/navigation-categories"
+import {
+  catalogueNavigationCategories,
+  PUBLIC_CATALOGUE_CATEGORIES,
+} from "@/lib/catalogue/navigation-categories"
 import { getMarketContext } from "@/lib/market/request"
 import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { listProductCategories, listProducts } from "@/lib/medusa/products"
@@ -74,6 +77,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   }
 
   const navigationCategories = catalogueNavigationCategories(categories)
+  // The approved Make toolbar has four commodity filters plus All.
+  // Additional provider taxonomy remains addressable through catalogue URLs.
+  const toolbarCategories = PUBLIC_CATALOGUE_CATEGORIES.slice(0, 4).map(
+    (entry) => navigationCategories.find((category) => category.handle === entry.handle)!,
+  )
   const selectedCategory = navigationCategories.find(
     (category) => category.handle === query.category,
   )
@@ -120,7 +128,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       <div className="sticky z-30 border-b border-line bg-canvas" style={{ top: "64px" }}>
         <div className="page-container flex flex-wrap items-center gap-3 py-3">
-          <form action="/products" method="get" className="flex min-w-0 flex-1 items-center gap-2">
+          <form action="/products" method="get" className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-80">
             {query.category ? <input type="hidden" name="category" value={query.category} /> : null}
             <label htmlFor="catalogue-search" className="min-w-0 flex-1">
               <span className="sr-only">Search products or origins</span>
@@ -140,15 +148,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               Clear
             </ButtonLink>
           ) : null}
-          <nav aria-label="Product categories" className="hidden min-w-0 flex-wrap gap-2 sm:flex">
+          <nav aria-label="Product categories" className="hidden min-w-0 flex-wrap items-center gap-2 sm:flex">
             <Link
               href={catalogueHref({ query: query.query })}
               aria-current={!selectedCategory ? "page" : undefined}
-              className="rounded-full border border-line px-4 py-2 text-sm font-semibold aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-white"
+              className="min-h-10 rounded-control border border-line-strong px-3 py-2 text-xs font-semibold whitespace-nowrap aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
             >
               All products
             </Link>
-            {navigationCategories.map((category) => (
+            {toolbarCategories.map((category) => (
               <Link
                 key={category.id}
                 href={catalogueHref({
@@ -156,7 +164,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   category: category.handle,
                 })}
                 aria-current={selectedCategory?.id === category.id ? "page" : undefined}
-                className="rounded-full border border-line px-4 py-2 text-sm font-semibold aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-white"
+                className="min-h-10 rounded-control border border-line-strong px-3 py-2 text-xs font-semibold whitespace-nowrap aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
               >
                 {category.name}
               </Link>
@@ -182,7 +190,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               >
                 All products
               </Link>
-              {navigationCategories.map((category) => (
+              {toolbarCategories.map((category) => (
                 <Link
                   key={category.id}
                   href={catalogueHref({
@@ -197,6 +205,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               ))}
             </nav>
           </details>
+          <p className="ml-auto shrink-0 text-xs text-muted" aria-live="polite" data-testid="catalogue-product-count">
+            {catalogue
+              ? `${catalogue.count} ${catalogue.count === 1 ? "product" : "products"}`
+              : "Count unavailable"}
+          </p>
         </div>
       </div>
 
@@ -226,12 +239,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   "). Publication does not itself confirm market sellability or current stock."}
             </p>
           </div>
-          {catalogue ? (
-            <p className="text-sm font-semibold text-muted" aria-live="polite">
-              {catalogue.count} {catalogue.count === 1 ? "product" : "products"}
-              {synthetic ? " · synthetic" : ""}
-            </p>
-          ) : null}
         </div>
 
         {failed ? (
