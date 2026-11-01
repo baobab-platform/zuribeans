@@ -8,6 +8,7 @@ import { getCurrentCustomer } from "@/lib/auth/customer"
 import { getSupplierApplicationForCustomer } from "@/lib/supplier/repository"
 import type { SupplierStatus } from "@/lib/supplier/lifecycle"
 import { getSupplierStatusPresentation } from "@/lib/supplier/presentation"
+import { SupplierPortalHero } from "@/components/supplier/supplier-portal-hero"
 
 export default async function SupplierDashboardPage() {
   const customer = await getCurrentCustomer()
@@ -28,12 +29,17 @@ export default async function SupplierDashboardPage() {
 
   if (!application) {
     return (
-      <EmptyState
+      <>
+        <SupplierPortalHero hasApplication={false} />
+        <div className="mt-8">
+          <EmptyState
         eyebrow="Application not started"
         title="Tell us what your organisation can supply"
         description="Provide business, contact, origin, capacity and certification information for sourcing review. Submission does not guarantee qualification."
         action={{ href: "/supplier/apply", label: "Start supplier application" }}
-      />
+          />
+        </div>
+      </>
     )
   }
 
@@ -48,7 +54,9 @@ export default async function SupplierDashboardPage() {
     application.organisation.status === "sample_required"
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <>
+      <SupplierPortalHero hasApplication />
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
       <Card className="p-8 lg:col-span-2">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -157,6 +165,7 @@ export default async function SupplierDashboardPage() {
           </ul>
         </Card>
       ) : null}
-    </div>
+      </div>
+    </>
   )
 }
