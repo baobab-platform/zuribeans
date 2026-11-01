@@ -28,7 +28,7 @@ test.describe("two-tier trade-desk header", () => {
       "href",
       "/sourcing",
     )
-    await expect(header.getByRole("link", { name: "Buyer sign in" })).toHaveAttribute(
+    await expect(header.getByRole("link", { name: "Login/Register" })).toHaveAttribute(
       "href",
       "/buyer/login",
     )
