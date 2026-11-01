@@ -1,0 +1,27 @@
+name: PR146 format viewport regression test once
+on:
+  push:
+    branches: [fix/catalogue-four-across-category-navigation]
+    paths:
+      - .github/workflows/pr146-format-viewport-test-once.yml
+permissions:
+  contents: write
+jobs:
+  format-viewport-test:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: fix/catalogue-four-across-category-navigation
+          fetch-depth: 0
+      - name: Format only the new viewport regression spec with pinned Prettier
+        run: |
+          set -euo pipefail
+          npm exec --yes --package=prettier@3.9.8 -- prettier --write tests/e2e/portal-journeys.spec.ts
+          npm exec --yes --package=prettier@3.9.8 -- prettier --check tests/e2e/portal-journeys.spec.ts
+          git add tests/e2e/portal-journeys.spec.ts
+          git diff --cached --check
+          git diff --cached --quiet && exit 0
+          test "$(git diff --cached --name-only)" = "tests/e2e/portal-journeys.spec.ts"
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "style(test): apply pinned Prettier to viewport regression assertions"
+          git push origin HEAD:refs/heads/fix/catalogue-four-across-category-navigation
