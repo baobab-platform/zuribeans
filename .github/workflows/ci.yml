@@ -61,6 +61,15 @@ jobs:
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
+      - name: Capture canonical Prettier formatting (temporary diagnostic)
+        run: |
+          pnpm exec prettier --write src/app/page.tsx src/app/products/page.tsx src/components/commerce/catalogue-tile.tsx src/components/commerce/catalogue-tile.test.tsx src/components/commerce/product-card.tsx src/components/commodities/commodity-card.tsx src/components/marketing/home/featured-commodities.tsx src/components/marketing/home/featured-commodities.test.tsx src/components/marketing/home/market-featured-commodities.tsx tests/e2e/catalogue.figma.spec.ts
+          for file in src/app/page.tsx src/app/products/page.tsx src/components/commerce/catalogue-tile.tsx src/components/commerce/catalogue-tile.test.tsx src/components/commerce/product-card.tsx src/components/commodities/commodity-card.tsx src/components/marketing/home/featured-commodities.tsx src/components/marketing/home/featured-commodities.test.tsx src/components/marketing/home/market-featured-commodities.tsx tests/e2e/catalogue.figma.spec.ts; do
+            echo "ZB_FORMAT_BEGIN:$file"
+            base64 -w0 "$file"
+            echo
+            echo "ZB_FORMAT_END:$file"
+          done
       - name: Check formatting
         run: pnpm format:check
       - name: Lint
