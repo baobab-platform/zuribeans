@@ -15,7 +15,7 @@ export const PUBLIC_PRODUCT_CLASSES = [
     actionLabel: "View coffee",
     contextLabel: "African origins",
     image: {
-      src: "/images/zuribeans-origin-trade-hero-v1.webp",
+      src: "/images/commodities/robusta-coffee.webp",
       alt: "Robusta coffee commodity category illustration",
       position: "72% center",
     },
@@ -30,7 +30,7 @@ export const PUBLIC_PRODUCT_CLASSES = [
     actionLabel: "View coffee",
     contextLabel: "African origins",
     image: {
-      src: "/images/zuribeans-origin-trade-hero-v1.webp",
+      src: "/images/commodities/arabica-coffee.webp",
       alt: "Arabica coffee commodity category illustration",
       position: "55% center",
     },
@@ -45,7 +45,7 @@ export const PUBLIC_PRODUCT_CLASSES = [
     actionLabel: "View vanilla",
     contextLabel: "Origin-led supply",
     image: {
-      src: "/images/zuribeans-origin-trade-hero-v1.webp",
+      src: "/images/commodities/vanilla-pods.webp",
       alt: "Vanilla pods alongside export-ready agricultural commodities",
       position: "42% center",
     },
@@ -60,7 +60,7 @@ export const PUBLIC_PRODUCT_CLASSES = [
     actionLabel: "View grains and seeds",
     contextLabel: "African origins",
     image: {
-      src: "/images/zuribeans-origin-trade-hero-v1.webp",
+      src: "/images/commodities/sesame-seeds.webp",
       alt: "Agricultural commodity category illustration for sesame seeds",
       position: "25% center",
     },
