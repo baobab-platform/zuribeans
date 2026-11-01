@@ -11,6 +11,7 @@ import {
 import { isSyntheticExperienceEnabled } from "./enablement"
 import { DEMO_INSIGHTS } from "./insights"
 import { DEMO_DOCUMENT_KINDS, DEMO_LOTS, DEMO_SUPPLIERS } from "./operations"
+import { DEMO_SUPPLIER_JOURNEYS } from "./supplier-journeys"
 import { FileInsightContentProvider } from "@/lib/content/insight-content-provider"
 
 describe("ZB-DEV-DATA v1.0", () => {
@@ -134,4 +135,23 @@ describe("ZB-DEV-DATA v1.0", () => {
       expect(dossier?.documents.every((doc) => doc.reference.startsWith("SYN-"))).toBe(true)
     }
   })
+  it("provides distinct, source-isolated supplier journeys for every preview market", () => {
+    expect(DEMO_SUPPLIER_JOURNEYS).toHaveLength(DEMO_SUPPLIERS.length)
+    expect(new Set(DEMO_SUPPLIER_JOURNEYS.map((record) => record.id)).size).toBe(
+      DEMO_SUPPLIER_JOURNEYS.length,
+    )
+    expect(new Set(DEMO_SUPPLIER_JOURNEYS.map((record) => record.country)).size).toBe(5)
+    for (const supplier of DEMO_SUPPLIER_JOURNEYS) {
+      const source = DEMO_SUPPLIERS.find((item) => item.id === supplier.id)
+      expect(source?.principalId).toBeNull()
+      expect(source?.legalEntityId).toBeNull()
+      expect(supplier.form.legalName).toBe(source?.label)
+      expect(supplier.form.contactEmail).toMatch(/@example\\.invalid$/)
+      expect(supplier.certificationStatus).toBe("unverified-fixture")
+      expect(supplier.documents.every((document) => document.reference.startsWith("SYN-"))).toBe(
+        true,
+      )
+    }
+  })
+
 })
