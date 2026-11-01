@@ -62,10 +62,7 @@ export function FeaturedCommodities({ commodities, products = [] }: FeaturedComm
 
         <div
           id="featured-commodities"
-          className="grid gap-px border border-line bg-line"
-          style={{
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
-          }}
+          className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4"
         >
           {hasPublishedProducts
             ? products
