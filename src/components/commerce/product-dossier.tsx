@@ -89,7 +89,7 @@ export function ProductDossier({
       </div>
 
       <div className="page-container">
-        <div className="grid min-w-0 gap-8 py-9 lg:grid-cols-12 lg:gap-10 lg:py-12">
+        <div className="grid min-w-0 gap-10 py-12 lg:grid-cols-12">
           <div className="min-w-0 lg:col-span-7">
             <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
               <span
@@ -198,7 +198,7 @@ export function ProductDossier({
               </Link>
             </div>
 
-            <div className="mt-9 lg:mt-12">
+            <div className="mt-12">
               <ProductDossierTabs product={product} />
             </div>
           </div>

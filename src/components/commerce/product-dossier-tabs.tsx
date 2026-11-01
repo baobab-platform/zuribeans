@@ -77,7 +77,11 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                 setActiveTab(target.id)
                 document.getElementById(`product-tab-${target.id}`)?.focus()
               }}
-              className="min-h-12 border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-ink aria-selected:border-ink aria-selected:text-ink"
+              className="min-h-12 border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-muted transition-colors hover:text-ink"
+              style={{
+                borderBottomColor: activeTab === tab.id ? "var(--color-ink)" : "transparent",
+                color: activeTab === tab.id ? "var(--color-ink)" : "var(--color-muted)",
+              }}
             >
               {tab.label}
             </button>
@@ -105,7 +109,7 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                     {product.variants.map((variant) => (
                       <div
                         key={variant.id}
-                        className="grid gap-1 py-3 text-sm sm:grid-cols-[10rem_1fr]"
+                        className="grid gap-1 py-3 text-sm sm:grid-cols-2"
                       >
                         <dt className="text-muted">{variant.title}</dt>
                         <dd className="break-all font-medium">{variant.sku || "SKU on request"}</dd>
@@ -202,7 +206,7 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                     {dossier.documents.map((doc) => (
                       <li
                         key={doc.id}
-                        className="grid gap-2 py-4 text-sm sm:grid-cols-[1fr_auto] sm:items-center"
+                        className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
                       >
                         <div className="min-w-0">
                           <p className="font-semibold">{doc.title}</p>

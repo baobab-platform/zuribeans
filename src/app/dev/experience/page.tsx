@@ -20,7 +20,7 @@ export default function DevelopmentExperiencePage() {
   if (!isSyntheticExperienceEnabled()) notFound()
 
   return (
-    <section className="bg-canvas py-12 lg:py-16">
+    <section className="bg-canvas py-16">
       <div className="page-container space-y-14">
         <header className="space-y-5">
           <p className="eyebrow">ZB-DEV-DATA v1.0 · local development only</p>
@@ -86,12 +86,12 @@ export default function DevelopmentExperiencePage() {
             HS 2022 six-digit reference classifications are informative; national tariff lines, duty
             rates, rules of origin and restrictions require regulatory verification.
           </p>
-          <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {DEMO_PRODUCT_CATEGORIES.map((category) => (
               <Link
                 key={category.id}
                 href={`/products?category=${category.handle}`}
-                className="rounded-panel border border-line bg-surface p-6 hover:border-ink"
+                className="rounded-panel border border-line bg-surface p-6 hover:bg-surface-muted"
               >
                 <h3 className="font-display text-2xl">{category.name}</h3>
                 <p className="mt-3 text-sm text-muted">
@@ -153,7 +153,7 @@ export default function DevelopmentExperiencePage() {
           <h2 id="dev-workflows-title" className="font-display text-4xl">
             Workflow specimens
           </h2>
-          <div className="mt-7 grid gap-5 md:grid-cols-3">
+          <div className="mt-7 grid gap-5 md:grid-cols-2">
             <div className="rounded-panel border border-line p-6">
               <h3 className="font-display text-2xl">Suppliers</h3>
               <p className="mt-2 text-muted">{DEMO_SUPPLIERS.length} fictional organisations</p>
