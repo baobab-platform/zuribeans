@@ -26,7 +26,7 @@ export default async function SupplierLayout({ children }: { children: React.Rea
             <p className="mt-2 text-sm text-canvas/70">Sourcing review and qualification · {customer.email}</p>
           </div>
           <form action={logoutAction}>
-            <Button type="submit" variant="outline" className="border-white/40 text-canvas hover:bg-white/10 hover:text-canvas">Sign out</Button>
+            <Button type="submit" variant="inverse">Sign out</Button>
           </form>
         </div>
       </header>
