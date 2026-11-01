@@ -10,10 +10,10 @@ import type { ZuribeansMarket } from "@/lib/market/markets"
  * - art-directed portrait crop on phones
  * - dark, bottom-weighted overlay instead of a lateral gradient
  * - three-line serif statement with an italic middle line
- * - procurement CTA group and a separately governed evidence cue.
+ * - procurement CTA group and the three-value right-side statistics rail.
  *
- * The source prototype displays unverified figures (12+, 98%, 7 years).
- * Do not copy those into production: this slot remains evidence-based.
+ * Figures are design content in development. Source verification is a separate
+ * staging/production release gate, documented outside the rendered interface.
  */
 export function HomeHero({
   content,
@@ -88,13 +88,28 @@ export function HomeHero({
             </div>
           </div>
 
-          <aside className="hidden flex-col justify-end lg:col-span-4 lg:flex">
-            <div className="border-l-2 border-clay pl-5">
-              <p className="eyebrow-inverse">{content.evidence.eyebrow}</p>
-              <p className="mt-3 max-w-xs font-display text-2xl font-light leading-snug text-canvas">
-                {content.evidence.statement}
-              </p>
-            </div>
+          <aside
+            aria-label="Trade at a glance"
+            className="hidden flex-col justify-end gap-5 lg:col-span-4 lg:flex"
+          >
+            <dl className="space-y-5">
+              {content.illustrativeMetrics.map((metric) => (
+                <div
+                  key={metric.label}
+                  className="flex flex-col border-l-2 border-clay-inverse pl-4"
+                >
+                  <dt className="order-2 mt-2 text-xs font-bold tracking-[.06em] text-clay-inverse uppercase">
+                    {metric.label}
+                  </dt>
+                  <dd className="order-1 font-display text-4xl font-light leading-none text-white">
+                    {metric.value}
+                  </dd>
+                  <dd className="order-3 mt-1 text-xs leading-relaxed text-white/75">
+                    {metric.detail}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </aside>
         </div>
       </div>
