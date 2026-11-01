@@ -585,7 +585,18 @@ export function listDemoProducts(options: {
   const offset = Math.max(options.offset ?? 0, 0)
   const category = DEMO_PRODUCT_CATEGORIES.find((entry) => entry.id === options.categoryId)
   const q = (options.query ?? "").trim().toLowerCase()
-  const matches = DEMO_PRODUCTS.filter(
+  // Keep prototype's varied product mix at the top of the default preview.
+  const previewOrder = [
+    ...DEMO_FEATURED_HANDLES,
+    "demo-rooibos-grade1-za",
+    "demo-arabica-g1-et",
+  ]
+  const promoted = previewOrder.flatMap((handle) => {
+    const product = DEMO_PRODUCTS.find((candidate) => candidate.handle === handle)
+    return product ? [product] : []
+  })
+  const remaining = DEMO_PRODUCTS.filter((product) => !previewOrder.includes(product.handle))
+  const matches = [...promoted, ...remaining].filter(
     (product) =>
       (!options.categoryId ||
         (category !== undefined && product.categoryHandle === category.handle)) &&
