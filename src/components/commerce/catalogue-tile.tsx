@@ -36,8 +36,8 @@ export function CatalogueTile({
     synthetic && image?.startsWith("https://images.unsplash.com/"),
   )
   const rows = [
-    { label: "Grade", value: cardFacts?.grade ?? (synthetic ? null : "On request") },
-    { label: "Process", value: cardFacts?.process ?? (synthetic ? null : "On request") },
+    { label: "Grade", value: cardFacts?.grade },
+    { label: "Process", value: cardFacts?.process },
   ].filter((row) => row.value)
 
   return (
