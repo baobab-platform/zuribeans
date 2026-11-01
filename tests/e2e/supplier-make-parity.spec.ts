@@ -28,8 +28,11 @@ test("synthetic supplier preview is disabled in production test builds", async (
     process.env.NODE_ENV === "development" && process.env.ZB_DEV_DATA_MODE === "synthetic",
     "This negative is for CI's production build only",
   )
-  await page.goto("/dev/supplier")
-  await expect(page.getByRole("heading", { name: /404|not found/i })).toBeVisible()
+  const response = await page.goto("/dev/supplier")
+  expect(response?.status()).toBe(404)
+  await expect(
+    page.getByRole("heading", { name: "This address is not part of the ZuriBeans estate." }),
+  ).toBeVisible()
 })
 
 test("synthetic supplier preview can walk the six sections without making an application", async ({ page }) => {
