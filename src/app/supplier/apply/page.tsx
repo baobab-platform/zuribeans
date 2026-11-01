@@ -3,6 +3,7 @@ import { ErrorState } from "@/components/ui/state-panel"
 import { getCurrentCustomer } from "@/lib/auth/customer"
 import { getSupplierApplicationForCustomer } from "@/lib/supplier/repository"
 import { SupplierApplicationJourney } from "@/components/supplier/supplier-application-journey"
+import { SupplierApplicationHeader } from "@/components/supplier/supplier-application-header"
 import { supplierApplicationSections } from "@/components/supplier/supplier-application-sections"
 import { submitSupplierApplicationAction, type SupplierApplicationErrorCode } from "./actions"
 
@@ -38,7 +39,7 @@ export default async function SupplierApplyPage({
   const { error } = await searchParams
   const message = error && isErrorCode(error) ? errorMessages[error] : null
   return (
-    <SupplierApplicationJourney
+    <SupplierApplicationJourney heading={<SupplierApplicationHeader mode="apply" />}
       mode="apply"
       action={submitSupplierApplicationAction}
       sections={supplierApplicationSections()}
