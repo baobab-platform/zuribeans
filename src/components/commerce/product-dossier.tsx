@@ -207,7 +207,7 @@ export function ProductDossier({
             className="hidden min-w-0 lg:col-span-5 lg:block"
             aria-label="Product procurement enquiry"
           >
-            <div className="sticky top-24 space-y-5">
+            <div className="sticky space-y-5" style={{ top: "6rem" }}>
               {image}
               <div className="rounded-panel border border-line-strong bg-surface p-6">
                 <p className="eyebrow">Procurement</p>
@@ -268,7 +268,7 @@ export function ProductDossier({
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas p-3 shadow-lg lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-canvas p-3 lg:hidden" style={{ boxShadow: "0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1)" }}>
         <div className="page-container">
           <Link
             href={inquiryHref}
