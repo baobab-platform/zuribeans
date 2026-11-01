@@ -31,7 +31,7 @@ export default function BuyerPortalPage() {
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
               <ButtonLink href="/buyer/register" className="text-white hover:text-white">Create buyer account</ButtonLink>
-              <ButtonLink href="/buyer/login" variant="outline" className="border-white/40 text-canvas hover:bg-white/10 hover:text-canvas">Buyer sign in</ButtonLink>
+              <ButtonLink href="/buyer/login" variant="inverse">Buyer sign in</ButtonLink>
             </div>
           </div>
           <div className="border-l-4 border-clay bg-ink-soft p-8">
