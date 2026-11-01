@@ -13,6 +13,7 @@ This register is operational guidance, not a replacement for Accepted ADRs or in
 
 ## Known incidents and reproducible resolutions
 
+<!-- prettier-ignore -->
 | ID | PR / evidence | Symptom and root cause | Corrective action | Guard / replay | Anti-pattern |
 | --- | --- | --- | --- | --- | --- |
 | ZB-LL-001 | [#131](https://github.com/baobab-platform/zuribeans/pull/131); [failed run](https://github.com/baobab-platform/zuribeans/actions/runs/41282274247); [diagnostic run](https://github.com/baobab-platform/zuribeans/actions/runs/41287966782); [passing run](https://github.com/baobab-platform/zuribeans/actions/runs/41288633446) | At 320/390/768 px, absolutely positioned screen-reader-only ordinal counters in `TrustEvidenceStrip` inflated document scroll width to 887 px, triggering 27 browser failures and distorted full-page screenshots. | Remove redundant absolute counters; native `ul/li` semantics already supply list structure. Preserve keyboard focus and intentional horizontal ribbon scrolling. | Re-run responsive E2E at 320/390/768/1024/1440 plus navigation, footer, and snapshots; verify document width is no greater than viewport without clipping legitimate ribbon overflow. | Do not apply global `overflow-x: hidden`, remove accessibility semantics, or relax viewport assertions. |
