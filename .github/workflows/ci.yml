@@ -61,15 +61,6 @@ jobs:
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
-      - name: Capture canonical formatter output
-        run: |
-          pnpm exec prettier --write src/components/commerce/product-dossier-tabs.tsx src/components/commerce/product-dossier.tsx src/components/supplier/supplier-application-journey.tsx
-          for file in src/components/commerce/product-dossier-tabs.tsx src/components/commerce/product-dossier.tsx src/components/supplier/supplier-application-journey.tsx; do
-            echo "ZB_FILE_BEGIN:$file"
-            base64 -w0 "$file"
-            echo
-            echo "ZB_FILE_END:$file"
-          done
       - name: Check formatting
         run: pnpm format:check
       - name: Lint
