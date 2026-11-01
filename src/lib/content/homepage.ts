@@ -23,18 +23,18 @@ export type HomeHeroContent = {
 }
 
 export const HOME_HERO = {
-  eyebrow: "African origin. Global reach.",
-  title: "Quality products. Clear provenance.",
-  accent: "Serious trade.",
+  eyebrow: "Uganda · South Africa",
+  title: "African origin.",
+  accent: "International trade discipline.",
   description:
-    "ZuriBeans connects professional buyers and qualified suppliers through disciplined sourcing, useful product information and cross-border capability built for repeat business.",
+    "ZuriBeans connects professional buyers with sourced agricultural commodities from East and Southern Africa, with documented origin, specifications and accountable cross-border trade.",
   primaryCta: {
-    label: "Request a Quote",
-    href: "/contact",
+    label: "View Catalogue",
+    href: "/products",
   },
   secondaryCta: {
-    label: "Explore products",
-    href: "/products",
+    label: "How We Trade",
+    href: "/trade",
   },
   image: {
     src: "/images/zuribeans-origin-trade-hero-v1.webp",

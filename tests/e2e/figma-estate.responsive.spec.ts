@@ -18,11 +18,20 @@ test.describe("Figma Make responsive estate contract", () => {
       await expect(page.getByRole("main")).toBeVisible()
       await expect(page.getByRole("link", { name: /request a quote/i }).first()).toBeVisible()
 
-      const documentOverflow = await page.evaluate(() => {
+      const layout = await page.evaluate(() => {
         const root = document.documentElement
-        return root.scrollWidth > root.clientWidth + 1
+        const offenders = Array.from(document.querySelectorAll("*"))
+          .filter((element) => element.getBoundingClientRect().right > root.clientWidth + 1)
+          .slice(0, 12)
+          .map((element) => ({
+            tag: element.tagName,
+            className: element.getAttribute("class"),
+            right: Math.round(element.getBoundingClientRect().right),
+          }))
+        return { overflows: root.scrollWidth > root.clientWidth + 1, offenders }
       })
-      expect(documentOverflow, `Document overflows at ${width}px`).toBe(false)
+      const message = `Document overflows at ${width}px: ${JSON.stringify(layout.offenders)}`
+      expect(layout.overflows, message).toBe(false)
 
       if (width < 1280) {
         const menu = page.getByRole("button", { name: /menu/i })
