@@ -228,7 +228,7 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
               <label className={label}>
                 Country of product origin
                 <select
-                    className={nativeSelectClass}
+                  className={nativeSelectClass}
                   name="capability_origin_country"
                   defaultValue={initial.capabilities?.[slot]?.originCountryCode ?? ""}
                 >
