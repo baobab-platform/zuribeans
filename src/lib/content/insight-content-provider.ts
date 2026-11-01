@@ -1,4 +1,6 @@
 import type { ZuribeansMarketKey } from "@/lib/market/markets"
+import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
+import { DEMO_INSIGHTS } from "@/lib/dev-data/insights"
 import {
   INSIGHT_ARTICLES,
   getPublishedInsightBySlug,
@@ -59,4 +61,6 @@ export class FileInsightContentProvider implements InsightContentProvider {
   }
 }
 
-export const insightContentProvider: InsightContentProvider = new FileInsightContentProvider()
+export const insightContentProvider: InsightContentProvider = isSyntheticExperienceEnabled()
+  ? new FileInsightContentProvider(DEMO_INSIGHTS)
+  : new FileInsightContentProvider()
