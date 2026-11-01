@@ -19,12 +19,15 @@ export function SupplierEditorialHero({
     <header className="relative overflow-hidden bg-ink text-canvas">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-28 -top-52 size-[420px] rounded-full border border-clay/20"
+        className="pointer-events-none absolute rounded-full"
+        style={{ right: "-7rem", top: "-13rem", width: 420, height: 420, border: "1px solid rgb(201 162 39 / 0.2)" }}
       />
-      <div className="page-container relative z-10 py-[clamp(54px,8vw,104px)]">
+      <div className="page-container relative z-10"
+        style={{ paddingBlock: "clamp(54px, 8vw, 104px)" }}>
         <nav
           aria-label="Breadcrumb"
-          className="mb-9 flex flex-wrap items-center gap-2 text-xs tracking-[.08em] text-canvas/65"
+          className="mb-9 flex flex-wrap items-center gap-2 text-xs text-canvas/65"
+          style={{ letterSpacing: "0.08em" }}
         >
           <Link href="/" className="min-h-8 py-2 hover:text-canvas hover:underline">
             Home
@@ -33,10 +36,12 @@ export function SupplierEditorialHero({
           <span aria-current="page">{eyebrow}</span>
         </nav>
         <p className="eyebrow-inverse mb-4">{eyebrow}</p>
-        <h1 className="max-w-[900px] font-display text-[clamp(38px,6.5vw,76px)] font-light leading-[1.02] tracking-[-.025em] text-canvas">
+        <h1 className="font-display font-light text-canvas"
+          style={{ maxWidth: 900, fontSize: "clamp(38px, 6.5vw, 76px)", lineHeight: 1.02, letterSpacing: "-0.025em" }}>
           {title}
         </h1>
-        <p className="mt-6 max-w-[720px] text-[clamp(15px,2vw,18px)] leading-[1.7] text-canvas/75">
+        <p className="mt-6 text-canvas/75"
+          style={{ maxWidth: 720, fontSize: "clamp(15px, 2vw, 18px)", lineHeight: 1.7 }}>
           {description}
         </p>
       </div>
