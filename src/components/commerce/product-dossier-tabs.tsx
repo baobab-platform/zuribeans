@@ -45,140 +45,140 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
         const tab = { id: tabId }
         return (
           <>
-          {tab.id === "specifications" ? (
-            <>
-              <h2 className="font-display text-2xl">Product specifications</h2>
-              <FieldGrid fields={product.specifications} />
-              {product.variants.length ? (
-                <div className="mt-9">
-                  <h3 className="font-display text-xl">Published formats</h3>
-                  <dl className="mt-4 divide-y divide-line border-y border-line">
-                    {product.variants.map((variant) => (
-                      <div key={variant.id} className="grid gap-1 py-3 text-sm sm:grid-cols-2">
-                        <dt className="text-muted">{variant.title}</dt>
-                        <dd className="break-all font-medium">{variant.sku || "SKU on request"}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-              ) : null}
-            </>
-          ) : null}
-          {tab.id === "provenance" ? (
-            <>
-              <h2 className="font-display text-2xl">Origin & provenance</h2>
-              <p className="mt-4 text-sm leading-7 text-muted">
-                {product.origin
-                  ? `Origin: ${product.origin}. Traceability details are displayed below where supplied.`
-                  : "Origin has not been published for this product."}
-              </p>
-              <FieldGrid fields={provenance} />
-            </>
-          ) : null}
-          {tab.id === "quality" ? (
-            <>
-              <h2 className="font-display text-2xl">Quality & grading</h2>
-              {product.qualityInformation ? (
-                <p className="mt-4 text-sm leading-7 text-muted">{product.qualityInformation}</p>
-              ) : null}
-              <FieldGrid fields={quality} />
-            </>
-          ) : null}
-          {tab.id === "evidence" ? (
-            <>
-              <h2 className="font-display text-2xl">Evidence & documents</h2>
-              {dossier?.certifications.length ? (
-                <section aria-labelledby="dossier-certificates" className="mt-6">
-                  <h3 id="dossier-certificates" className="font-display text-xl">
-                    Certifications & compliance
-                  </h3>
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                    {dossier.certifications.map((cert) => (
-                      <article
-                        key={cert.certificateId}
-                        className="rounded-panel border border-line bg-surface p-5"
-                      >
-                        <div className="flex flex-wrap items-start justify-between gap-2">
-                          <h4 className="font-semibold">{cert.name}</h4>
-                          <span className="rounded-full bg-surface-muted px-2 py-1 text-xs font-semibold capitalize">
-                            {cert.status}
-                          </span>
+            {tab.id === "specifications" ? (
+              <>
+                <h2 className="font-display text-2xl">Product specifications</h2>
+                <FieldGrid fields={product.specifications} />
+                {product.variants.length ? (
+                  <div className="mt-9">
+                    <h3 className="font-display text-xl">Published formats</h3>
+                    <dl className="mt-4 divide-y divide-line border-y border-line">
+                      {product.variants.map((variant) => (
+                        <div key={variant.id} className="grid gap-1 py-3 text-sm sm:grid-cols-2">
+                          <dt className="text-muted">{variant.title}</dt>
+                          <dd className="break-all font-medium">{variant.sku || "SKU on request"}</dd>
                         </div>
-                        <dl className="mt-4 space-y-2 text-sm">
-                          <div>
-                            <dt className="text-xs text-muted">Scheme</dt>
-                            <dd>{cert.scheme}</dd>
-                          </div>
-                          <div>
-                            <dt className="text-xs text-muted">Issuer</dt>
-                            <dd>{cert.issuer}</dd>
-                          </div>
-                          <div>
-                            <dt className="text-xs text-muted">Reference</dt>
-                            <dd className="break-all font-mono text-xs">{cert.certificateId}</dd>
-                          </div>
-                          <div>
-                            <dt className="text-xs text-muted">Valid until</dt>
-                            <dd>{cert.validUntil || "Under review"}</dd>
-                          </div>
-                          <div>
-                            <dt className="text-xs text-muted">Scope</dt>
-                            <dd>{cert.scope}</dd>
-                          </div>
-                        </dl>
-                      </article>
-                    ))}
+                      ))}
+                    </dl>
                   </div>
-                </section>
-              ) : product.certifications.length ? (
-                <ul className="mt-6 space-y-2">
-                  {product.certifications.map((name) => (
-                    <li key={name} className="rounded-panel border border-line p-4 text-sm">
-                      {name}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-5 text-sm text-muted">No certification records are published.</p>
-              )}
-              {dossier?.documents.length ? (
-                <section aria-labelledby="dossier-documents" className="mt-9">
-                  <h3 id="dossier-documents" className="font-display text-xl">
-                    Document register
-                  </h3>
-                  <ul className="mt-4 divide-y divide-line border-y border-line">
-                    {dossier.documents.map((doc) => (
-                      <li
-                        key={doc.id}
-                        className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div className="min-w-0">
-                          <p className="font-semibold">{doc.title}</p>
-                          <p className="mt-1 break-all text-xs text-muted">
-                            {doc.reference} · {doc.issuer}
-                          </p>
-                          <p className="mt-1 text-xs text-muted">
-                            {doc.kind} · {doc.issuedAt || "Issue date pending"}
-                          </p>
-                        </div>
-                        <span className="w-fit rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold capitalize">
-                          {doc.status}
-                        </span>
+                ) : null}
+              </>
+            ) : null}
+            {tab.id === "provenance" ? (
+              <>
+                <h2 className="font-display text-2xl">Origin & provenance</h2>
+                <p className="mt-4 text-sm leading-7 text-muted">
+                  {product.origin
+                    ? `Origin: ${product.origin}. Traceability details are displayed below where supplied.`
+                    : "Origin has not been published for this product."}
+                </p>
+                <FieldGrid fields={provenance} />
+              </>
+            ) : null}
+            {tab.id === "quality" ? (
+              <>
+                <h2 className="font-display text-2xl">Quality & grading</h2>
+                {product.qualityInformation ? (
+                  <p className="mt-4 text-sm leading-7 text-muted">{product.qualityInformation}</p>
+                ) : null}
+                <FieldGrid fields={quality} />
+              </>
+            ) : null}
+            {tab.id === "evidence" ? (
+              <>
+                <h2 className="font-display text-2xl">Evidence & documents</h2>
+                {dossier?.certifications.length ? (
+                  <section aria-labelledby="dossier-certificates" className="mt-6">
+                    <h3 id="dossier-certificates" className="font-display text-xl">
+                      Certifications & compliance
+                    </h3>
+                    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                      {dossier.certifications.map((cert) => (
+                        <article
+                          key={cert.certificateId}
+                          className="rounded-panel border border-line bg-surface p-5"
+                        >
+                          <div className="flex flex-wrap items-start justify-between gap-2">
+                            <h4 className="font-semibold">{cert.name}</h4>
+                            <span className="rounded-full bg-surface-muted px-2 py-1 text-xs font-semibold capitalize">
+                              {cert.status}
+                            </span>
+                          </div>
+                          <dl className="mt-4 space-y-2 text-sm">
+                            <div>
+                              <dt className="text-xs text-muted">Scheme</dt>
+                              <dd>{cert.scheme}</dd>
+                            </div>
+                            <div>
+                              <dt className="text-xs text-muted">Issuer</dt>
+                              <dd>{cert.issuer}</dd>
+                            </div>
+                            <div>
+                              <dt className="text-xs text-muted">Reference</dt>
+                              <dd className="break-all font-mono text-xs">{cert.certificateId}</dd>
+                            </div>
+                            <div>
+                              <dt className="text-xs text-muted">Valid until</dt>
+                              <dd>{cert.validUntil || "Under review"}</dd>
+                            </div>
+                            <div>
+                              <dt className="text-xs text-muted">Scope</dt>
+                              <dd>{cert.scope}</dd>
+                            </div>
+                          </dl>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                ) : product.certifications.length ? (
+                  <ul className="mt-6 space-y-2">
+                    {product.certifications.map((name) => (
+                      <li key={name} className="rounded-panel border border-line p-4 text-sm">
+                        {name}
                       </li>
                     ))}
                   </ul>
-                </section>
-              ) : (
-                <p className="mt-5 text-sm text-muted">
-                  Documents may be requested from the trade desk.
+                ) : (
+                  <p className="mt-5 text-sm text-muted">No certification records are published.</p>
+                )}
+                {dossier?.documents.length ? (
+                  <section aria-labelledby="dossier-documents" className="mt-9">
+                    <h3 id="dossier-documents" className="font-display text-xl">
+                      Document register
+                    </h3>
+                    <ul className="mt-4 divide-y divide-line border-y border-line">
+                      {dossier.documents.map((doc) => (
+                        <li
+                          key={doc.id}
+                          className="flex flex-col gap-2 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="min-w-0">
+                            <p className="font-semibold">{doc.title}</p>
+                            <p className="mt-1 break-all text-xs text-muted">
+                              {doc.reference} · {doc.issuer}
+                            </p>
+                            <p className="mt-1 text-xs text-muted">
+                              {doc.kind} · {doc.issuedAt || "Issue date pending"}
+                            </p>
+                          </div>
+                          <span className="w-fit rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold capitalize">
+                            {doc.status}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ) : (
+                  <p className="mt-5 text-sm text-muted">
+                    Documents may be requested from the trade desk.
+                  </p>
+                )}
+                <p className="mt-5 text-xs leading-5 text-muted">
+                  Document details are informational; no download or verification action is provided
+                  without the owning document service.
                 </p>
-              )}
-              <p className="mt-5 text-xs leading-5 text-muted">
-                Document details are informational; no download or verification action is provided
-                without the owning document service.
-              </p>
-            </>
-          ) : null}
+              </>
+            ) : null}
           </>
         )
       })}
