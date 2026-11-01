@@ -44,8 +44,10 @@ export function ProductDossier({
   ]
   const imageAlt = `${product.title}${product.origin ? ` from ${product.origin}` : ""}`
   const image = (
-    <div className="relative overflow-hidden rounded-panel bg-sand"
-      style={{ aspectRatio: "4 / 3" }}>
+    <div
+      className="relative overflow-hidden rounded-panel bg-sand"
+      style={{ aspectRatio: "4 / 3" }}
+    >
       {product.thumbnail ? (
         <Image
           src={product.thumbnail}
@@ -56,11 +58,13 @@ export function ProductDossier({
           className="object-cover"
         />
       ) : (
-        <div className="absolute inset-0 grid place-items-center"
+        <div
+          className="absolute inset-0 grid place-items-center"
           style={{
             backgroundImage:
               "radial-gradient(circle at 30% 20%, #d9b88d, transparent 40%), linear-gradient(145deg, #526a4f, #172219)",
-          }}>
+          }}
+        >
           <span aria-hidden="true" className="font-display text-7xl text-white/75">
             Z
           </span>
@@ -88,8 +92,10 @@ export function ProductDossier({
         <div className="grid min-w-0 gap-8 py-9 lg:grid-cols-12 lg:gap-10 lg:py-12">
           <div className="min-w-0 lg:col-span-7">
             <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
-              <span className="font-semibold uppercase text-clay-on-light"
-                style={{ letterSpacing: ".12em" }}>
+              <span
+                className="font-semibold uppercase text-clay-on-light"
+                style={{ letterSpacing: ".12em" }}
+              >
                 {product.categories[0] || "Commodity"}
               </span>
               {product.origin ? (
@@ -102,12 +108,22 @@ export function ProductDossier({
               ) : null}
               {synthetic ? <Badge tone="info">Development preview</Badge> : null}
             </div>
-            <h1 className="max-w-3xl font-display font-light text-ink"
-              style={{ fontSize: "clamp(2rem, 4.2vw, 3.3rem)", lineHeight: 1.12, letterSpacing: "-.02em" }}>
+            <h1
+              className="max-w-3xl font-display font-light text-ink"
+              style={{
+                fontSize: "clamp(2rem, 4.2vw, 3.3rem)",
+                lineHeight: 1.12,
+                letterSpacing: "-.02em",
+              }}
+            >
               {productName}
               {subtitle ? (
-                <em className="mt-2 block font-light text-muted-strong"
-                  style={{ fontSize: ".78em" }}>{subtitle}</em>
+                <em
+                  className="mt-2 block font-light text-muted-strong"
+                  style={{ fontSize: ".78em" }}
+                >
+                  {subtitle}
+                </em>
               ) : null}
             </h1>
 
@@ -125,8 +141,7 @@ export function ProductDossier({
             ) : null}
 
             <div className="mt-7 lg:hidden">{image}</div>
-            <p className="mt-6 max-w-2xl text-muted"
-              style={{ fontSize: "15px", lineHeight: 1.75 }}>
+            <p className="mt-6 max-w-2xl text-muted" style={{ fontSize: "15px", lineHeight: 1.75 }}>
               {product.description ||
                 "Detailed origin, grade and trade specifications will appear when published by the product provider."}
             </p>
@@ -140,7 +155,9 @@ export function ProductDossier({
               <dl className="mt-6 grid gap-3 sm:grid-cols-2">
                 {product.dossier.highlights.map((entry) => (
                   <div key={entry.label} className="border-l-2 border-clay pl-3">
-                    <dt className="text-xs uppercase text-muted" style={{ letterSpacing: ".08em" }}>{entry.label}</dt>
+                    <dt className="text-xs uppercase text-muted" style={{ letterSpacing: ".08em" }}>
+                      {entry.label}
+                    </dt>
                     <dd className="mt-1 font-semibold text-ink">{entry.value}</dd>
                   </div>
                 ))}
