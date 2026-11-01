@@ -14,12 +14,13 @@ export const SUPPLIER_STEPS = [
 
 type Props = {
   sections: ReactNode[]
-  action: (formData: FormData) => Promise<void>
+  action?: (formData: FormData) => Promise<void>
   mode?: "apply" | "resubmit"
   error?: string | null
+  preview?: boolean
 }
 
-export function SupplierApplicationJourney({ sections, action, mode = "apply", error }: Props) {
+export function SupplierApplicationJourney({ sections, action, mode = "apply", error, preview = false }: Props) {
   const [step, setStep] = useState(0)
   const [snapshot, setSnapshot] = useState<[string, string][]>([])
   const formRef = useRef<HTMLFormElement>(null)
@@ -56,7 +57,7 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
   }
 
   return (
-    <div className="min-w-0 bg-canvas">
+    <div data-supplier-journey className="min-w-0 bg-canvas">
       <header className="bg-ink px-5 py-10 text-canvas">
         <div className="mx-auto max-w-3xl">
           <Link href="/" className="text-xs font-semibold text-clay-inverse">← ZuriBeans.com</Link>
@@ -68,6 +69,11 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
             Join the ZuriBeans supplier network. Complete all sections for sourcing review.
             Submission does not constitute approval.
           </p>
+          {preview ? (
+            <p className="mt-3 text-sm font-semibold text-clay-inverse">
+              Synthetic development preview — no supplier account or submission is created.
+            </p>
+          ) : null}
         </div>
       </header>
       <div className="sticky top-0 z-30 border-b border-line bg-surface-muted">
@@ -138,8 +144,8 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
                 Continue: {SUPPLIER_STEPS[step + 1]} →
               </button>
             ) : (
-              <button type="submit" className="min-h-12 flex-1 rounded-control bg-leaf px-6 text-sm font-bold text-white">
-                {mode === "apply" ? "Submit Application" : "Resubmit for Review"} →
+              <button type="submit" disabled={preview} className="min-h-12 flex-1 rounded-control bg-leaf px-6 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60">
+                {preview ? "Preview only — no submission" : mode === "apply" ? "Submit Application" : "Resubmit for Review"} →
               </button>
             )}
           </div>
