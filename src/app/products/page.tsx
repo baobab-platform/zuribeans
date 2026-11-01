@@ -79,9 +79,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const navigationCategories = catalogueNavigationCategories(categories)
   // The approved Make toolbar has four commodity filters plus All.
   // Additional provider taxonomy remains addressable through catalogue URLs.
-  const toolbarCategories = PUBLIC_CATALOGUE_CATEGORIES.slice(0, 4).map(
-    (entry) => navigationCategories.find((category) => category.handle === entry.handle)!,
-  )
+  const toolbarHandles = new Set(PUBLIC_CATALOGUE_CATEGORIES.slice(0, 4).map(({ handle }) => handle))
+  const toolbarCategories = navigationCategories.filter(({ handle }) => toolbarHandles.has(handle))
   const selectedCategory = navigationCategories.find(
     (category) => category.handle === query.category,
   )
