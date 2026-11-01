@@ -160,7 +160,10 @@ export default function DevelopmentExperiencePage() {
               <p className="mt-2 text-sm text-muted">
                 No IAM principals, CP entities or verified mandates
               </p>
-              <Link href="/dev/supplier" className="mt-5 inline-block text-sm font-semibold underline">
+              <Link
+                href="/dev/supplier"
+                className="mt-5 inline-block text-sm font-semibold underline"
+              >
                 Inspect six-step supplier application →
               </Link>
             </div>

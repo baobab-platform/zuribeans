@@ -31,16 +31,29 @@ export function SupplierPortalEntry({
         className="flex min-h-80 flex-col justify-between bg-ink text-canvas"
         style={{ padding: "clamp(28px, 6vw, 72px)" }}
       >
-        <Link href="/" className="flex items-center gap-3 self-start" aria-label="ZuriBeans homepage">
-          <span className="grid size-7 place-items-center rounded bg-clay text-xs font-bold text-ink">ZB</span>
+        <Link
+          href="/"
+          className="flex items-center gap-3 self-start"
+          aria-label="ZuriBeans homepage"
+        >
+          <span className="grid size-7 place-items-center rounded bg-clay text-xs font-bold text-ink">
+            ZB
+          </span>
           <span className="font-display text-xl">ZuriBeans</span>
         </Link>
         <div className="mt-16 max-w-xl">
           <p className="eyebrow-inverse">{eyebrow}</p>
-          <h1 className="mt-4 font-display font-light leading-tight" style={{ fontSize: "clamp(38px, 6vw, 64px)", letterSpacing: "-.025em" }}>
+          <h1
+            className="mt-4 font-display font-light leading-tight"
+            style={{ fontSize: "clamp(38px, 6vw, 64px)", letterSpacing: "-.025em" }}
+          >
             {title}
           </h1>
-          {preview ? <p className="mt-5 text-sm text-clay-inverse">Synthetic supplier preview — development only</p> : null}
+          {preview ? (
+            <p className="mt-5 text-sm text-clay-inverse">
+              Synthetic supplier preview — development only
+            </p>
+          ) : null}
         </div>
       </section>
       <section className="flex items-center" style={{ padding: "clamp(32px, 7vw, 88px)" }}>
@@ -52,10 +65,15 @@ export function SupplierPortalEntry({
           >
             {primaryLabel}
           </Link>
-          <Link href={secondaryHref} className="mt-4 flex min-h-12 items-center justify-center text-center text-sm font-semibold underline underline-offset-4">
+          <Link
+            href={secondaryHref}
+            className="mt-4 flex min-h-12 items-center justify-center text-center text-sm font-semibold underline underline-offset-4"
+          >
             {secondaryLabel} →
           </Link>
-          <p className="mt-5 text-xs leading-5 text-muted">Application review does not create supplier approval, buyer access or an active mandate.</p>
+          <p className="mt-5 text-xs leading-5 text-muted">
+            Application review does not create supplier approval, buyer access or an active mandate.
+          </p>
         </div>
       </section>
     </div>

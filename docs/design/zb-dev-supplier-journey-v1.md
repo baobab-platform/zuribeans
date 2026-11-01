@@ -12,14 +12,14 @@
 
 ## Integrated production route mapping
 
-| Make experience | ZuriBeans authoritative route | Source / guard |
-| --- | --- | --- |
-| Supplier entry / eligibility | `/sourcing/become-a-supplier` | Reuses Make split-screen portal presentation; live application CTA redirects through identity |
-| Supplier application | `/supplier/apply` | Authenticated, existing repository/validation/server action; six rendered steps |
-| Supplier resubmission | `/supplier/resubmit` | Status-gated, original server action; not a free-standing client-side mutation |
-| Supplier overview | `/supplier` | Existing authenticated supplier lifecycle, verification, organisation, capability and documentary projection |
-| Visual demo | `/dev/supplier` | Opt-in, deterministic, never stores applications or issues principals |
-| Fixture laboratory | `/dev/experience` | Links to synthetic supplier preview |
+| Make experience              | ZuriBeans authoritative route | Source / guard                                                                                               |
+| ---------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Supplier entry / eligibility | `/sourcing/become-a-supplier` | Reuses Make split-screen portal presentation; live application CTA redirects through identity                |
+| Supplier application         | `/supplier/apply`             | Authenticated, existing repository/validation/server action; six rendered steps                              |
+| Supplier resubmission        | `/supplier/resubmit`          | Status-gated, original server action; not a free-standing client-side mutation                               |
+| Supplier overview            | `/supplier`                   | Existing authenticated supplier lifecycle, verification, organisation, capability and documentary projection |
+| Visual demo                  | `/dev/supplier`               | Opt-in, deterministic, never stores applications or issues principals                                        |
+| Fixture laboratory           | `/dev/experience`             | Links to synthetic supplier preview                                                                          |
 
 The split-screen design lives in `src/components/supplier/supplier-portal-entry.tsx`; the selectable certificate cards in `src/components/supplier/supplier-certification-picker.tsx`. Production status still comes exclusively from `getSupplierApplicationForCustomer` and status presentation, **not** `DEMO_SUPPLIER_JOURNEYS`.
 
@@ -35,7 +35,7 @@ The split-screen design lives in `src/components/supplier/supplier-portal-entry.
 
 ## Explicit provider gaps
 
-The Make prototype also displays a free-text **website**, **origin district/region** and an unlimited add-another-product interaction. Current production input has registration/tax fields, per-product country/season, and a fixed maximum of three capabilities/certifications. Do not add fields which appear persisted but are discarded by the backend. A future upgrade must extend the canonical form, its validation, database/provider projection, resubmission read-back and test contracts *together*. No application should imply a 5-day service-level commitment without sourcing policy authority.
+The Make prototype also displays a free-text **website**, **origin district/region** and an unlimited add-another-product interaction. Current production input has registration/tax fields, per-product country/season, and a fixed maximum of three capabilities/certifications. Do not add fields which appear persisted but are discarded by the backend. A future upgrade must extend the canonical form, its validation, database/provider projection, resubmission read-back and test contracts _together_. No application should imply a 5-day service-level commitment without sourcing policy authority.
 
 ## Acceptance and regression coverage
 

@@ -58,15 +58,15 @@ export function SupplierCertificationPicker({
     setRows((current) => {
       const matching = current.findIndex((row) => row.type === choice)
       if (matching !== -1)
-        return current.map((row, index) => index === matching ? { ...row, type: "" } : row)
+        return current.map((row, index) => (index === matching ? { ...row, type: "" } : row))
       const empty = current.findIndex((row) => !row.type)
       if (empty === -1) return current
-      return current.map((row, index) => index === empty ? { ...row, type: choice } : row)
+      return current.map((row, index) => (index === empty ? { ...row, type: choice } : row))
     })
   }
 
   const change = (index: number, key: keyof Certification, value: string) =>
-    setRows((current) => current.map((row, i) => i === index ? { ...row, [key]: value } : row))
+    setRows((current) => current.map((row, i) => (i === index ? { ...row, [key]: value } : row)))
 
   return (
     <div className="space-y-5">
@@ -78,7 +78,11 @@ export function SupplierCertificationPicker({
             <label
               key={choice}
               className="flex min-h-12 items-center gap-3 rounded-control border border-line-strong bg-surface px-4 py-3 text-sm"
-              style={checked ? { borderColor: "var(--color-leaf)", backgroundColor: "rgb(46 90 76 / 0.06)" } : undefined}
+              style={
+                checked
+                  ? { borderColor: "var(--color-leaf)", backgroundColor: "rgb(46 90 76 / 0.06)" }
+                  : undefined
+              }
             >
               <input
                 type="checkbox"
@@ -97,7 +101,8 @@ export function SupplierCertificationPicker({
             type="checkbox"
             checked={selected.length === 0}
             onChange={(event) => {
-              if (event.target.checked) setRows((current) => current.map((row) => ({ ...row, type: "" })))
+              if (event.target.checked)
+                setRows((current) => current.map((row) => ({ ...row, type: "" })))
             }}
             className="size-5 accent-leaf"
             aria-label="None — applying for first time"
@@ -125,25 +130,45 @@ export function SupplierCertificationPicker({
             </label>
             <label className="block text-sm font-semibold text-ink">
               Issuer
-              <Input name="certification_issuer" value={row.issuer} onChange={(event) => change(index, "issuer", event.target.value)} />
+              <Input
+                name="certification_issuer"
+                value={row.issuer}
+                onChange={(event) => change(index, "issuer", event.target.value)}
+              />
             </label>
             <label className="block text-sm font-semibold text-ink">
               Reference number
-              <Input name="certification_reference" value={row.reference} onChange={(event) => change(index, "reference", event.target.value)} />
+              <Input
+                name="certification_reference"
+                value={row.reference}
+                onChange={(event) => change(index, "reference", event.target.value)}
+              />
             </label>
             <label className="block text-sm font-semibold text-ink">
               Issued on
-              <Input type="date" name="certification_issued_on" value={row.issuedOn} onChange={(event) => change(index, "issuedOn", event.target.value)} />
+              <Input
+                type="date"
+                name="certification_issued_on"
+                value={row.issuedOn}
+                onChange={(event) => change(index, "issuedOn", event.target.value)}
+              />
             </label>
             <label className="block text-sm font-semibold text-ink">
               Expires on
-              <Input type="date" name="certification_expires_on" value={row.expiresOn} onChange={(event) => change(index, "expiresOn", event.target.value)} />
+              <Input
+                type="date"
+                name="certification_expires_on"
+                value={row.expiresOn}
+                onChange={(event) => change(index, "expiresOn", event.target.value)}
+              />
             </label>
           </div>
         </fieldset>
       ))}
       <datalist id="supplier-certifications">
-        {CERTIFICATION_CHOICES.map((choice) => <option key={choice} value={choice} />)}
+        {CERTIFICATION_CHOICES.map((choice) => (
+          <option key={choice} value={choice} />
+        ))}
       </datalist>
     </div>
   )
