@@ -23,6 +23,7 @@ test("public action labels remain legible at desktop and mobile widths", async (
     "/help",
     "/trade",
   ]
+  const contrastProblems: string[] = []
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     for (const route of routes) {
@@ -110,7 +111,10 @@ test("public action labels remain legible at desktop and mobile widths", async (
           })
           .filter((entry) => entry.contrast < 4.5)
       })
-      expect(failures, `Unclear button or CTA text on ${route} at ${width}px`).toEqual([])
+      contrastProblems.push(
+        ...failures.map((failure) => `${route} at ${width}px: ${JSON.stringify(failure)}`),
+      )
     }
   }
+  expect(contrastProblems, "Unreadable public actions found across the viewport matrix").toEqual([])
 })
