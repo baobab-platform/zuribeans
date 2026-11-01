@@ -44,8 +44,8 @@ export default function SourcingPage() {
               A serious route to a serious supply relationship.
             </h2>
             <p className="mt-6 text-base leading-7 text-muted">
-              Qualification is not an instant marketplace listing. It creates a reviewable record of
-              the business, supply capability and evidence behind the product.
+              Share details about your business, your products and supporting documents. Our
+              sourcing team will review them before approving a supply relationship.
             </p>
             <ButtonLink
               href="/sourcing/become-a-supplier"

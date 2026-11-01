@@ -36,7 +36,7 @@ export default function BecomeASupplierPage() {
       <SupplierEditorialHero
         eyebrow="Become a supplier"
         title="Bring a clear supply picture."
-        description="Review the information and evidence ZuriBeans needs before beginning the structured supplier application."
+        description="Find out what information you will need to apply as a ZuriBeans supplier."
       />
 
       <section
@@ -72,8 +72,8 @@ export default function BecomeASupplierPage() {
                 Ready to provide a complete supply profile?
               </h2>
               <p className="mt-1 text-sm leading-6 text-muted">
-                Create your secure supplier login to begin or continue your application. Submission
-                starts review; it does not grant supplier approval.
+                Create your supplier login to begin your application. Submission starts review; it
+                does not grant supplier approval.
               </p>
             </div>
             <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:items-end">

@@ -7,25 +7,25 @@ import { getPublicPageMetadata } from "@/lib/seo/metadata"
 export const metadata: Metadata = getPublicPageMetadata({
   title: "Buyer portal",
   description:
-    "Create an account, apply for buyer organisation approval and access verified procurement capabilities.",
+    "Create a buyer account, submit your business application and access approved purchasing services.",
   path: "/buyer",
 })
 
 const steps = [
   {
     number: "01",
-    title: "Secure identity",
-    text: "Create your buyer login or use your existing secure sign-in.",
+    title: "Create an account",
+    text: "Register or sign in to get started.",
   },
   {
     number: "02",
-    title: "Organisation verification",
-    text: "Submit your legal trading identity and requested markets for KYB and commercial review.",
+    title: "Tell us about your business",
+    text: "Provide your organisation details and the markets where you want to buy.",
   },
   {
     number: "03",
-    title: "Trade authorisation",
-    text: "The responsible platform confirms allowed capabilities before any buyer-specific transactions.",
+    title: "Get approved",
+    text: "We review your application before enabling purchasing services.",
   },
 ] as const
 
@@ -40,8 +40,8 @@ export default function BuyerPortalPage() {
               Your gateway to African-origin trade.
             </h1>
             <p className="mt-7 max-w-2xl text-base leading-8 text-canvas/80">
-              Discover product specifications, request commercial review and manage your approved
-              trading relationship with ZuriBeans.
+              Explore products, apply for a buyer account and manage your ZuriBeans trading
+              relationship after approval.
             </p>
             <div className="mt-9 flex flex-wrap gap-4">
               <ButtonLink href="/buyer/register" className="text-white hover:text-white">
@@ -58,16 +58,15 @@ export default function BuyerPortalPage() {
               Designed for professional buyers.
             </h2>
             <p className="mt-4 text-sm leading-7 text-canvas/75">
-              Organisation profiles, team access, RFQs, quotations, orders, documents and shipments
-              follow distinct approval and provider capabilities. Unavailable features remain
-              visibly restricted—not simulated as live transactions.
+              Review your company information and the purchasing services available to your
+              organisation. Some features require additional approval.
             </p>
           </div>
         </div>
       </header>
       <section className="page-container py-16">
         <p className="eyebrow">How to begin</p>
-        <h2 className="mt-4 font-display text-4xl">A governed path to procurement.</h2>
+        <h2 className="mt-4 font-display text-4xl">How buyer access works.</h2>
         <div className="mt-9 grid gap-5 md:grid-cols-3">
           {steps.map((step) => (
             <Card key={step.number} className="p-7">

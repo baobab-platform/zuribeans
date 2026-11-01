@@ -54,11 +54,11 @@ export function JourneyAuth({
   const description =
     mode === "login"
       ? buyer
-        ? "Access your organisation, commercial review and approved procurement capabilities."
-        : "Manage your supply application, supporting evidence and qualification status."
+        ? "Review your buyer account and available purchasing services."
+        : "Check your supplier application and respond to information requests."
       : buyer
-        ? "Establish a secure identity, then apply for buyer organisation approval. Registration is not authority to purchase."
-        : "Establish a secure identity, then submit your supplier organisation for sourcing review. Registration is not approval to supply."
+        ? "Create your login, then complete your business application. Purchasing requires approval."
+        : "Create your login, then apply to supply ZuriBeans. Supplier approval is required."
   const message =
     mode === "login"
       ? error && error in loginErrors
@@ -75,7 +75,7 @@ export function JourneyAuth({
       description={description}
     >
       <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-clay-on-light">
-        {mode === "login" ? "Secure sign in" : "Organisation registration"}
+        {mode === "login" ? "Secure sign in" : "Create an account"}
       </p>
       {message ? (
         <Alert tone="danger" title="Your request could not be completed.">
@@ -120,12 +120,7 @@ export function JourneyAuth({
                 </Button>
               </form>
             </>
-          ) : (
-            <p className="mt-3 text-xs leading-5 text-muted">
-              Supplier single sign-on is not yet qualified. Use your existing email and password for
-              the supplier application and review workspace.
-            </p>
-          )}
+          ) : null}
         </>
       ) : (
         <form action={registerAction} className="space-y-5">
@@ -196,10 +191,6 @@ export function JourneyAuth({
           >
             {buyer ? "Supplier portal" : "Buyer portal"}
           </Link>
-        </p>
-        <p className="text-xs leading-5 text-muted">
-          Both journeys use the existing secure sign-in provider, but access, organisational
-          approval and trading mandates are independently governed.
         </p>
       </div>
     </AuthShell>

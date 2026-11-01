@@ -1,11 +1,5 @@
 import Link from "next/link"
 
-/**
- * Figma Make public-page editorial hero for supplier acquisition.
- * The same ink panel, breadcrumb, serif hierarchy and restrained orbital
- * motif are used by /sourcing and /sourcing/become-a-supplier.
- * No product, certification or supplier approval is asserted here.
- */
 export function SupplierEditorialHero({
   eyebrow,
   title,

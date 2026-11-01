@@ -1,11 +1,6 @@
 import Link from "next/link"
 import type { ReactNode } from "react"
 
-/**
- * Shared Figma Make portal-entry composition. Buyer/supplier copy and form
- * actions stay separate; no authentication or organisation approval happens
- * in this layout component.
- */
 export function AuthShell({
   eyebrow,
   title,
@@ -38,9 +33,6 @@ export function AuthShell({
           <h1 className="mt-3 font-display text-[clamp(1.9rem,4vw,3.75rem)] font-light leading-[1.07] tracking-[-.025em] text-canvas text-balance">
             {title}
           </h1>
-          <p className="mt-4 hidden max-w-md text-sm leading-6 text-canvas/80 lg:block">
-            Procurement and sourcing are independently governed journeys.
-          </p>
         </div>
       </section>
       <section

@@ -40,7 +40,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
               {organisation?.legal_name || customer.company_name || "Trading account"}
             </h1>
             <p className="mt-2 text-sm text-canvas/70">
-              Secure commercial access · {customer.email}
+              Signed in as {customer.email}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-4">
