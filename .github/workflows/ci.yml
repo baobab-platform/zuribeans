@@ -61,6 +61,13 @@ jobs:
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
+      - name: Capture exact Prettier result for dossier
+        run: |
+          pnpm exec prettier --write src/components/commerce/product-dossier-tabs.tsx
+          echo 'ZB_DOSSIER_BEGIN'
+          base64 -w0 src/components/commerce/product-dossier-tabs.tsx
+          echo
+          echo 'ZB_DOSSIER_END'
       - name: Check formatting
         run: pnpm format:check
       - name: Lint
