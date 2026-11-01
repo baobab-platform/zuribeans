@@ -5,11 +5,11 @@ test("supplier entry links to real onboarding", async ({ page }) => {
   await expect(
     page.getByRole("heading", { level: 1, name: /Become a ZuriBeans supplier/i }),
   ).toBeVisible()
-  const begin = page.getByRole("link", { name: "Begin supplier application" })
-  await expect(begin).toHaveAttribute("href", "/supplier/apply")
-  await expect(page.getByRole("link", { name: /Existing supplier.*workspace/i })).toHaveAttribute(
+  const begin = page.getByRole("link", { name: "Create supplier login" })
+  await expect(begin).toHaveAttribute("href", "/supplier/register")
+  await expect(page.getByRole("link", { name: /Existing supplier.*Sign in/i })).toHaveAttribute(
     "href",
-    "/supplier",
+    "/supplier/login",
   )
   await expect(
     page.getByText(/application review does not create supplier approval/i),
@@ -24,7 +24,7 @@ test("supplier entry fits mobile width", async ({ page }) => {
     documentWidth: document.documentElement.scrollWidth,
   }))
   expect(extent.documentWidth).toBeLessThanOrEqual(extent.viewport + 1)
-  await expect(page.getByRole("link", { name: "Begin supplier application" })).toBeVisible()
+  await expect(page.getByRole("link", { name: "Create supplier login" })).toBeVisible()
 })
 
 test("supplier preview is absent in production", async ({ page }) => {
