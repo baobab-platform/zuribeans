@@ -135,11 +135,6 @@ export function CatalogueTile({
               {actionLabel} →
             </span>
           </div>
-          {synthetic ? (
-            <p className="mt-2 text-xs text-muted">
-              Fictional preview; no verified certificate, stock or binding offer.
-            </p>
-          ) : null}
         </div>
       </Link>
     </article>
