@@ -48,7 +48,7 @@ This register is operational guidance, not a replacement for Accepted ADRs or in
 
 ## How to add a lesson
 
-Use a stable ID `ZB-LL-NNN`; record **date; relevant PR(s)/SHA; observed failure and precise conditions; root cause with evidence; resolution; regression test or check; prohibited workaround; responsible component/owner; verification status and current run URL**. Separate *proposed hypothesis* from *verified resolution*. Cross-reference the lesson in the PR description or linked incident. If the same failure appears in another estate, nominate it for the Baobab shared experience engineering practice; do not silently declare it platform-wide Accepted.
+Use a stable ID `ZB-LL-NNN`; record **date; relevant PR(s)/SHA; observed failure and precise conditions; root cause with evidence; resolution; regression test or check; prohibited workaround; responsible component/owner; verification status and current run URL**. Separate _proposed hypothesis_ from _verified resolution_. Cross-reference the lesson in the PR description or linked incident. If the same failure appears in another estate, nominate it for the Baobab shared experience engineering practice; do not silently declare it platform-wide Accepted.
 
 ## Current implementation and verification notes
 
