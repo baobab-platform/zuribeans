@@ -24,13 +24,7 @@ describe("Figma-inspired catalogue tile", () => {
   })
 
   it("does not invent a certificate, grade or availability if metadata is absent", () => {
-    render(
-      <CatalogueTile
-        href="/products/unknown"
-        title="Published product"
-        eyebrow="Catalogue"
-      />,
-    )
+    render(<CatalogueTile href="/products/unknown" title="Published product" eyebrow="Catalogue" />)
     expect(screen.getByText("Origin details on request")).toBeInTheDocument()
     expect(screen.queryByText("Details")).toBeNull()
     expect(screen.queryByText("Available")).toBeNull()
