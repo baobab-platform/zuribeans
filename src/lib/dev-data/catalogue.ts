@@ -7,7 +7,7 @@ import type { ProductCategoryModel, ProductDetailModel, ProductListModel } from 
  * HS codes are indicative six-digit HS 2022 classification families only.
  */
 export type DemoCountry = "UG" | "ZA" | "TZ" | "KE" | "ET"
-export type DemoCommodity = "coffee" | "vanilla" | "sorghum" | "related"
+export type DemoCommodity = "coffee" | "vanilla" | "sorghum" | "sesame" | "rooibos" | "related"
 export type DemoMarket = {
   code: DemoCountry
   name: string
@@ -90,6 +90,8 @@ export const DEMO_HS2022 = {
   "090520": "Vanilla, crushed or ground",
   "100710": "Grain sorghum, seed",
   "100790": "Grain sorghum, other than seed",
+  "120740": "Sesamum seeds, whether or not broken",
+  "121299": "Other vegetable products used primarily for human consumption",
   "210111": "Extracts, essences and concentrates of coffee",
 } as const
 
@@ -377,6 +379,30 @@ const TEMPLATES: readonly GradeTemplate[] = [
       "Separate seed HS category; seed certification and phytosanitary permission not asserted.",
   },
   {
+    key: "sesame-hulled",
+    title: "Hulled sesame seeds",
+    commodity: "sesame",
+    hs6: "120740",
+    originCodes: ["UG"],
+    grade: "99.95% purity (illustrative)",
+    process: "Machine-cleaned, hulled",
+    packaging: "25 kg food-grade sacks",
+    moq: "1,000 kg",
+    description: "Synthetic sesame catalogue lot for Figma procurement interface qualification.",
+  },
+  {
+    key: "rooibos-grade1",
+    title: "Rooibos Grade 1",
+    commodity: "rooibos",
+    hs6: "121299",
+    originCodes: ["ZA"],
+    grade: "Fine cut (illustrative)",
+    process: "Fermented and dried",
+    packaging: "20 kg food-grade bags",
+    moq: "200 kg",
+    description: "Synthetic Rooibos catalogue lot; tariff classification is indicative, not a customs ruling.",
+  },
+  {
     key: "coffee-husks",
     title: "Coffee husks and skins",
     commodity: "related",
@@ -407,6 +433,8 @@ export const DEMO_PRODUCT_CATEGORIES: readonly ProductCategoryModel[] = [
   { id: "demo-category-vanilla", handle: "vanilla", name: "Vanilla" },
   { id: "demo-category-sorghum", handle: "sorghum", name: "Sorghum" },
   { id: "demo-category-related", handle: "related", name: "Related products" },
+  { id: "demo-category-sesame", handle: "sesame", name: "Grains & Seeds" },
+  { id: "demo-category-rooibos", handle: "rooibos", name: "Botanicals" },
 ]
 
 export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template) =>
@@ -418,7 +446,25 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
     const grade =
       template.key === "arabica-aa-washed" && originCountry === "UG"
         ? "AA, Screen 18"
-        : template.grade.replace(/\s*\([^)]*\)/g, "")
+        : template.key === "robusta-faq"
+          ? "Screen 15+, FAQ"
+          : template.key === "vanilla-gourmet"
+            ? "Grade A, 16cm+"
+            : template.key === "sesame-hulled"
+              ? "Hulled, 99.95% purity"
+              : template.key === "rooibos-grade1"
+                ? "Grade 1, Fine cut"
+                : template.grade.replace(/\s*\([^)]*\)/g, "")
+    const process =
+      template.key === "robusta-faq"
+        ? "Natural / Sun-dried"
+        : template.key === "vanilla-gourmet"
+          ? "Cured, Vacuum-sealed"
+          : template.key === "sesame-hulled"
+            ? "Machine-cleaned"
+            : template.key === "rooibos-grade1"
+              ? "Fermented"
+              : template.process
     const description =
       template.key === "arabica-aa-washed" && originCountry === "UG"
         ? "Single-origin Arabica from the slopes of Mount Elgon, Eastern Uganda. Fully washed and raised-bed dried at altitude. Clear citric acidity, clean cup, good body. 2024 fly crop. Full documentation available."
@@ -434,7 +480,7 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
       commodity: template.commodity,
       hs6: template.hs6,
       grade,
-      process: template.process,
+      process,
       packaging: template.packaging,
       moq: template.moq,
       destinationMarkets,
@@ -444,12 +490,67 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
       id: `fixture-${handle}`,
       handle,
       title,
-      subtitle: `${grade} · ${template.process}`,
+      subtitle: `${grade} · ${process}`,
       description,
-      thumbnail: ["coffee", "vanilla", "related"].includes(template.commodity)
-        ? "/images/zuribeans-origin-trade-hero-v1.webp"
-        : null,
+      thumbnail:
+        template.key === "robusta-faq"
+          ? "https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?w=700&h=520&fit=crop&auto=format"
+          : template.key === "arabica-aa-washed"
+            ? "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=700&h=520&fit=crop&auto=format"
+            : template.key === "vanilla-gourmet"
+              ? "https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?w=700&h=520&fit=crop&auto=format"
+              : template.key === "sesame-hulled"
+                ? "https://images.unsplash.com/photo-1556909212-d5b604d0c90d?w=700&h=520&fit=crop&auto=format"
+                : template.key === "rooibos-grade1"
+                  ? "https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=700&h=520&fit=crop&auto=format"
+                  : "/images/zuribeans-origin-trade-hero-v1.webp",
       origin: origin.name,
+      cardFacts: {
+        source: "synthetic" as const,
+        displayName:
+          template.key === "robusta-faq"
+            ? "Robusta Coffee"
+            : template.key === "arabica-aa-washed"
+              ? "Arabica Coffee"
+              : template.key === "vanilla-gourmet"
+                ? "Vanilla Planifolia"
+                : template.key === "sesame-hulled"
+                  ? "Sesame Seeds"
+                  : template.key === "rooibos-grade1"
+                    ? "Rooibos"
+                    : template.title,
+        originLabel:
+          template.key === "robusta-faq"
+            ? "Western Uganda"
+            : template.key === "arabica-aa-washed"
+              ? "Mount Elgon, Uganda"
+              : template.key === "vanilla-gourmet"
+                ? "Masindi, Uganda"
+                : template.key === "sesame-hulled"
+                  ? "Northern Uganda"
+                  : template.key === "rooibos-grade1"
+                    ? "Cederberg, South Africa"
+                    : origin.name,
+        category:
+          DEMO_PRODUCT_CATEGORIES.find((category) => category.handle === template.commodity)?.name ??
+          "Agricultural commodities",
+        grade,
+        process,
+        certification:
+          template.key === "robusta-faq"
+            ? "UTZ / RA (sample)"
+            : template.key === "arabica-aa-washed"
+              ? "Organic (EU) / UTZ (sample)"
+              : template.key === "vanilla-gourmet"
+                ? "Organic readiness (sample)"
+                : template.key === "sesame-hulled"
+                  ? "Phytosanitary (sample)"
+                  : "Certification specimen",
+        supplyStatus: template.key === "arabica-aa-washed" ? "Limited" as const : "Available" as const,
+        harvest: "Illustrative 2026 crop",
+        minimumOrder: template.moq,
+        incoterms: dossier.terms?.incoterms.join(" / "),
+      },
       originCountry,
       categoryHandle: template.commodity,
       categories: [
@@ -462,7 +563,7 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
       specifications: [
         { label: "HS 2022 (6 digits)", value: template.hs6 },
         { label: "Grade", value: grade },
-        { label: "Processing", value: template.process },
+        { label: "Processing", value: process },
         { label: "Packaging", value: template.packaging },
         { label: "Minimum order", value: dossier.terms?.minimumOrder ?? template.moq },
         { label: "Origin", value: origin.name },
@@ -488,6 +589,22 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
   }),
 )
 
+/** Curated four-card synthetic showcase: exactly the Figma Make commodity mix. */
+export const DEMO_FEATURED_HANDLES = [
+  "demo-robusta-faq-ug",
+  "demo-arabica-aa-washed-ug",
+  "demo-vanilla-gourmet-ug",
+  "demo-sesame-hulled-ug",
+] as const
+
+export function getDemoFeaturedProducts(): ProductListModel {
+  const items = DEMO_FEATURED_HANDLES.flatMap((handle) => {
+    const product = DEMO_PRODUCTS.find((candidate) => candidate.handle === handle)
+    return product ? [product] : []
+  })
+  return { items, count: items.length, limit: 4, offset: 0 }
+}
+
 export function listDemoProducts(options: {
   query?: string
   categoryId?: string
@@ -498,7 +615,18 @@ export function listDemoProducts(options: {
   const offset = Math.max(options.offset ?? 0, 0)
   const category = DEMO_PRODUCT_CATEGORIES.find((entry) => entry.id === options.categoryId)
   const q = (options.query ?? "").trim().toLowerCase()
-  const matches = DEMO_PRODUCTS.filter(
+  // Keep prototype's varied product mix at the top of the default preview.
+  const previewOrder = [
+    ...DEMO_FEATURED_HANDLES,
+    "demo-rooibos-grade1-za",
+    "demo-arabica-g1-et",
+  ]
+  const promoted = previewOrder.flatMap((handle) => {
+    const product = DEMO_PRODUCTS.find((candidate) => candidate.handle === handle)
+    return product ? [product] : []
+  })
+  const remaining = DEMO_PRODUCTS.filter((product) => !previewOrder.includes(product.handle))
+  const matches = [...promoted, ...remaining].filter(
     (product) =>
       (!options.categoryId ||
         (category !== undefined && product.categoryHandle === category.handle)) &&

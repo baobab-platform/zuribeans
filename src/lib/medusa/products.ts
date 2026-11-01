@@ -28,6 +28,9 @@ type MedusaProduct = {
   variants?: Array<{ id: string; title?: string | null; sku?: string | null }> | null
 }
 
+const publishedText = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim() ? value.trim() : undefined
+
 const toCard = (product: MedusaProduct): ProductCardModel => ({
   id: product.id,
   handle: product.handle || product.id,
@@ -35,6 +38,14 @@ const toCard = (product: MedusaProduct): ProductCardModel => ({
   subtitle: product.subtitle || null,
   thumbnail: normalizeProductMediaUrl(product.thumbnail),
   origin: typeof product.metadata?.origin === "string" ? product.metadata.origin : null,
+  cardFacts: {
+    source: "provider",
+    category: product.categories?.[0]?.name ?? "Published catalogue",
+    grade: publishedText(product.metadata?.grade),
+    process: publishedText(product.metadata?.processing_method),
+    // Certification/stock/financial terms require separate verified authority.
+    // Arbitrary Medusa metadata is not evidence of certification or inventory.
+  },
 })
 
 export type MarketPricingContext = {

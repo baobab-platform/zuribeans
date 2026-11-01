@@ -1,6 +1,22 @@
 import type { ProductDossierData } from "@/lib/commerce/product-dossier-model"
 
+/** Visual facts carry provenance. Only explicit local synthetic mode may display fabricated commercial states. */
+export type ProductCardVisual = {
+  source: "synthetic" | "provider"
+  displayName?: string
+  originLabel?: string
+  category?: string
+  grade?: string
+  process?: string
+  certification?: string
+  supplyStatus?: "Available" | "Limited" | "Out of Season"
+  harvest?: string
+  minimumOrder?: string
+  incoterms?: string
+}
+
 export type ProductCardModel = {
+  cardFacts?: ProductCardVisual
   id: string
   handle: string
   title: string

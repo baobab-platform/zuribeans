@@ -51,7 +51,7 @@ describe("ZB-DEV-DATA v1.0", () => {
     expect(new Set(DEMO_PRODUCTS.map((product) => product.id)).size).toBe(DEMO_PRODUCTS.length)
     expect(new Set(DEMO_PRODUCTS.map((product) => product.handle)).size).toBe(DEMO_PRODUCTS.length)
     expect(new Set(DEMO_PRODUCTS.map((product) => product.originCountry)).size).toBe(5)
-    for (const family of ["coffee", "vanilla", "sorghum", "related"]) {
+    for (const family of ["coffee", "vanilla", "sorghum", "related", "sesame", "rooibos"]) {
       expect(DEMO_PRODUCTS.some((product) => product.categoryHandle === family)).toBe(true)
     }
     for (const product of DEMO_PRODUCTS) {
@@ -68,12 +68,15 @@ describe("ZB-DEV-DATA v1.0", () => {
   })
 
   it("supports category, text, HS code, paging and detail lookup deterministically", () => {
-    expect(DEMO_PRODUCT_CATEGORIES).toHaveLength(4)
+    expect(DEMO_PRODUCT_CATEGORIES).toHaveLength(6)
     const all = listDemoProducts({ limit: 12, offset: 0 })
     expect(all.items).toHaveLength(12)
     expect(all.count).toBe(DEMO_PRODUCTS.length)
     const page2 = listDemoProducts({ limit: 12, offset: 12 })
-    expect(page2.items[0].id).toBe(DEMO_PRODUCTS[12].id)
+    const combined = listDemoProducts({ limit: 24, offset: 0 })
+    expect([...all.items, ...page2.items].map((item) => item.id)).toEqual(
+      combined.items.map((item) => item.id),
+    )
     const coffeeId = DEMO_PRODUCT_CATEGORIES.find((category) => category.handle === "coffee")!.id
     expect(
       listDemoProducts({ categoryId: coffeeId }).items.every(
