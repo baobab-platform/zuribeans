@@ -1,0 +1,61 @@
+name: PR 145 reviewed visual-baseline promotion (temporary)
+
+# Intentionally single-use: only the commit that introduces this workflow
+# triggers it. Remove this workflow immediately after baseline promotion.
+on:
+  push:
+    branches: [feat/home-strip-figma-parity]
+    paths:
+      - .github/workflows/visual-baseline-pr145-once.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  promote-reviewed-screenshots:
+    if: ${{ github.repository == 'baobab-platform/zuribeans' && github.ref == 'refs/heads/feat/home-strip-figma-parity' }}
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Checkout the PR head, not the target branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: feat/home-strip-figma-parity
+          persist-credentials: true
+
+      - name: Retrieve reviewed final-head CI screenshot candidates
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: zuribeans-experience-browser-evidence
+          run-id: 41317672232
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: reviewed-screenshots
+
+      - name: Verify the five personally reviewed, exact CI artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_dir="reviewed-screenshots/tests/e2e/landing-page.visual.spec.ts-snapshots"
+          test -d "$source_dir"
+          (
+            cd "$source_dir"
+            sha256sum --check --strict <<'CHECKSUMS'
+          fa39a42bb2fcbb1ace8fefe1cb06bb6c901ccc0b04bb5ef53ea6039ecd1c4b83  landing-page-1024-chromium-desktop-linux.png
+          21b5b3279381aa92c7ff08bea460dcee8c53dd9704c06b381c8113a8d5738dc2  landing-page-1440-chromium-desktop-linux.png
+          c8f405e2450be68d926024ab61c96959ed90e8607b5fefd7d7024b82800bc87e  landing-page-320-chromium-desktop-linux.png
+          9c3a93299df9810c39ceb53ae1e69735382c659f64c586064e56d16d4d5168af  landing-page-390-chromium-desktop-linux.png
+          79ad66ddb1be8420f610cb803bcc3d242775e473c258600d44d303c80e859552  landing-page-768-chromium-desktop-linux.png
+          CHECKSUMS
+          )
+          target="tests/e2e/landing-page.visual.spec.ts-snapshots"
+          for width in 320 390 768 1024 1440; do
+            cp "$source_dir/landing-page-${width}-chromium-desktop-linux.png" "$target/"
+          done
+          git add -- "$target"
+          git diff --cached --check
+          git diff --cached --stat
+          test "$(git diff --cached --name-only | wc -l)" -eq 5
+          git -c user.name="baobab-visual-baseline[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "test(visual): accept reviewed PR 145 five-viewport homepage baselines"
+          git push origin HEAD:refs/heads/feat/home-strip-figma-parity
