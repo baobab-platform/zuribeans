@@ -9,6 +9,7 @@ import { TradePathways } from "@/components/marketing/home/trade-pathways"
 import { TrustEvidenceStrip } from "@/components/marketing/home/trust-evidence-strip"
 import { MarketFootprint } from "@/components/markets/market-footprint"
 import { getVisibleEvidence } from "@/lib/content/evidence"
+import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { HOME_HERO, TRUST_EVIDENCE } from "@/lib/content/homepage"
 import { PUBLIC_PRODUCT_CLASSES, TRADE_STEPS } from "@/lib/content/public-estate"
 import { QUALITY_EVIDENCE_ITEMS } from "@/lib/content/quality"
@@ -25,7 +26,9 @@ export const metadata = getPublicPageMetadata({
 
 export default async function HomePage() {
   const { active: market } = await getMarketContext()
-  const visibleEvidence = getVisibleEvidence(TRUST_EVIDENCE)
+  const visibleEvidence = isSyntheticExperienceEnabled()
+    ? (await import("@/lib/dev-data/trust-evidence")).DEMO_TRUST_EVIDENCE
+    : getVisibleEvidence(TRUST_EVIDENCE)
 
   return (
     <>
