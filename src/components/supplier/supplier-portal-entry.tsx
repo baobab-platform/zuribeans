@@ -33,10 +33,14 @@ export function SupplierPortalEntry({
       >
         <Link
           href="/"
-          className="flex items-center" style={{ gap: "0.75rem", alignSelf: "flex-start" }}
+          className="flex items-center"
+          style={{ gap: "0.75rem", alignSelf: "flex-start" }}
           aria-label="ZuriBeans homepage"
         >
-          <span className="grid place-items-center bg-clay text-xs font-bold text-ink" style={{ width: "1.75rem", height: "1.75rem", borderRadius: "0.25rem" }}>
+          <span
+            className="grid place-items-center bg-clay text-xs font-bold text-ink"
+            style={{ width: "1.75rem", height: "1.75rem", borderRadius: "0.25rem" }}
+          >
             ZB
           </span>
           <span className="font-display text-xl">ZuriBeans</span>
@@ -57,17 +61,24 @@ export function SupplierPortalEntry({
         </div>
       </section>
       <section className="flex items-center" style={{ padding: "clamp(32px, 7vw, 88px)" }}>
-        <div className="w-full border-clay" style={{ maxWidth: "32rem", borderTopWidth: "4px", paddingTop: "1.75rem" }}>
-          <p className="text-base text-muted" style={{ lineHeight: "2rem" }}>{description}</p>
+        <div
+          className="w-full border-clay"
+          style={{ maxWidth: "32rem", borderTopWidth: "4px", paddingTop: "1.75rem" }}
+        >
+          <p className="text-base text-muted" style={{ lineHeight: "2rem" }}>
+            {description}
+          </p>
           <Link
             href={primaryHref}
-            className="flex min-h-12 items-center justify-center rounded-control bg-ink px-5 py-3 text-center text-sm font-bold text-canvas" style={{ marginTop: "2rem" }}
+            className="flex min-h-12 items-center justify-center rounded-control bg-ink px-5 py-3 text-center text-sm font-bold text-canvas"
+            style={{ marginTop: "2rem" }}
           >
             {primaryLabel}
           </Link>
           <Link
             href={secondaryHref}
-            className="flex min-h-12 items-center justify-center text-center text-sm font-semibold underline" style={{ marginTop: "1rem", textUnderlineOffset: "0.25rem" }}
+            className="flex min-h-12 items-center justify-center text-center text-sm font-semibold underline"
+            style={{ marginTop: "1rem", textUnderlineOffset: "0.25rem" }}
           >
             {secondaryLabel} →
           </Link>
