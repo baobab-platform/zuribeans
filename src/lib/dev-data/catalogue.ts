@@ -446,7 +446,25 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
     const grade =
       template.key === "arabica-aa-washed" && originCountry === "UG"
         ? "AA, Screen 18"
-        : template.grade.replace(/\s*\([^)]*\)/g, "")
+        : template.key === "robusta-faq"
+          ? "Screen 15+, FAQ"
+          : template.key === "vanilla-gourmet"
+            ? "Grade A, 16cm+"
+            : template.key === "sesame-hulled"
+              ? "Hulled, 99.95% purity"
+              : template.key === "rooibos-grade1"
+                ? "Grade 1, Fine cut"
+                : template.grade.replace(/\s*\([^)]*\)/g, "")
+    const process =
+      template.key === "robusta-faq"
+        ? "Natural / Sun-dried"
+        : template.key === "vanilla-gourmet"
+          ? "Cured, Vacuum-sealed"
+          : template.key === "sesame-hulled"
+            ? "Machine-cleaned"
+            : template.key === "rooibos-grade1"
+              ? "Fermented"
+              : template.process
     const description =
       template.key === "arabica-aa-washed" && originCountry === "UG"
         ? "Single-origin Arabica from the slopes of Mount Elgon, Eastern Uganda. Fully washed and raised-bed dried at altitude. Clear citric acidity, clean cup, good body. 2024 fly crop. Full documentation available."
@@ -462,7 +480,7 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
       commodity: template.commodity,
       hs6: template.hs6,
       grade,
-      process: template.process,
+      process,
       packaging: template.packaging,
       moq: template.moq,
       destinationMarkets,
@@ -472,7 +490,7 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
       id: `fixture-${handle}`,
       handle,
       title,
-      subtitle: `${grade} · ${template.process}`,
+      subtitle: `${grade} · ${process}`,
       description,
       thumbnail:
         template.key === "robusta-faq"
@@ -501,11 +519,23 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
                   : template.key === "rooibos-grade1"
                     ? "Rooibos"
                     : template.title,
+        originLabel:
+          template.key === "robusta-faq"
+            ? "Western Uganda"
+            : template.key === "arabica-aa-washed"
+              ? "Mount Elgon, Uganda"
+              : template.key === "vanilla-gourmet"
+                ? "Masindi, Uganda"
+                : template.key === "sesame-hulled"
+                  ? "Northern Uganda"
+                  : template.key === "rooibos-grade1"
+                    ? "Cederberg, South Africa"
+                    : origin.name,
         category:
           DEMO_PRODUCT_CATEGORIES.find((category) => category.handle === template.commodity)?.name ??
           "Agricultural commodities",
         grade,
-        process: template.process,
+        process,
         certification:
           template.key === "robusta-faq"
             ? "UTZ / RA (sample)"
@@ -533,7 +563,7 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
       specifications: [
         { label: "HS 2022 (6 digits)", value: template.hs6 },
         { label: "Grade", value: grade },
-        { label: "Processing", value: template.process },
+        { label: "Processing", value: process },
         { label: "Packaging", value: template.packaging },
         { label: "Minimum order", value: dossier.terms?.minimumOrder ?? template.moq },
         { label: "Origin", value: origin.name },
