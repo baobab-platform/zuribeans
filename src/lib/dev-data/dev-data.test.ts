@@ -146,7 +146,7 @@ describe("ZB-DEV-DATA v1.0", () => {
       expect(source?.principalId).toBeNull()
       expect(source?.legalEntityId).toBeNull()
       expect(supplier.form.legalName).toBe(source?.label)
-      expect(supplier.form.contactEmail).toMatch(/@example\\.invalid$/)
+      expect(supplier.form.contactEmail).toMatch(/@example\.invalid$/)
       expect(supplier.certificationStatus).toBe("unverified-fixture")
       expect(supplier.documents.every((document) => document.reference.startsWith("SYN-"))).toBe(
         true,
