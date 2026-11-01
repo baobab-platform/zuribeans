@@ -43,7 +43,7 @@ test.describe("Figma-inspired procurement catalogue", () => {
     )
   })
 
-  test("exposes all category links through mobile filter disclosure", async ({ page }) => {
+  test("exposes only the approved four commodity categories in mobile filters", async ({ page }) => {
     await page.setViewportSize({ width: 320, height: 720 })
     await page.goto("/products", { waitUntil: "domcontentloaded" })
     await page.getByText("Filters", { exact: true }).click()
@@ -54,11 +54,11 @@ test.describe("Figma-inspired procurement catalogue", () => {
       "Vanilla",
       "Grains & Seeds",
       "Botanicals",
-      "Sorghum",
-      "Related products",
     ]) {
       await expect(filters.getByRole("link", { name: label })).toBeVisible()
     }
+    await expect(filters.getByRole("link", { name: "Sorghum" })).toHaveCount(0)
+    await expect(filters.getByRole("link", { name: "Related products" })).toHaveCount(0)
   })
 
   test("keeps catalogue search usable at 320px without horizontal page overflow", async ({
