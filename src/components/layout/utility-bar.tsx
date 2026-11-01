@@ -72,6 +72,7 @@ export function UtilityBar({
           </Link>
           <Link
             href={hasSession ? "/account" : "/buyer/login"}
+            title={hasSession ? "Buyer account" : "Buyer login and registration"}
             className="flex items-center gap-1.5 whitespace-nowrap border-l border-white/20 pl-5 transition-colors hover:text-clay-inverse"
           >
             <UserRound
@@ -79,7 +80,7 @@ export function UtilityBar({
               strokeWidth={1.75}
               className="size-4 shrink-0 text-clay-inverse"
             />
-            {hasSession ? "Buyer account" : "Buyer sign in"}
+            {hasSession ? "Buyer account" : "Login/Register"}
           </Link>
         </div>
       </div>
