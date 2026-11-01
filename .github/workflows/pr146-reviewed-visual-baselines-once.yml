@@ -46,7 +46,7 @@ jobs:
           for width, height in expected.items():
               image = root / f"landing-page-{width}-chromium-desktop-linux.png"
               header = image.read_bytes()[:24]
-              assert header[:8] == b"\\x89PNG\\r\\n\\x1a\\n", image
+              assert header[:8].hex() == "89504e470d0a1a0a", image
               actual_size = struct.unpack(">II", header[16:24])
               assert actual_size == (width, height), (image, actual_size)
               matches = list(pathlib.Path("test-results").rglob(f"landing-page-{width}-actual.png"))
