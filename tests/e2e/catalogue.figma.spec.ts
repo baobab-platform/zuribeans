@@ -19,7 +19,7 @@ test.describe("Figma-inspired procurement catalogue", () => {
     await expect(page.getByRole("region", { name: "Catalogue results" })).toBeVisible()
   })
 
-  test("keeps every public category filter visible on desktop without Medusa fixtures", async ({
+  test("shows four approved commodity filters and a result count at the right", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
@@ -31,11 +31,12 @@ test.describe("Figma-inspired procurement catalogue", () => {
       "Vanilla",
       "Grains & Seeds",
       "Botanicals",
-      "Sorghum",
-      "Related products",
     ]) {
       await expect(filters.getByRole("link", { name: label })).toBeVisible()
     }
+    await expect(filters.getByRole("link", { name: "Sorghum" })).toHaveCount(0)
+    await expect(filters.getByRole("link", { name: "Related products" })).toHaveCount(0)
+    await expect(page.getByTestId("catalogue-product-count")).toBeVisible()
     await expect(filters.getByRole("link", { name: "Coffee" })).toHaveAttribute(
       "href",
       "/products?category=coffee",
@@ -67,6 +68,7 @@ test.describe("Figma-inspired procurement catalogue", () => {
     await page.goto("/products", { waitUntil: "domcontentloaded" })
     await expect(page.getByRole("searchbox", { name: "Search products or origins" })).toBeVisible()
     await expect(page.getByRole("button", { name: "Search" })).toBeVisible()
+    await expect(page.getByTestId("catalogue-product-count")).toBeVisible()
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
