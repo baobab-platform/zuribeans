@@ -18,6 +18,22 @@ const variants: Record<ButtonVariant, string> = {
   danger: "bg-danger text-white hover:bg-danger-strong hover:text-white",
 }
 
+/**
+ * Semantic CTA foregrounds are deliberate and stable across hover states.
+ * Tailwind text utilities from contextual className must not accidentally
+ * render canvas-on-clay or ink-on-ink. Explicit caller style.color remains
+ * available for audited exceptional designs.
+ */
+const foregrounds: Record<ButtonVariant, string> = {
+  primary: "var(--color-canvas)",
+  secondary: "var(--color-canvas)",
+  outline: "var(--color-ink)",
+  inverse: "var(--color-canvas)",
+  gold: "var(--color-ink)",
+  ghost: "var(--color-ink)",
+  danger: "var(--color-canvas)",
+}
+
 const sizes: Record<ButtonSize, string> = {
   sm: "min-h-10 px-4 py-2 text-sm",
   md: "min-h-11 px-5 py-2.5 text-sm",
@@ -47,13 +63,20 @@ export function Button({
   variant,
   size,
   type = "button",
+  style,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant
   size?: ButtonSize
 }) {
   return (
-    <BaseButton type={type} className={buttonClassName({ variant, size, className })} {...props} />
+    <BaseButton
+      type={type}
+      data-button-variant={variant ?? "primary"}
+      style={{ color: foregrounds[variant ?? "primary"], ...style }}
+      className={buttonClassName({ variant, size, className })}
+      {...props}
+    />
   )
 }
 
@@ -78,7 +101,8 @@ export function ButtonLink({
     <Link
       href={href}
       onClick={onClick}
-      style={style}
+      data-button-variant={variant ?? "primary"}
+      style={{ color: foregrounds[variant ?? "primary"], ...style }}
       className={buttonClassName({ variant, size, className })}
     >
       {children}
