@@ -1,7 +1,15 @@
 "use client"
 
-import { useState } from "react"
-import { Input } from "@/components/ui/form-controls"
+import { useState, type InputHTMLAttributes } from "react"
+
+function SupplierInput(props: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className="mt-2 w-full rounded-control border border-line-strong bg-surface px-4 py-3 text-ink shadow-control placeholder:text-muted focus:border-leaf focus:outline-none focus:ring-2 focus:ring-focus disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted"
+    />
+  )
+}
 
 export const CERTIFICATION_CHOICES = [
   "UTZ / Rainforest Alliance",
@@ -120,7 +128,7 @@ export function SupplierCertificationPicker({
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-ink">
               Certification type
-              <Input
+              <SupplierInput
                 name="certification_type"
                 value={row.type}
                 onChange={(event) => change(index, "type", event.target.value)}
@@ -130,7 +138,7 @@ export function SupplierCertificationPicker({
             </label>
             <label className="block text-sm font-semibold text-ink">
               Issuer
-              <Input
+              <SupplierInput
                 name="certification_issuer"
                 value={row.issuer}
                 onChange={(event) => change(index, "issuer", event.target.value)}
@@ -138,7 +146,7 @@ export function SupplierCertificationPicker({
             </label>
             <label className="block text-sm font-semibold text-ink">
               Reference number
-              <Input
+              <SupplierInput
                 name="certification_reference"
                 value={row.reference}
                 onChange={(event) => change(index, "reference", event.target.value)}
@@ -146,7 +154,7 @@ export function SupplierCertificationPicker({
             </label>
             <label className="block text-sm font-semibold text-ink">
               Issued on
-              <Input
+              <SupplierInput
                 type="date"
                 name="certification_issued_on"
                 value={row.issuedOn}
@@ -155,7 +163,7 @@ export function SupplierCertificationPicker({
             </label>
             <label className="block text-sm font-semibold text-ink">
               Expires on
-              <Input
+              <SupplierInput
                 type="date"
                 name="certification_expires_on"
                 value={row.expiresOn}
