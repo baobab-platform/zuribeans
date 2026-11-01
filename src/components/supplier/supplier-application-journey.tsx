@@ -128,6 +128,17 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
               </div>
             ))}
           </dl>
+          {mode === "resubmit" ? (
+            <label className="mt-6 block text-sm font-semibold">
+              Note to sourcing team
+              <textarea
+                name="resubmitNote"
+                rows={3}
+                placeholder="Explain your updated information or evidence."
+                className="mt-2 w-full rounded-control border border-line-strong bg-surface p-4 text-ink"
+              />
+            </label>
+          ) : null}
           <p className="mt-8 rounded-control border border-leaf bg-success-soft p-4 text-sm leading-7">
             By submitting, you confirm that the supplied information is accurate and authorise
             standard supplier due diligence. Declarations remain unverified until independently assessed.
