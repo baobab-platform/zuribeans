@@ -126,13 +126,15 @@ export function SupplierCertificationPicker({
         <fieldset key={index} className="rounded-control border border-line bg-surface p-5">
           <legend className="px-2 text-sm font-semibold">Certification {index + 1}</legend>
           <div className="grid gap-4 sm:grid-cols-2">
-            {([
-              ["type", "Certification type", "certification_type"],
-              ["issuer", "Issuer", "certification_issuer"],
-              ["reference", "Reference number", "certification_reference"],
-              ["issuedOn", "Issued on", "certification_issued_on"],
-              ["expiresOn", "Expires on", "certification_expires_on"],
-            ] as const).map(([key, label, name]) => (
+            {(
+              [
+                ["type", "Certification type", "certification_type"],
+                ["issuer", "Issuer", "certification_issuer"],
+                ["reference", "Reference number", "certification_reference"],
+                ["issuedOn", "Issued on", "certification_issued_on"],
+                ["expiresOn", "Expires on", "certification_expires_on"],
+              ] as const
+            ).map(([key, label, name]) => (
               <label key={key} className="block text-sm font-semibold text-ink">
                 {label}
                 <SupplierInput
