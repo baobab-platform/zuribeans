@@ -27,7 +27,6 @@ export default async function HomePage() {
   const { active: market } = await getMarketContext()
   const visibleEvidence = getVisibleEvidence(TRUST_EVIDENCE)
 
-
   return (
     <>
       <HomeHero content={HOME_HERO} market={market} />
