@@ -17,8 +17,10 @@ type FeaturedCommoditiesProps = {
 export function FeaturedCommodities({ commodities, products = [] }: FeaturedCommoditiesProps) {
   if (commodities.length === 0 && products.length === 0) return null
 
-  const hasPublishedProducts = products.length > 0
-  const synthetic = products.some((product) => product.cardFacts?.source === "synthetic")
+  const featuredProducts = products.slice(0, 4)
+  const fallbackClasses = commodities.slice(0, Math.max(0, 4 - featuredProducts.length))
+  const hasPublishedProducts = featuredProducts.length > 0
+  const synthetic = featuredProducts.some((product) => product.cardFacts?.source === "synthetic")
 
   return (
     <section
@@ -55,7 +57,7 @@ export function FeaturedCommodities({ commodities, products = [] }: FeaturedComm
             {synthetic
               ? "Explore sample grades, certifications, inventory states and indicative terms. Every product and commercial fact in this preview is fictional until its owning Baobab engine qualifies the real evidence."
               : hasPublishedProducts
-                ? "Explore published product information, including declared origin and specifications. Certification, availability and commercial terms require independent confirmation."
+                ? "Explore published products and product-class discovery where publications are limited. Certification, availability and commercial terms require independent confirmation."
                 : "Explore our principal product classes. Individual products, grades, evidence and availability appear only when published by the responsible trade systems."}
           </p>
         </header>
@@ -64,13 +66,10 @@ export function FeaturedCommodities({ commodities, products = [] }: FeaturedComm
           id="featured-commodities"
           className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4"
         >
-          {hasPublishedProducts
-            ? products
-                .slice(0, 4)
-                .map((product) => <ProductCard key={product.id} product={product} />)
-            : commodities.map((commodity) => (
-                <CommodityCard key={commodity.id} commodity={commodity} />
-              ))}
+          {featuredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+          {fallbackClasses.map((commodity) => (
+            <CommodityCard key={commodity.id} commodity={commodity} />
+          ))}
         </div>
 
         <div className="flex justify-center" style={{ marginTop: "36px" }}>
