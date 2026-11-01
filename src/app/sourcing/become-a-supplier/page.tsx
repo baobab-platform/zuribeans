@@ -16,10 +16,10 @@ export default function BecomeASupplierPage() {
         eyebrow="Supplier programme"
         title="Become a ZuriBeans supplier."
         description="Join the ZuriBeans supplier network. Present your business identity, contacts, products, origin, annual capacity and certifications for structured sourcing review."
-        primaryHref="/supplier/apply"
-        primaryLabel="Begin supplier application"
-        secondaryHref="/supplier"
-        secondaryLabel="Existing supplier? Open your workspace"
+        primaryHref="/supplier/register"
+        primaryLabel="Create supplier login"
+        secondaryHref="/supplier/login"
+        secondaryLabel="Existing supplier? Sign in"
       />
       <section className="page-container py-14">
         <p className="eyebrow">Application requirements</p>
