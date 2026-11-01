@@ -22,7 +22,10 @@ export function SupplierEditorialHero({
         className="pointer-events-none absolute -right-28 -top-52 size-[420px] rounded-full border border-clay/20"
       />
       <div className="page-container relative z-10 py-[clamp(54px,8vw,104px)]">
-        <nav aria-label="Breadcrumb" className="mb-9 flex flex-wrap items-center gap-2 text-xs tracking-[.08em] text-canvas/65">
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-9 flex flex-wrap items-center gap-2 text-xs tracking-[.08em] text-canvas/65"
+        >
           <Link href="/" className="min-h-8 py-2 hover:text-canvas hover:underline">
             Home
           </Link>

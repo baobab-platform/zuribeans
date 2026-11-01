@@ -24,7 +24,10 @@ export default function SourcingPage() {
         description="ZuriBeans works with growers, cooperatives, processors and exporters through a structured, evidence-led qualification process."
       />
 
-      <section aria-labelledby="sourcing-qualification-title" className="bg-canvas py-[clamp(48px,7vw,88px)]">
+      <section
+        aria-labelledby="sourcing-qualification-title"
+        className="bg-canvas py-[clamp(48px,7vw,88px)]"
+      >
         <div className="page-container grid gap-12 lg:grid-cols-2">
           <div className="max-w-xl">
             <p className="eyebrow mb-5">Before you apply</p>
@@ -35,8 +38,8 @@ export default function SourcingPage() {
               A serious route to a serious supply relationship.
             </h2>
             <p className="mt-6 text-base leading-7 text-muted">
-              Qualification is not an instant marketplace listing. It creates a reviewable record
-              of the business, supply capability and evidence behind the product.
+              Qualification is not an instant marketplace listing. It creates a reviewable record of
+              the business, supply capability and evidence behind the product.
             </p>
             <ButtonLink
               href="/sourcing/become-a-supplier"

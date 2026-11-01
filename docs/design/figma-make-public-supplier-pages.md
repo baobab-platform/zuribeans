@@ -8,10 +8,10 @@
 
 Both public routes use the same Make editorial hero: full-width ink background, small breadcrumb and eyebrow, a large light Source Serif display headline, restrained orbital outline and explanatory copy. The two pages then diverge:
 
-| Route | Make composition | Production mapping |
-| --- | --- | --- |
-| `/sourcing` | Two-column introduction; “Before you apply”; four numbered requirements; one prominent CTA | Responsive two-column text/numbered-list section, with “Review the application path” to `/sourcing/become-a-supplier` |
-| `/sourcing/become-a-supplier` | Three joined numbered cards: Review, Apply, Qualification; lower contrasting CTA band | Three cards at desktop/tablet, vertical at mobile; supplier registration and sign-in choices |
+| Route                         | Make composition                                                                           | Production mapping                                                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `/sourcing`                   | Two-column introduction; “Before you apply”; four numbered requirements; one prominent CTA | Responsive two-column text/numbered-list section, with “Review the application path” to `/sourcing/become-a-supplier` |
+| `/sourcing/become-a-supplier` | Three joined numbered cards: Review, Apply, Qualification; lower contrasting CTA band      | Three cards at desktop/tablet, vertical at mobile; supplier registration and sign-in choices                          |
 
 Shared hero implementation: `src/components/marketing/supplier-editorial-hero.tsx`. The page headings, paragraphs and step labels come from the actual prototype rather than a generic supplier marketing template.
 

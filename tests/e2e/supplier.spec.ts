@@ -12,5 +12,7 @@ test("visitor can understand and start the supplier application journey", async 
     "href",
     "/supplier/login",
   )
-  await expect(page.getByText(/Submission starts review; it does not grant supplier approval/)).toBeVisible()
+  await expect(
+    page.getByText(/Submission starts review; it does not grant supplier approval/),
+  ).toBeVisible()
 })

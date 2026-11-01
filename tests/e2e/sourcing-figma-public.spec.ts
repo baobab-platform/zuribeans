@@ -1,11 +1,16 @@
 import { expect, test } from "@playwright/test"
 
 test.describe("Figma Make public sourcing journeys", () => {
-  test("sourcing matches the editorial layout and links to supplier requirements", async ({ page }) => {
+  test("sourcing matches the editorial layout and links to supplier requirements", async ({
+    page,
+  }) => {
     await page.goto("/sourcing", { waitUntil: "domcontentloaded" })
 
     await expect(
-      page.getByRole("heading", { level: 1, name: "Qualification starts with a clear supply picture." }),
+      page.getByRole("heading", {
+        level: 1,
+        name: "Qualification starts with a clear supply picture.",
+      }),
     ).toBeVisible()
     const requirements = page.getByRole("region", {
       name: "A serious route to a serious supply relationship.",
@@ -17,7 +22,9 @@ test.describe("Figma Make public sourcing journeys", () => {
     ).toHaveAttribute("href", "/sourcing/become-a-supplier")
   })
 
-  test("supplier acquisition has the three Make stages and gated real registration", async ({ page }) => {
+  test("supplier acquisition has the three Make stages and gated real registration", async ({
+    page,
+  }) => {
     await page.goto("/sourcing/become-a-supplier", { waitUntil: "domcontentloaded" })
 
     await expect(
@@ -36,11 +43,18 @@ test.describe("Figma Make public sourcing journeys", () => {
       "href",
       "/supplier/login",
     )
-    await expect(page.getByText(/Submission starts review; it does not grant supplier approval/)).toBeVisible()
+    await expect(
+      page.getByText(/Submission starts review; it does not grant supplier approval/),
+    ).toBeVisible()
   })
 
-  test("public sourcing pages remain responsive without page-width overflow", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== "chromium-desktop", "Canonical responsive matrix uses Chromium")
+  test("public sourcing pages remain responsive without page-width overflow", async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== "chromium-desktop",
+      "Canonical responsive matrix uses Chromium",
+    )
     for (const width of [320, 390, 768, 1440]) {
       await page.setViewportSize({ width, height: 900 })
       for (const route of ["/sourcing", "/sourcing/become-a-supplier"] as const) {

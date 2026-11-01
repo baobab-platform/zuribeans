@@ -15,7 +15,8 @@ const stages = [
   {
     number: "01",
     title: "Review",
-    description: "Confirm your business, products and supply capability are ready for qualification.",
+    description:
+      "Confirm your business, products and supply capability are ready for qualification.",
   },
   {
     number: "02",
@@ -38,7 +39,10 @@ export default function BecomeASupplierPage() {
         description="Review the information and evidence ZuriBeans needs before beginning the structured supplier application."
       />
 
-      <section aria-label="Supplier application pathway" className="bg-canvas py-[clamp(48px,7vw,88px)]">
+      <section
+        aria-label="Supplier application pathway"
+        className="bg-canvas py-[clamp(48px,7vw,88px)]"
+      >
         <div className="page-container">
           <ol className="grid gap-px border border-line bg-line md:grid-cols-3">
             {stages.map((stage) => (
@@ -56,10 +60,12 @@ export default function BecomeASupplierPage() {
 
           <div className="mt-9 flex flex-col items-start justify-between gap-6 bg-surface-muted p-6 sm:flex-row sm:items-center sm:p-7">
             <div>
-              <h2 className="font-semibold text-ink">Ready to provide a complete supply profile?</h2>
+              <h2 className="font-semibold text-ink">
+                Ready to provide a complete supply profile?
+              </h2>
               <p className="mt-1 text-sm leading-6 text-muted">
-                Create your secure supplier login to begin or continue your application.
-                Submission starts review; it does not grant supplier approval.
+                Create your secure supplier login to begin or continue your application. Submission
+                starts review; it does not grant supplier approval.
               </p>
             </div>
             <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:items-end">
