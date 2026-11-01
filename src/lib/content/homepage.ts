@@ -20,6 +20,12 @@ export type HomeHeroContent = {
     eyebrow: string
     statement: string
   }
+  /** Demonstration values only; must be verified before factual publication. */
+  illustrativeMetrics: readonly {
+    value: string
+    label: string
+    detail: string
+  }[]
 }
 
 export const HOME_HERO = {
@@ -44,6 +50,11 @@ export const HOME_HERO = {
     eyebrow: "Built for procurement",
     statement: "From a defined requirement to accountable delivery.",
   },
+  illustrativeMetrics: [
+    { value: "12+", label: "Export markets", detail: "Active buyer relationships" },
+    { value: "98%", label: "Documentation rate", detail: "Full traceability on every shipment" },
+    { value: "7", label: "Years trading", detail: "Uganda & South Africa operations" },
+  ],
 } as const satisfies HomeHeroContent
 
 export const TRUST_EVIDENCE = [
