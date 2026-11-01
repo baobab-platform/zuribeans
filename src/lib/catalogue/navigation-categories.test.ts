@@ -12,7 +12,9 @@ describe("public catalogue navigation", () => {
       "sorghum",
       "related",
     ])
-    expect(links.map((entry) => entry.name)).toEqual(PUBLIC_CATALOGUE_CATEGORIES.map((entry) => entry.name))
+    expect(links.map((entry) => entry.name)).toEqual(
+      PUBLIC_CATALOGUE_CATEGORIES.map((entry) => entry.name),
+    )
     expect(links.every((entry) => entry.id.startsWith("navigation-"))).toBe(true)
   })
 
