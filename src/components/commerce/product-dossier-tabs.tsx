@@ -109,10 +109,7 @@ export function ProductDossierTabs({ product }: { product: ProductDetailModel })
                   <h3 className="font-display text-xl">Published formats</h3>
                   <dl className="mt-4 divide-y divide-line border-y border-line">
                     {product.variants.map((variant) => (
-                      <div
-                        key={variant.id}
-                        className="grid gap-1 py-3 text-sm sm:grid-cols-2"
-                      >
+                      <div key={variant.id} className="grid gap-1 py-3 text-sm sm:grid-cols-2">
                         <dt className="text-muted">{variant.title}</dt>
                         <dd className="break-all font-medium">{variant.sku || "SKU on request"}</dd>
                       </div>
