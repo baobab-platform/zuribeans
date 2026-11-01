@@ -1,6 +1,6 @@
 import { SupplierCertificationPicker } from "./supplier-certification-picker"
 import { Alert } from "@/components/ui/alert"
-import { Input, Select, FieldDescription, Textarea } from "@/components/ui/form-controls"
+import { Input, Select, FieldDescription } from "@/components/ui/form-controls"
 import { SUPPLIER_CAPABILITY_CATEGORIES } from "@/lib/supplier/categories"
 
 export type SupplierFormPrefill = {
