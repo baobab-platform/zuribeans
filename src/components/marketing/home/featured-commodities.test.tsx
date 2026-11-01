@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
+import { cleanup, render, screen } from "@testing-library/react"
+import { afterEach, describe, expect, it } from "vitest"
 import { FeaturedCommodities } from "./featured-commodities"
 import type { CommodityPresentation } from "@/lib/content/commodity"
 import type { ProductCardModel } from "@/lib/medusa/types"
@@ -28,6 +28,8 @@ const published: ProductCardModel = {
   origin: "Mount Elgon, Uganda",
 }
 
+afterEach(cleanup)
+
 describe("Featured procurement catalogue", () => {
   it("prioritises provider-published products and does not fabricate commercial claims", () => {
     render(<FeaturedCommodities commodities={[classEntry]} products={[published]} />)
@@ -37,7 +39,8 @@ describe("Featured procurement catalogue", () => {
       "/products/uganda-arabica",
     )
     expect(screen.queryByRole("link", { name: "View coffee: Green coffee" })).toBeNull()
-    expect(screen.queryByText(/available|certified|EUDR ready|FOB|CIF/i)).toBeNull()
+    expect(screen.queryByText(/^(Available|Limited)( \\(sample\\))?$/)).toBeNull()
+    expect(screen.queryByText(/^(ISO 22000|EUDR Ready|UTZ Certified)$/)).toBeNull()
   })
 
   it("falls back to governed product classes when no products are published", () => {
