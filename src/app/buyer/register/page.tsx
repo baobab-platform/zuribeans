@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 export default async function BuyerRegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; next?: string }>
 }) {
-  const { error } = await searchParams
-  return <JourneyAuth journey="buyer" mode="register" error={error} />
+  const { error, next } = await searchParams
+  return <JourneyAuth requestedNext={next} journey="buyer" mode="register" error={error} />
 }
