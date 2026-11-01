@@ -60,7 +60,11 @@ export default async function SyntheticSupplierJourneyPage({
           </p>
         </div>
       </div>
-      <SupplierApplicationJourney heading={<SupplierApplicationHeader preview />} preview sections={supplierApplicationSections(example.form)} />
+      <SupplierApplicationJourney
+        heading={<SupplierApplicationHeader preview />}
+        preview
+        sections={supplierApplicationSections(example.form)}
+      />
     </section>
   )
 }
