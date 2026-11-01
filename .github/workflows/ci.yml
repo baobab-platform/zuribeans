@@ -61,14 +61,6 @@ jobs:
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
-      - name: Diagnose Figma component formatting (temporary)
-        run: |
-          echo '----- PRETTIER TRUST STRIP -----'
-          pnpm exec prettier src/components/marketing/home/trust-evidence-strip.tsx
-          echo '----- PRETTIER HERO TEST (if present) -----'
-          if test -f tests/e2e/home-hero.figma.spec.ts; then
-            pnpm exec prettier tests/e2e/home-hero.figma.spec.ts
-          fi
       - name: Check formatting
         run: pnpm format:check
       - name: Lint
