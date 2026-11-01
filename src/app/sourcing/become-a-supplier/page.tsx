@@ -1,5 +1,7 @@
-import { SupplierPortalEntry } from "@/components/supplier/supplier-portal-entry"
-import { Card } from "@/components/ui/card"
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
+import { SupplierEditorialHero } from "@/components/marketing/supplier-editorial-hero"
+import { ButtonLink } from "@/components/ui/button"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
 export const metadata = getPublicPageMetadata({
@@ -9,51 +11,76 @@ export const metadata = getPublicPageMetadata({
   path: "/sourcing/become-a-supplier",
 })
 
+const stages = [
+  {
+    number: "01",
+    title: "Review",
+    description: "Confirm your business, products and supply capability are ready for qualification.",
+  },
+  {
+    number: "02",
+    title: "Apply",
+    description: "Provide structured company, product, capacity and evidence information.",
+  },
+  {
+    number: "03",
+    title: "Qualification",
+    description: "The sourcing team reviews fit, documentation and any follow-up requirements.",
+  },
+] as const
+
 export default function BecomeASupplierPage() {
   return (
     <>
-      <SupplierPortalEntry
-        eyebrow="Supplier programme"
-        title="Become a ZuriBeans supplier."
-        description="Join the ZuriBeans supplier network. Present your business identity, contacts, products, origin, annual capacity and certifications for structured sourcing review."
-        primaryHref="/supplier/register"
-        primaryLabel="Create supplier login"
-        secondaryHref="/supplier/login"
-        secondaryLabel="Existing supplier? Sign in"
+      <SupplierEditorialHero
+        eyebrow="Become a supplier"
+        title="Bring a clear supply picture."
+        description="Review the information and evidence ZuriBeans needs before beginning the structured supplier application."
       />
-      <section className="page-container py-14">
-        <p className="eyebrow">Application requirements</p>
-        <h2 className="mt-4 font-display text-3xl">Prepare your supply information.</h2>
-        <p className="mt-3 max-w-3xl leading-7 text-muted">
-          The application follows the Make prototype’s six sections. Login, submission, resubmission
-          and status access remain governed by the existing ZuriBeans supplier service.
-        </p>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {[
-            ["Business identity", "Legal and registration details for the applying organisation."],
-            [
-              "Supply capability",
-              "Product class, variety, grade, origin, season and indicative capacity.",
-            ],
-            [
-              "Qualification evidence",
-              "Certification declarations and supporting information where applicable.",
-            ],
-          ].map(([title, description]) => (
-            <Card key={title}>
-              <h2 className="font-display text-xl">{title}</h2>
-              <p className="mt-3 text-sm leading-6 text-muted">{description}</p>
-            </Card>
-          ))}
+
+      <section aria-label="Supplier application pathway" className="bg-canvas py-[clamp(48px,7vw,88px)]">
+        <div className="page-container">
+          <ol className="grid gap-px border border-line bg-line md:grid-cols-3">
+            {stages.map((stage) => (
+              <li key={stage.number} className="min-h-[230px] bg-canvas px-6 py-8 sm:px-7">
+                <span className="text-xs font-bold tracking-wider text-clay-on-light">
+                  {stage.number}
+                </span>
+                <h2 className="mt-9 font-display text-[27px] font-normal leading-tight text-ink">
+                  {stage.title}
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-muted">{stage.description}</p>
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-9 flex flex-col items-start justify-between gap-6 bg-surface-muted p-6 sm:flex-row sm:items-center sm:p-7">
+            <div>
+              <h2 className="font-semibold text-ink">Ready to provide a complete supply profile?</h2>
+              <p className="mt-1 text-sm leading-6 text-muted">
+                Create your secure supplier login to begin or continue your application.
+                Submission starts review; it does not grant supplier approval.
+              </p>
+            </div>
+            <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:items-end">
+              <ButtonLink
+                href="/supplier/register"
+                size="lg"
+                className="w-full whitespace-nowrap sm:w-auto"
+                style={{ color: "var(--color-canvas)" }}
+              >
+                Begin supplier application
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </ButtonLink>
+              <Link
+                href="/supplier/login"
+                className="inline-flex min-h-10 items-center justify-center text-sm font-semibold text-ink underline underline-offset-4"
+              >
+                Existing supplier? Sign in
+              </Link>
+            </div>
+          </div>
         </div>
-        <Card className="mt-8 bg-sand/40">
-          <h2 className="font-display text-2xl">Before you apply</h2>
-          <p className="mt-3 max-w-4xl leading-7 text-muted">
-            Submission starts a sourcing review; it does not approve or activate a supplier.
-            Declared capabilities and certifications remain unverified until ZuriBeans completes the
-            relevant qualification work.
-          </p>
-        </Card>
       </section>
     </>
   )
