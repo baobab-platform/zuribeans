@@ -9,7 +9,7 @@ Shared ADR-SHARED-042/043. No N04 provider support promotion.
 The existing Next.js `/api/iam/*` BFF is an **estate-owned** confidential
 OIDC/B2B buyer handoff. The separate IAM Go `/auth/*` service in IAM #146/#147
 is a **native IAM proof boundary** which resolves a current **CP human
-Principal** under a *different* opaque cookie, assurance and revocation policy.
+Principal** under a _different_ opaque cookie, assurance and revocation policy.
 
 These sessions are intentionally **not interchangeable**. The qualification
 page `/identity/native-qualification` uses only the Go BFF. It must not
@@ -36,8 +36,8 @@ The N02 runner must reach a **single owned first-party HTTPS browser origin**:
 - `GET /` and `GET /identity/native-qualification` are served by
   this exact reviewed ZuriBeans Next.js source.
 - `/auth/{start,login,consent,callback,session,recovery,logout,logout-all}`
-  are served by the **separately supervised IAM Go BFF**, at the *same browser
-  origin*. The estate's `/api/iam/*` must stay distinct.
+  are served by the **separately supervised IAM Go BFF**, at the _same browser
+  origin_. The estate's `/api/iam/*` must stay distinct.
 - The Go process requires TLS and exact public `Host` equality and must
   observe a genuine TLS peer; an untrusted forwarded-proto header, plaintext
   reverse proxy or an automatic external Next.js rewrite **does not satisfy**
@@ -48,14 +48,14 @@ The N02 runner must reach a **single owned first-party HTTPS browser origin**:
 - Real Kratos browser cookies, AAL2 step-up, recovery courier and real Hydra
   authorization-code flow must be reachable in the same tested browser.
   The separate CP Principal read identity must be provisioned under its
-  exact Shared development registry ceiling; `PROVISIONED` is *not*
+  exact Shared development registry ceiling; `PROVISIONED` is _not_
   `ACTIVE` and not a CP grant.
 - Infrastructure #69 must observe actual original Chromium browser/CP and
   DEV-04 originals under a bounded disposable topology, including source
   SHAs and independently observed teardown. Source tests in this PR are
   never browser/CP/provider acceptance.
 
-The connected journey must *start from this page*; IAM #147's Playwright
+The connected journey must _start from this page_; IAM #147's Playwright
 script now clicks the real "Continue with governed IAM" browser control
 instead of injecting a synthetic form into a JSON response. This stops
 standalone Go handler/unit fixtures from being counted as a qualified
@@ -74,7 +74,6 @@ spend approval remain independent.
 recovery/AAL2 run, original Chromium receipt or independent CP authorization
 evidence for these latest heads has been provided. No protected activation,
 provider support promotion or merge.
-
 
 ## Kratos host-only cookie source correction
 

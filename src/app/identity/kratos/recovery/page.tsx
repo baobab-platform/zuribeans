@@ -13,8 +13,10 @@ export const metadata: Metadata = {
 }
 
 export default function NativeRecoveryPage() {
-  if (process.env.ZURIBEANS_N02_NATIVE_QUALIFICATION_ENABLED !== "true"
-      || process.env.ZURIBEANS_IAM_ENVIRONMENT !== "development") {
+  if (
+    process.env.ZURIBEANS_N02_NATIVE_QUALIFICATION_ENABLED !== "true" ||
+    process.env.ZURIBEANS_IAM_ENVIRONMENT !== "development"
+  ) {
     notFound()
   }
 
@@ -23,8 +25,8 @@ export default function NativeRecoveryPage() {
       <p className="eyebrow">Private development qualification</p>
       <h1 className="mt-4 font-display text-4xl">Governed IAM account recovery</h1>
       <p className="mt-4 text-muted">
-        This is a genuine Kratos-managed recovery ceremony.
-        Completing it does not create a Control Plane Principal or purchasing authority.
+        This is a genuine Kratos-managed recovery ceremony. Completing it does not create a Control
+        Plane Principal or purchasing authority.
       </p>
       <NativeKratosFlowForm kind="recovery" />
     </main>

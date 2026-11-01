@@ -90,7 +90,10 @@ export function NativeIamQualificationClient() {
           {/* An actual browser form POST supplies its own same-origin Origin.
               Never forward a caller-provided destination or OAuth state. */}
           <form method="POST" action="/auth/start">
-            <button type="submit" className="rounded-control bg-ink px-6 py-3 font-semibold text-white">
+            <button
+              type="submit"
+              className="rounded-control bg-ink px-6 py-3 font-semibold text-white"
+            >
               Continue with governed IAM
             </button>
           </form>
@@ -118,8 +121,8 @@ export function NativeIamQualificationClient() {
         </button>
       ) : null}
       <p className="text-sm text-muted">
-        Buyer onboarding and protected trading permissions are governed
-        separately by Trade and the Control Plane.
+        Buyer onboarding and protected trading permissions are governed separately by Trade and the
+        Control Plane.
       </p>
     </section>
   )
