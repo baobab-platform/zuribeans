@@ -61,6 +61,28 @@ jobs:
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
+      - name: Temporary supplier runtime Prettier capture
+        run: |
+          echo 'SUPRUNTIME_FMT_START:src/app/supplier/apply/page.tsx'
+          pnpm exec prettier 'src/app/supplier/apply/page.tsx' | base64 -w0
+          echo
+          echo 'SUPRUNTIME_FMT_END:src/app/supplier/apply/page.tsx'
+          echo 'SUPRUNTIME_FMT_START:src/app/supplier/page.tsx'
+          pnpm exec prettier 'src/app/supplier/page.tsx' | base64 -w0
+          echo
+          echo 'SUPRUNTIME_FMT_END:src/app/supplier/page.tsx'
+          echo 'SUPRUNTIME_FMT_START:src/app/supplier/resubmit/page.tsx'
+          pnpm exec prettier 'src/app/supplier/resubmit/page.tsx' | base64 -w0
+          echo
+          echo 'SUPRUNTIME_FMT_END:src/app/supplier/resubmit/page.tsx'
+          echo 'SUPRUNTIME_FMT_START:src/components/supplier/supplier-application-journey.test.tsx'
+          pnpm exec prettier 'src/components/supplier/supplier-application-journey.test.tsx' | base64 -w0
+          echo
+          echo 'SUPRUNTIME_FMT_END:src/components/supplier/supplier-application-journey.test.tsx'
+          echo 'SUPRUNTIME_FMT_START:src/lib/supplier/repository.ts'
+          pnpm exec prettier 'src/lib/supplier/repository.ts' | base64 -w0
+          echo
+          echo 'SUPRUNTIME_FMT_END:src/lib/supplier/repository.ts'
       - name: Check formatting
         run: pnpm format:check
       - name: Lint
