@@ -35,7 +35,11 @@ export default function SourcingPage() {
             <h2
               id="sourcing-qualification-title"
               className="font-display font-light text-ink"
-              style={{ fontSize: "clamp(30px, 4vw, 46px)", lineHeight: 1.12, letterSpacing: "-0.02em" }}
+              style={{
+                fontSize: "clamp(30px, 4vw, 46px)",
+                lineHeight: 1.12,
+                letterSpacing: "-0.02em",
+              }}
             >
               A serious route to a serious supply relationship.
             </h2>

@@ -5,7 +5,9 @@ import { expect, test } from "@playwright/test"
  * links styled as CTAs. Checks actual inherited backgrounds; CSS token and
  * variant strings alone cannot catch a blank-looking call to action.
  */
-test("public action labels remain legible at desktop and mobile widths", async ({ page }, testInfo) => {
+test("public action labels remain legible at desktop and mobile widths", async ({
+  page,
+}, testInfo) => {
   test.skip(testInfo.project.name !== "chromium-desktop", "Canonical color contrast browser check")
   const routes = [
     "/",
