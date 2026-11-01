@@ -79,7 +79,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const navigationCategories = catalogueNavigationCategories(categories)
   // The approved Make toolbar has four commodity filters plus All.
   // Additional provider taxonomy remains addressable through catalogue URLs.
-  const toolbarHandles = new Set(PUBLIC_CATALOGUE_CATEGORIES.slice(0, 4).map(({ handle }) => handle))
+  const toolbarHandles = new Set(
+    PUBLIC_CATALOGUE_CATEGORIES.slice(0, 4).map(({ handle }) => handle),
+  )
   const toolbarCategories = navigationCategories.filter(({ handle }) => toolbarHandles.has(handle))
   const selectedCategory = navigationCategories.find(
     (category) => category.handle === query.category,
@@ -127,7 +129,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       <div className="sticky z-30 border-b border-line bg-canvas" style={{ top: "64px" }}>
         <div className="page-container flex flex-wrap items-center gap-3 py-3">
-          <form action="/products" method="get" className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-80">
+          <form
+            action="/products"
+            method="get"
+            className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-80"
+          >
             {query.category ? <input type="hidden" name="category" value={query.category} /> : null}
             <label htmlFor="catalogue-search" className="min-w-0 flex-1">
               <span className="sr-only">Search products or origins</span>
@@ -147,7 +153,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               Clear
             </ButtonLink>
           ) : null}
-          <nav aria-label="Product categories" className="hidden min-w-0 flex-wrap items-center gap-2 sm:flex">
+          <nav
+            aria-label="Product categories"
+            className="hidden min-w-0 flex-wrap items-center gap-2 sm:flex"
+          >
             <Link
               href={catalogueHref({ query: query.query })}
               aria-label="All products"
@@ -165,7 +174,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   category: category.handle,
                 })}
                 aria-current={selectedCategory?.id === category.id ? "page" : undefined}
-                style={{ color: selectedCategory?.id === category.id ? "var(--color-canvas)" : "var(--color-ink)" }}
+                style={{
+                  color:
+                    selectedCategory?.id === category.id
+                      ? "var(--color-canvas)"
+                      : "var(--color-ink)",
+                }}
                 className="min-h-10 rounded-control border border-line-strong px-3 py-2 text-xs font-semibold whitespace-nowrap aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
               >
                 {category.name}
@@ -189,7 +203,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 href={catalogueHref({ query: query.query })}
                 aria-label="All products"
                 aria-current={!selectedCategory ? "page" : undefined}
-              style={{ color: !selectedCategory ? "var(--color-canvas)" : "var(--color-ink)" }}
+                style={{ color: !selectedCategory ? "var(--color-canvas)" : "var(--color-ink)" }}
                 className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
               >
                 All
@@ -202,7 +216,12 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     category: category.handle,
                   })}
                   aria-current={selectedCategory?.id === category.id ? "page" : undefined}
-                style={{ color: selectedCategory?.id === category.id ? "var(--color-canvas)" : "var(--color-ink)" }}
+                  style={{
+                    color:
+                      selectedCategory?.id === category.id
+                        ? "var(--color-canvas)"
+                        : "var(--color-ink)",
+                  }}
                   className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
                 >
                   {category.name}
@@ -210,7 +229,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               ))}
             </nav>
           </details>
-          <p className="ml-auto shrink-0 text-xs text-muted" aria-live="polite" data-testid="catalogue-product-count">
+          <p
+            className="ml-auto shrink-0 text-xs text-muted"
+            aria-live="polite"
+            data-testid="catalogue-product-count"
+          >
             {catalogue
               ? `${catalogue.count} ${catalogue.count === 1 ? "product" : "products"}`
               : "Count unavailable"}
