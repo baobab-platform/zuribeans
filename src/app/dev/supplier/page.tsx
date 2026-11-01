@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { SupplierApplicationJourney } from "@/components/supplier/supplier-application-journey"
+import { SupplierApplicationHeader } from "@/components/supplier/supplier-application-header"
 import { supplierApplicationSections } from "@/components/supplier/supplier-application-sections"
 import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { DEMO_SUPPLIER_JOURNEYS } from "@/lib/dev-data/supplier-journeys"
@@ -59,7 +60,7 @@ export default async function SyntheticSupplierJourneyPage({
           </p>
         </div>
       </div>
-      <SupplierApplicationJourney preview sections={supplierApplicationSections(example.form)} />
+      <SupplierApplicationJourney heading={<SupplierApplicationHeader preview />} preview sections={supplierApplicationSections(example.form)} />
     </section>
   )
 }
