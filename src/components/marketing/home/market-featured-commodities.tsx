@@ -1,11 +1,13 @@
 import type { CommodityPresentation } from "@/lib/content/commodity"
+import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { listProducts } from "@/lib/medusa/products"
+import type { ProductCardModel } from "@/lib/medusa/types"
 import type { ZuribeansMarket } from "@/lib/market/markets"
 import { FeaturedCommodities } from "./featured-commodities"
 
 /**
- * Streamed below the homepage hero: slow provider lookups never hold up
- * initial hero/assurance delivery or manufacture substitute product records.
+ * The hero remains streamable. Explicit development synthetic mode uses
+ * standalone preview products; production never falls back to fictional lots.
  */
 export async function MarketFeaturedCommodities({
   commodities,
@@ -14,15 +16,23 @@ export async function MarketFeaturedCommodities({
   commodities: readonly CommodityPresentation[]
   market: ZuribeansMarket
 }) {
-  try {
-    const catalogue = await listProducts({
-      countryCode: market.countryCode,
-      marketKey: market.marketKey,
-      limit: 4,
-      offset: 0,
-    })
-    return <FeaturedCommodities commodities={commodities} products={catalogue.items} />
-  } catch {
-    return <FeaturedCommodities commodities={commodities} />
+  let products: readonly ProductCardModel[] = []
+  if (isSyntheticExperienceEnabled()) {
+    const { getDemoFeaturedProducts } = await import("@/lib/dev-data/catalogue")
+    products = getDemoFeaturedProducts().items
+  } else {
+    try {
+      const catalogue = await listProducts({
+        countryCode: market.countryCode,
+        marketKey: market.marketKey,
+        limit: 4,
+        offset: 0,
+      })
+      products = catalogue.items
+    } catch {
+      // Preserve curated category discovery, not synthetic products.
+    }
   }
+
+  return <FeaturedCommodities commodities={commodities} products={products} />
 }
