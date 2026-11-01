@@ -24,13 +24,18 @@ test("featured commodities expose truthful catalogue routes", async ({ page }) =
   await expect(section.locator("#featured-commodities")).toHaveClass(/lg:grid-cols-4/)
 
   const cards = section.locator("#featured-commodities article a[href]")
+  await expect(cards).toHaveCount(4)
   await expect(cards.first()).toBeVisible()
   const hrefs = await cards.evaluateAll((links) =>
     links.map((link) => link.getAttribute("href") ?? ""),
   )
 
-  if (hrefs.some((href) => href.startsWith("/products?category="))) {
-    // No market-scoped publication: category discovery is the truthful fallback.
+  // Full provider publication yields four dossiers; an empty or partial market
+  // fills remaining slots with clearly labelled product-class discovery links.
+  for (const href of hrefs) {
+    expect(href).toMatch(/^\/products(?:\/[^/?#]+|\?category=[a-z-]+)$/)
+  }
+  if (hrefs.every((href) => href.startsWith("/products?category="))) {
     expect(hrefs).toEqual([
       "/products?category=coffee",
       "/products?category=coffee",
@@ -39,13 +44,6 @@ test("featured commodities expose truthful catalogue routes", async ({ page }) =
     ])
     for (const title of ["Robusta coffee", "Arabica coffee", "Vanilla pods", "Sesame seeds"]) {
       await expect(section.getByRole("heading", { name: title })).toBeVisible()
-    }
-  } else {
-    // A market-scoped publication (or explicit local demo) links to its own
-    // dossier rather than claiming that a product class is in stock.
-    expect(hrefs.length).toBeGreaterThan(0)
-    for (const href of hrefs) {
-      expect(href).toMatch(/^\/products\/[^/?#]+$/)
     }
   }
 
