@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, userEvent, waitFor, within } from "storybook/test"
 import { Select } from "./select"
 const meta = { title: "Forms/Select", component: Select } satisfies Meta<typeof Select>
 export default meta
@@ -26,7 +26,8 @@ export const Country: Story = {
     await expect(new FormData(form).get("country")).toBe("UG")
     await userEvent.click(trigger)
     await userEvent.keyboard("{Escape}")
-    await expect(trigger).toHaveFocus()
+    // Base UI returns portal focus after its dismissal lifecycle, not synchronously.
+    await waitFor(() => expect(trigger).toHaveFocus())
   },
 }
 
