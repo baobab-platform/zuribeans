@@ -69,7 +69,12 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
         </label>
         <label className={label}>
           Country of Registration *
-          <select className={nativeSelectClass} name="countryCode" required defaultValue={initial.countryCode || ""}>
+          <select
+            className={nativeSelectClass}
+            name="countryCode"
+            required
+            defaultValue={initial.countryCode || ""}
+          >
             <option value="">Select country</option>
             <option value="UG">Uganda</option>
             <option value="ZA">South Africa</option>
@@ -158,7 +163,8 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
               <div className={inputBox}>
                 <label className={label}>
                   Product category
-                  <select className={nativeSelectClass}
+                  <select
+                    className={nativeSelectClass}
                     name="capability_category"
                     required={slot === 0}
                     defaultValue={row?.category || ""}
@@ -221,7 +227,8 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
             <div className={inputBox}>
               <label className={label}>
                 Country of product origin
-                <select className={nativeSelectClass}
+                <select
+                    className={nativeSelectClass}
                   name="capability_origin_country"
                   defaultValue={initial.capabilities?.[slot]?.originCountryCode ?? ""}
                 >
