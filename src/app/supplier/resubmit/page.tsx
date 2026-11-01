@@ -75,7 +75,8 @@ export default async function SupplierResubmitPage({
               : "Please try again."}
         </Alert>
       ) : null}
-      <SupplierApplicationJourney heading={<SupplierApplicationHeader mode="resubmit" />}
+      <SupplierApplicationJourney
+        heading={<SupplierApplicationHeader mode="resubmit" />}
         mode="resubmit"
         action={resubmitSupplierApplicationAction}
         sections={sections}
