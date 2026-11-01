@@ -59,7 +59,10 @@ export function CatalogueTile({
           >
             {eyebrow}
           </p>
-          <h3 className="font-display font-normal text-ink" style={{ fontSize: "20px", lineHeight: 1.2 }}>
+          <h3
+            className="font-display font-normal text-ink"
+            style={{ fontSize: "20px", lineHeight: 1.2 }}
+          >
             {title}
           </h3>
           <p className="text-sm text-muted" style={{ marginTop: "4px", marginBottom: "14px" }}>
@@ -75,7 +78,10 @@ export function CatalogueTile({
               </div>
             ) : null}
           </dl>
-          <span className="mt-auto flex items-center justify-between border-t border-line font-semibold text-ink" style={{ paddingTop: "12px", fontSize: "13px" }}>
+          <span
+            className="mt-auto flex items-center justify-between border-t border-line font-semibold text-ink"
+            style={{ paddingTop: "12px", fontSize: "13px" }}
+          >
             <span>Product information</span>
             <span className="underline underline-offset-4">{actionLabel} →</span>
           </span>
