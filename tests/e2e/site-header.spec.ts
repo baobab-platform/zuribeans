@@ -38,6 +38,12 @@ test.describe("two-tier trade-desk header", () => {
       "href",
       "/contact",
     )
+    // A readable link is more than a present DOM node: the CTA foreground
+    // must contrast with the ink background in the actual rendered CSS.
+    await expect(header.getByRole("link", { name: "Request a Quote" })).toHaveCSS(
+      "color",
+      "rgb(247, 242, 233)",
+    )
   })
 
   test("primary navigation discloses by click and closes on Escape", async ({ page }) => {
