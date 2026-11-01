@@ -7,55 +7,56 @@ import { exactNativeSession } from "@/lib/iam/native-qualification-session"
 // OAuth bearer/refresh token, Kratos identity, organisational roles or market.
 // This status UI does NOT consume the separate Next /api/iam/* BFF session.
 type State = "checking" | "unauthenticated" | "authenticated" | "unavailable"
+type SessionStatus = { state: Exclude<State, "checking">; csrf: string | null }
+
+// This reader only interprets the native first-party BFF session. It neither
+// sets React state nor returns any issuer token, CP Principal or private roles.
+async function readNativeStatus(signal?: AbortSignal): Promise<SessionStatus> {
+  try {
+    const response = await fetch("/auth/session", {
+      method: "GET",
+      credentials: "same-origin",
+      cache: "no-store",
+      redirect: "manual",
+      headers: { Accept: "application/json" },
+      signal,
+    })
+    if (response.status === 401) return { state: "unauthenticated", csrf: null }
+    if (
+      response.status !== 200 ||
+      !response.headers.get("content-type")?.startsWith("application/json")
+    ) {
+      return { state: "unavailable", csrf: null }
+    }
+    const session: unknown = await response.json()
+    if (!exactNativeSession(session)) return { state: "unavailable", csrf: null }
+    return { state: "authenticated", csrf: session.csrf }
+  } catch {
+    return { state: "unavailable", csrf: null }
+  }
+}
+
 export function NativeIamQualificationClient() {
   const [state, setState] = useState<State>("checking")
   const [csrf, setCsrf] = useState<string | null>(null)
 
-  const refresh = useCallback(async (signal?: AbortSignal) => {
-    // The initial render is already "checking"; only commit a state after the
-    // asynchronous request resolves. This avoids sync setState in mount effects.
-    try {
-      const response = await fetch("/auth/session", {
-        method: "GET",
-        credentials: "same-origin",
-        cache: "no-store",
-        redirect: "manual",
-        headers: { Accept: "application/json" },
-        signal,
-      })
-      if (signal?.aborted) return
-      setCsrf(null)
-      if (response.status === 401) {
-        setState("unauthenticated")
-        return
-      }
-      if (
-        response.status !== 200 ||
-        !response.headers.get("content-type")?.startsWith("application/json")
-      ) {
-        setState("unavailable")
-        return
-      }
-      const session: unknown = await response.json()
-      if (signal?.aborted) return
-      if (!exactNativeSession(session)) {
-        setState("unavailable")
-        return
-      }
-      setCsrf(session.csrf)
-      setState("authenticated")
-    } catch {
-      if (signal?.aborted) return
-      setCsrf(null)
-      setState("unavailable")
-    }
+  const refresh = useCallback(async () => {
+    const status = await readNativeStatus()
+    setCsrf(status.csrf)
+    setState(status.state)
   }, [])
 
   useEffect(() => {
     const controller = new AbortController()
-    void refresh(controller.signal)
+    // The promise callback is the asynchronous external response; this effect
+    // does not synchronously update React state during mount.
+    void readNativeStatus(controller.signal).then((status) => {
+      if (controller.signal.aborted) return
+      setCsrf(status.csrf)
+      setState(status.state)
+    })
     return () => controller.abort()
-  }, [refresh])
+  }, [])
 
   async function logoutAll() {
     if (state !== "authenticated" || !csrf) return
