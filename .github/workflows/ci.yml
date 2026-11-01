@@ -61,6 +61,14 @@ jobs:
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
+      - name: Temporary exact formatter capture for supplier CI repair
+        run: |
+          for file in src/app/dev/supplier/portal/page.tsx tests/e2e/supplier.spec.ts; do
+            echo "SUPPLIER_PRETTIER_BEGIN:$file"
+            pnpm exec prettier "$file" | base64 -w0
+            echo
+            echo "SUPPLIER_PRETTIER_END:$file"
+          done
       - name: Check formatting
         run: pnpm format:check
       - name: Lint
