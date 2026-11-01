@@ -4,9 +4,13 @@ test("visitor can understand and start the supplier application journey", async 
   await page.goto("/sourcing/become-a-supplier")
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Become a ZuriBeans supplier.")
-  await expect(page.getByRole("link", { name: "Begin supplier application" })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "Create supplier login" })).toHaveAttribute(
     "href",
-    "/supplier/apply",
+    "/supplier/register",
+  )
+  await expect(page.getByRole("link", { name: /Existing supplier.*Sign in/i })).toHaveAttribute(
+    "href",
+    "/supplier/login",
   )
   await expect(page.getByText(/Submission starts a sourcing review/)).toBeVisible()
 })
