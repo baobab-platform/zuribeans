@@ -23,11 +23,13 @@ type Props = {
 export function SupplierApplicationJourney({ sections, action, mode = "apply", error, preview = false }: Props) {
   const [step, setStep] = useState(0)
   const [snapshot, setSnapshot] = useState<[string, string][]>([])
+  const [validationMessage, setValidationMessage] = useState<string | null>(null)
   const [previewMessage, setPreviewMessage] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
   const last = SUPPLIER_STEPS.length - 1
 
   function advance() {
+    setValidationMessage(null)
     const section = formRef.current?.querySelector<HTMLElement>(`[data-supplier-section="${step}"]`)
     for (const control of section?.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
       "input, select, textarea",
@@ -36,6 +38,20 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
         control.focus()
         return
       }
+    }
+    if (formRef.current && step === 0 && !new FormData(formRef.current).get("countryCode")) {
+      setValidationMessage("Select the country where your organisation is registered.")
+      section?.querySelector<HTMLElement>('[role="combobox"]')?.focus()
+      return
+    }
+    if (
+      formRef.current &&
+      step === 2 &&
+      !new FormData(formRef.current).getAll("capability_category").some((value) => String(value).trim())
+    ) {
+      setValidationMessage("Select at least one product category before continuing.")
+      section?.querySelector<HTMLElement>('[role="combobox"]')?.focus()
+      return
     }
     if (step === last - 1 && formRef.current) {
       const data = new FormData(formRef.current)
@@ -113,6 +129,11 @@ export function SupplierApplicationJourney({ sections, action, mode = "apply", e
         {preview ? <p className="mb-6 rounded-control border border-line bg-sand p-4 text-sm font-semibold">Development preview · the form is interactive but cannot submit a supplier application.</p> : null}
         {previewMessage ? <p role="status" className="mb-6 rounded-control border border-leaf bg-success-soft p-4 text-sm">Preview complete. No application, supplier principal, approval or documentary record was created.</p> : null}
         {error ? <p role="alert" className="mb-6 rounded-control border border-danger bg-danger-soft p-4 text-danger-strong">{error}</p> : null}
+        {validationMessage ? (
+          <p role="alert" className="mb-6 rounded-control border border-danger bg-danger-soft p-4 text-danger-strong">
+            {validationMessage}
+          </p>
+        ) : null}
         {sections.map((section, index) => (
           <div key={index} data-supplier-section={index} hidden={step !== index}>
             {section}
