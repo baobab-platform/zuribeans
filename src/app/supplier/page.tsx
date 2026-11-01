@@ -8,7 +8,7 @@ import { getCurrentCustomer } from "@/lib/auth/customer"
 import { getSupplierApplicationForCustomer } from "@/lib/supplier/repository"
 import type { SupplierStatus } from "@/lib/supplier/lifecycle"
 import { getSupplierStatusPresentation } from "@/lib/supplier/presentation"
-import { SupplierPortalHero } from "@/components/supplier/supplier-portal-hero"
+import { SupplierPortalEntry } from "@/components/supplier/supplier-portal-entry"
 
 export default async function SupplierDashboardPage() {
   const customer = await getCurrentCustomer()
@@ -30,7 +30,7 @@ export default async function SupplierDashboardPage() {
   if (!application) {
     return (
       <>
-        <SupplierPortalHero hasApplication={false} />
+        <SupplierPortalEntry primaryHref="/supplier/apply" primaryLabel="Start supplier application" secondaryHref="/sourcing/become-a-supplier" />
         <div className="mt-8">
           <EmptyState
         eyebrow="Application not started"
@@ -55,8 +55,12 @@ export default async function SupplierDashboardPage() {
 
   return (
     <>
-      <SupplierPortalHero hasApplication />
-      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+      <SupplierPortalEntry
+        primaryHref="#supplier-status"
+        primaryLabel="View application status"
+        secondaryHref="/sourcing/become-a-supplier"
+      />
+      <div id="supplier-status" className="mt-8 grid gap-6 lg:grid-cols-2">
       <Card className="p-8 lg:col-span-2">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
