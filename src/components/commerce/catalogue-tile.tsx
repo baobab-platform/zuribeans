@@ -66,14 +66,6 @@ export function CatalogueTile({
             {origin || "Origin details on request"}
           </p>
           <dl className="flex flex-1 flex-col" style={{ gap: "5px", marginBottom: "16px" }}>
-            {origin ? (
-              <div className="flex gap-2 border-b border-line" style={{ paddingBottom: "6px" }}>
-                <dt className="shrink-0 text-xs text-muted" style={{ width: "62px" }}>
-                  Origin
-                </dt>
-                <dd className="min-w-0 text-xs font-medium text-ink">{origin}</dd>
-              </div>
-            ) : null}
             {details ? (
               <div className="flex gap-2 border-b border-line" style={{ paddingBottom: "6px" }}>
                 <dt className="shrink-0 text-xs text-muted" style={{ width: "62px" }}>
