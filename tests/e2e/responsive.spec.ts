@@ -44,7 +44,10 @@ test.describe("responsive shell", () => {
     await page.goto("/sourcing/become-a-supplier")
 
     await expect(page.getByRole("button", { name: "Menu" })).toBeVisible()
-    await expect(page.getByRole("link", { name: "Start a supplier application" })).toBeVisible()
+    await expect(page.getByRole("link", { name: "Begin supplier application" })).toHaveAttribute(
+      "href",
+      "/supplier/apply",
+    )
   })
 
   test("large procurement viewport uses desktop navigation without horizontal overflow", async ({
