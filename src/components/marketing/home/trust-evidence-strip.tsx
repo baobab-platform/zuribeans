@@ -17,16 +17,13 @@ export function TrustEvidenceStrip({ items }: { items: readonly EvidenceItem[] }
   return (
     <section aria-label="Trade assurance" className={stripClassName} tabIndex={0}>
       <ul className={listClassName}>
-        {items.map((item, index) => (
+        {items.map((item) => (
           <li key={item.id} className={itemClassName}>
             <span className="text-xs font-bold uppercase tracking-[.07em] text-clay-inverse">
               {item.label}
             </span>
             <span className="mt-1 max-w-[240px] text-[11px] leading-4 text-white/70">
               {item.description}
-            </span>
-            <span className="sr-only">
-              {index + 1} of {items.length}
             </span>
           </li>
         ))}
