@@ -44,7 +44,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
           <div className="flex flex-wrap items-center gap-4">
             <Badge tone={badge.tone}>{badge.label}</Badge>
             <form action={logoutAction}>
-              <Button type="submit" variant="outline" className="border-white/40 text-canvas hover:bg-white/10 hover:text-canvas">Sign out</Button>
+              <Button type="submit" variant="inverse">Sign out</Button>
             </form>
           </div>
         </div>
