@@ -1,3 +1,4 @@
+import { SupplierCertificationPicker } from "./supplier-certification-picker"
 import { Alert } from "@/components/ui/alert"
 import { Input, Select, FieldDescription, Textarea } from "@/components/ui/form-controls"
 import { SUPPLIER_CAPABILITY_CATEGORIES } from "@/lib/supplier/categories"
@@ -118,19 +119,7 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
     fields("Certifications", "Declare certificates currently held. Every declaration remains unverified until independently reviewed.", (
       <div className={group}>
         <Alert title="Document upload is not available yet" tone="info">Documentary custody remains with the authorised provider. Do not send private certificate files through this form.</Alert>
-        <datalist id="supplier-certifications">
-          {["UTZ / Rainforest Alliance", "Organic (EU)", "Organic (NOP)", "Fair Trade", "GlobalG.A.P", "ISO 22000", "FSSC 22000"].map(name => <option key={name} value={name} />)}
-        </datalist>
-        {slots.map(slot => <div key={slot} className="rounded-control border border-line bg-surface p-5">
-          <h3 className="mb-4 font-semibold">Certification {slot + 1}</h3>
-          <div className={inputBox}>
-            <label className={label}>Type<Input name="certification_type" list="supplier-certifications" defaultValue={initial.certifications?.[slot]?.certificationType ?? ""} placeholder="e.g. Organic (EU)" /></label>
-            <label className={label}>Issuer<Input name="certification_issuer" defaultValue={initial.certifications?.[slot]?.issuer ?? ""} /></label>
-            <label className={label}>Reference number<Input name="certification_reference" defaultValue={initial.certifications?.[slot]?.referenceNumber ?? ""} /></label>
-            <label className={label}>Issued on<Input name="certification_issued_on" type="date" defaultValue={initial.certifications?.[slot]?.issuedOn ?? ""} /></label>
-            <label className={label}>Expires on<Input name="certification_expires_on" type="date" defaultValue={initial.certifications?.[slot]?.expiresOn ?? ""} /></label>
-          </div>
-        </div>)}
+        <SupplierCertificationPicker initial={initial.certifications} />
       </div>
     )),
   ]
