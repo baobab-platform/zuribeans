@@ -23,6 +23,34 @@ describe("Figma-inspired catalogue tile", () => {
     expect(screen.queryByText(/ISO|available|grade certified/i)).toBeNull()
   })
 
+  it("reproduces synthetic grade, process, certification, availability and terms without claiming verification", () => {
+    render(
+      <CatalogueTile
+        href="/products/demo-robusta-faq-ug"
+        title="Robusta Coffee"
+        eyebrow="Coffee"
+        origin="Western Uganda"
+        cardFacts={{
+          source: "synthetic",
+          category: "Coffee",
+          grade: "Screen 15+, FAQ",
+          process: "Natural / Sun-dried",
+          certification: "UTZ / RA (sample)",
+          supplyStatus: "Available",
+          minimumOrder: "1,200 kg",
+          incoterms: "FOB / CIF",
+        }}
+      />,
+    )
+    expect(screen.getByText("Sample data")).toBeInTheDocument()
+    expect(screen.getByText("Screen 15+, FAQ")).toBeInTheDocument()
+    expect(screen.getByText("Natural / Sun-dried")).toBeInTheDocument()
+    expect(screen.getByText(/UTZ \/ RA \(sample\)/)).toBeInTheDocument()
+    expect(screen.getByText("Available (sample)")).toBeInTheDocument()
+    expect(screen.getByText(/Illustrative terms: MOQ 1,200 kg/)).toBeInTheDocument()
+    expect(screen.getByText(/no verified certificate, stock or binding offer/)).toBeInTheDocument()
+  })
+
   it("does not invent a certificate, grade or availability if metadata is absent", () => {
     render(<CatalogueTile href="/products/unknown" title="Published product" eyebrow="Catalogue" />)
     expect(screen.getByText("Origin details on request")).toBeInTheDocument()
