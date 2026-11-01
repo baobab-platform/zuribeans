@@ -30,6 +30,12 @@ test("public action labels remain legible at desktop and mobile widths", async (
       await page.goto(route, { waitUntil: "domcontentloaded" })
       const failures = await page.evaluate(() => {
         type RGB = [number, number, number, number]
+        // Chromium may preserve CSS Color 4 oklab() and color(srgb) values in
+        // computed styles. Canvas pixel readback converts them into sRGB.
+        const canvas = document.createElement("canvas")
+        canvas.width = 1
+        canvas.height = 1
+        const ctx = canvas.getContext("2d", { willReadFrequently: true })
         const parseColor = (input: string): RGB | null => {
           const color = input.trim()
           if (color.startsWith("rgb(") || color.startsWith("rgba(")) {
@@ -42,7 +48,16 @@ test("public action labels remain legible at desktop and mobile widths", async (
             if (!parts || parts.length < 3) return null
             return [parts[0] * 255, parts[1] * 255, parts[2] * 255, parts[3] ?? 1]
           }
-          return null
+          if (!ctx) return null
+          try {
+            ctx.clearRect(0, 0, 1, 1)
+            ctx.fillStyle = color
+            ctx.fillRect(0, 0, 1, 1)
+            const data = ctx.getImageData(0, 0, 1, 1).data
+            return [data[0], data[1], data[2], data[3] / 255]
+          } catch {
+            return null
+          }
         }
         const blend = (front: RGB, back: RGB): RGB => {
           const a = front[3]
