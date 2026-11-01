@@ -3,13 +3,15 @@ import { Button as BaseButton } from "@base-ui/react/button"
 import type { ButtonHTMLAttributes, ReactNode } from "react"
 import { classNames } from "@/lib/ui/classnames"
 
-export type ButtonVariant = "primary" | "secondary" | "outline" | "inverse" | "gold" | "ghost" | "danger"
+export type ButtonVariant =
+  "primary" | "secondary" | "outline" | "inverse" | "gold" | "ghost" | "danger"
 export type ButtonSize = "sm" | "md" | "lg"
 
 const variants: Record<ButtonVariant, string> = {
   primary: "bg-ink text-white hover:bg-ink-soft hover:text-white",
   secondary: "bg-leaf text-white hover:bg-leaf-dark hover:text-white",
-  outline: "border border-line-strong bg-transparent text-ink hover:bg-surface-raised hover:text-ink",
+  outline:
+    "border border-line-strong bg-transparent text-ink hover:bg-surface-raised hover:text-ink",
   inverse: "border border-white/40 bg-transparent text-canvas hover:bg-white/10 hover:text-canvas",
   gold: "bg-clay text-ink hover:bg-clay-inverse hover:text-ink",
   ghost: "bg-transparent text-ink hover:bg-surface-raised hover:text-ink",

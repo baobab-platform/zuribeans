@@ -19,7 +19,9 @@ test.describe("Figma-inspired procurement catalogue", () => {
     await expect(page.getByRole("region", { name: "Catalogue results" })).toBeVisible()
   })
 
-  test("keeps every public category filter visible on desktop without Medusa fixtures", async ({ page }) => {
+  test("keeps every public category filter visible on desktop without Medusa fixtures", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 1440, height: 900 })
     await page.goto("/products", { waitUntil: "domcontentloaded" })
     const filters = page.getByRole("navigation", { name: "Product categories" })

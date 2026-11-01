@@ -45,9 +45,9 @@ test("featured commodities expose truthful catalogue routes", async ({ page }) =
     for (const title of ["Robusta coffee", "Arabica coffee", "Vanilla pods", "Sesame seeds"]) {
       await expect(section.getByRole("heading", { name: title })).toBeVisible()
     }
-    const photos = await section.locator("#featured-commodities img").evaluateAll((images) =>
-      images.map((image) => image.getAttribute("src")),
-    )
+    const photos = await section
+      .locator("#featured-commodities img")
+      .evaluateAll((images) => images.map((image) => image.getAttribute("src")))
     expect(new Set(photos).size).toBe(4)
   }
 

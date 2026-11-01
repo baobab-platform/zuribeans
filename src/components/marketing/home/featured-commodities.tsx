@@ -49,7 +49,11 @@ export function FeaturedCommodities({ commodities, products = [] }: FeaturedComm
             >
               {synthetic ? "Origin-certified commodities." : "African-origin commodities."}
               <span className="block">
-                <em>{synthetic ? "Grade-documented, export-ready." : "Specified for professional trade."}</em>
+                <em>
+                  {synthetic
+                    ? "Grade-documented, export-ready."
+                    : "Specified for professional trade."}
+                </em>
               </span>
             </h2>
           </div>
@@ -66,7 +70,9 @@ export function FeaturedCommodities({ commodities, products = [] }: FeaturedComm
           id="featured-commodities"
           className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4"
         >
-          {featuredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+          {featuredProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
           {fallbackClasses.map((commodity) => (
             <CommodityCard key={commodity.id} commodity={commodity} />
           ))}

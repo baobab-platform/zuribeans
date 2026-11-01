@@ -6,11 +6,11 @@
 
 ## Journey separation and URLs
 
-| Role / intention | Public entry | Login | Registration | Protected workspace | Application |
-|---|---|---|---|---|---|
-| Buyer | `/buyer` | `/buyer/login` | `/buyer/register` | `/account` | `/account/apply` |
-| Supplier | `/sourcing/become-a-supplier` | `/supplier/login` | `/supplier/register` | `/supplier` | `/supplier/apply` |
-| Supplier resubmission | Supplier workspace only | `/supplier/login?next=/supplier/resubmit` | n/a | `/supplier` | `/supplier/resubmit` |
+| Role / intention      | Public entry                  | Login                                     | Registration         | Protected workspace | Application          |
+| --------------------- | ----------------------------- | ----------------------------------------- | -------------------- | ------------------- | -------------------- |
+| Buyer                 | `/buyer`                      | `/buyer/login`                            | `/buyer/register`    | `/account`          | `/account/apply`     |
+| Supplier              | `/sourcing/become-a-supplier` | `/supplier/login`                         | `/supplier/register` | `/supplier`         | `/supplier/apply`    |
+| Supplier resubmission | Supplier workspace only       | `/supplier/login?next=/supplier/resubmit` | n/a                  | `/supplier`         | `/supplier/resubmit` |
 
 `/login` and `/register` remain backwards-compatible legacy customer-identity routes, **not** buyer/supplier authority or onboarding approval. The new role-specific presentation reuses the existing Medusa email/password identity provider, with role-specific redirect and onboarding destinations; it does not create a second identity silo. Only the already-qualified buyer OIDC is offered as SSO. Supplier SSO is withheld pending separate provider qualification.
 

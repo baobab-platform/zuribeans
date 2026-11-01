@@ -11,7 +11,12 @@ export type LoginErrorCode = "invalid_input" | "invalid_credentials" | "sso_unav
 
 export async function loginAction(formData: FormData): Promise<void> {
   const next = toSafeRelativePath(formData.get("next")?.toString()) ?? "/account"
-  const journey = formData.get("journey") === "supplier" ? "supplier" : formData.get("journey") === "buyer" ? "buyer" : null
+  const journey =
+    formData.get("journey") === "supplier"
+      ? "supplier"
+      : formData.get("journey") === "buyer"
+        ? "buyer"
+        : null
   const errorRoute = journey ? `/${journey}/login` : "/login"
   const nextParam = `next=${encodeURIComponent(next)}`
 
@@ -54,7 +59,12 @@ export async function loginAction(formData: FormData): Promise<void> {
  */
 export async function loginWithSsoAction(formData: FormData): Promise<void> {
   const next = toSafeRelativePath(formData.get("next")?.toString()) ?? "/account"
-  const journey = formData.get("journey") === "supplier" ? "supplier" : formData.get("journey") === "buyer" ? "buyer" : null
+  const journey =
+    formData.get("journey") === "supplier"
+      ? "supplier"
+      : formData.get("journey") === "buyer"
+        ? "buyer"
+        : null
   const errorRoute = journey ? `/${journey}/login` : "/login"
   const nextParam = `next=${encodeURIComponent(next)}`
 

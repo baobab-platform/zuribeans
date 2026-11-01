@@ -23,8 +23,14 @@ export function AuthShell({
         className="flex min-h-80 flex-col justify-between bg-ink text-canvas"
         style={{ padding: "clamp(28px, 6vw, 72px)" }}
       >
-        <Link href="/" aria-label="ZuriBeans homepage" className="inline-flex items-center gap-3 self-start text-canvas">
-          <span className="grid size-8 place-items-center rounded-control bg-clay text-xs font-bold text-ink">ZB</span>
+        <Link
+          href="/"
+          aria-label="ZuriBeans homepage"
+          className="inline-flex items-center gap-3 self-start text-canvas"
+        >
+          <span className="grid size-8 place-items-center rounded-control bg-clay text-xs font-bold text-ink">
+            ZB
+          </span>
           <span className="font-display text-xl">ZuriBeans</span>
         </Link>
         <div className="mt-16 max-w-xl">
@@ -37,7 +43,10 @@ export function AuthShell({
           </p>
         </div>
       </section>
-      <section className="flex items-center px-6 py-12 sm:px-12 lg:px-[clamp(36px,6vw,88px)]" aria-label="Portal credentials">
+      <section
+        className="flex items-center px-6 py-12 sm:px-12 lg:px-[clamp(36px,6vw,88px)]"
+        aria-label="Portal credentials"
+      >
         <div className="mx-auto w-full max-w-lg border-t-4 border-clay pt-8">
           <p className="mb-9 text-base leading-8 text-muted">{description}</p>
           {children}

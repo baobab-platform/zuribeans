@@ -13,7 +13,12 @@ const isDuplicateIdentityError = (error: unknown): boolean =>
 
 export async function registerAction(formData: FormData): Promise<void> {
   const next = toSafeRelativePath(formData.get("next")?.toString()) ?? "/account"
-  const journey = formData.get("journey") === "supplier" ? "supplier" : formData.get("journey") === "buyer" ? "buyer" : null
+  const journey =
+    formData.get("journey") === "supplier"
+      ? "supplier"
+      : formData.get("journey") === "buyer"
+        ? "buyer"
+        : null
   const errorRoute = journey ? `/${journey}/register` : "/register"
   const nextParam = `next=${encodeURIComponent(next)}`
 
