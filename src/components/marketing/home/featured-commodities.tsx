@@ -18,6 +18,7 @@ export function FeaturedCommodities({ commodities, products = [] }: FeaturedComm
   if (commodities.length === 0 && products.length === 0) return null
 
   const hasPublishedProducts = products.length > 0
+  const synthetic = products.some((product) => product.cardFacts?.source === "synthetic")
 
   return (
     <section
@@ -44,16 +45,18 @@ export function FeaturedCommodities({ commodities, products = [] }: FeaturedComm
                 letterSpacing: "-0.02em",
               }}
             >
-              African-origin commodities.
+              {synthetic ? "Origin-certified commodities." : "African-origin commodities."}
               <span className="block">
-                <em>Specified for professional trade.</em>
+                <em>{synthetic ? "Grade-documented, export-ready." : "Specified for professional trade."}</em>
               </span>
             </h2>
           </div>
           <p className="max-w-xl self-end text-sm leading-7 text-muted lg:col-span-5">
-            {hasPublishedProducts
-              ? "Explore published product information, including declared origin and specifications. Certification, availability and commercial terms require independent confirmation."
-              : "Explore our principal product classes. Individual products, grades, evidence and availability appear only when published by the responsible trade systems."}
+            {synthetic
+              ? "Explore sample grades, certifications, inventory states and indicative terms. Every product and commercial fact in this preview is fictional until its owning Baobab engine qualifies the real evidence."
+              : hasPublishedProducts
+                ? "Explore published product information, including declared origin and specifications. Certification, availability and commercial terms require independent confirmation."
+                : "Explore our principal product classes. Individual products, grades, evidence and availability appear only when published by the responsible trade systems."}
           </p>
         </header>
 
