@@ -123,6 +123,7 @@ jobs:
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm test:e2e:a11y
       - name: Landing-page visual regression checks
+        id: experience_visual
         env:
           CI: "true"
           MEDUSA_BACKEND_URL: http://localhost:9000
@@ -137,7 +138,7 @@ jobs:
       # Candidate generation preserves the failed gate. Pixels are accepted
       # only by a separately reviewed source commit; normal tests never update.
       - name: Capture visual candidates after browser failure
-        if: failure() && steps.experience_browser.outcome == 'failure'
+        if: failure() && (steps.experience_browser.outcome == 'failure' || steps.experience_visual.outcome == 'failure')
         env:
           CI: "true"
           MEDUSA_BACKEND_URL: http://localhost:9000
