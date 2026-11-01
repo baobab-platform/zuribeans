@@ -1,6 +1,8 @@
-import { render, screen } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
+import { cleanup, render, screen } from "@testing-library/react"
+import { afterEach, describe, expect, it } from "vitest"
 import { CatalogueTile } from "./catalogue-tile"
+
+afterEach(cleanup)
 
 describe("Figma-inspired catalogue tile", () => {
   it("shows only sourced product details and a usable product link", () => {
