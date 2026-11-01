@@ -79,12 +79,17 @@ export function SupplierApplicationJourney({
         ["Certifications", "certification_type"],
       ] as const
       setSnapshot([
-        ...fields.map(([label, key]) => [label, data.get(key)?.toString() || "—"] as [string, string]),
-        ...collections.map(([label, key]) => [
-          label,
-          data.getAll(key).filter(Boolean).join(", ") ||
-            (key === "certification_type" ? "None declared" : "—"),
-        ] as [string, string]),
+        ...fields.map(
+          ([label, key]) => [label, data.get(key)?.toString() || "—"] as [string, string],
+        ),
+        ...collections.map(
+          ([label, key]) =>
+            [
+              label,
+              data.getAll(key).filter(Boolean).join(", ") ||
+                (key === "certification_type" ? "None declared" : "—"),
+            ] as [string, string],
+        ),
       ])
     }
     setStep((current) => Math.min(last, current + 1))
