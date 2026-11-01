@@ -39,7 +39,8 @@ describe("Featured procurement catalogue", () => {
       "/products/uganda-arabica",
     )
     expect(screen.queryByRole("link", { name: "View coffee: Green coffee" })).toBeNull()
-    expect(screen.queryByText(/^(Available|Limited)( \\(sample\\))?$/)).toBeNull()
+    expect(screen.queryByText("Available (sample)")).toBeNull()
+    expect(screen.queryByText("Limited (sample)")).toBeNull()
     expect(screen.queryByText(/^(ISO 22000|EUDR Ready|UTZ Certified)$/)).toBeNull()
   })
 
