@@ -138,8 +138,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               Clear
             </ButtonLink>
           ) : null}
-          <>
-              <nav
+          <nav
                 aria-label="Product categories"
                 className="hidden min-w-0 flex-wrap gap-2 lg:flex"
               >
@@ -163,8 +162,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     {category.name}
                   </Link>
                 ))}
-              </nav>
-              <details className="relative lg:hidden">
+          </nav>
+          <details className="relative lg:hidden">
                 <summary className="min-h-11 cursor-pointer rounded-control border border-line-strong bg-surface px-4 py-3 text-sm font-semibold">
                   Filters{selectedCategory ? " · " + selectedCategory.name : ""}
                 </summary>
@@ -184,7 +183,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   >
                     All products
                   </Link>
-                  {categories.map((category) => (
+                  {navigationCategories.map((category) => (
                     <Link
                       key={category.id}
                       href={catalogueHref({
@@ -198,8 +197,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     </Link>
                   ))}
                 </nav>
-              </details>
-          </>
+          </details>
         </div>
       </div>
 
