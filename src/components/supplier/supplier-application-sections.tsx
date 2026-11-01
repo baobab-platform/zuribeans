@@ -1,6 +1,6 @@
 import { SupplierCertificationPicker } from "./supplier-certification-picker"
 import { Alert } from "@/components/ui/alert"
-import { Input, Select, FieldDescription } from "@/components/ui/form-controls"
+import { Input, FieldDescription } from "@/components/ui/form-controls"
 import { SUPPLIER_CAPABILITY_CATEGORIES } from "@/lib/supplier/categories"
 
 export type SupplierFormPrefill = {
@@ -35,6 +35,8 @@ const group = "space-y-5"
 const heading = "font-display text-2xl text-ink"
 const intro = "mt-2 mb-8 text-sm leading-7 text-muted"
 const inputBox = "grid gap-5 sm:grid-cols-2"
+const nativeSelectClass =
+  "mt-2 min-h-11 w-full rounded-control border border-line-strong bg-surface px-4 py-3 text-left text-ink shadow-control focus:ring-2 focus:ring-focus disabled:cursor-not-allowed disabled:bg-surface-muted"
 const fields = (title: string, description: string, children: React.ReactNode) => (
   <section className={group}>
     <h2 className={heading}>{title}</h2>
@@ -67,14 +69,14 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
         </label>
         <label className={label}>
           Country of Registration *
-          <Select name="countryCode" required defaultValue={initial.countryCode || ""}>
+          <select className={nativeSelectClass} name="countryCode" required defaultValue={initial.countryCode || ""}>
             <option value="">Select country</option>
             <option value="UG">Uganda</option>
             <option value="ZA">South Africa</option>
             <option value="TZ">Tanzania</option>
             <option value="KE">Kenya</option>
             <option value="ET">Ethiopia</option>
-          </Select>
+          </select>
         </label>
         <label className={label}>
           Company Registration Number
@@ -156,7 +158,7 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
               <div className={inputBox}>
                 <label className={label}>
                   Product category
-                  <Select
+                  <select className={nativeSelectClass}
                     name="capability_category"
                     required={slot === 0}
                     defaultValue={row?.category || ""}
@@ -167,7 +169,7 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
                         {c.label}
                       </option>
                     ))}
-                  </Select>
+                  </select>
                 </label>
                 <label className={label}>
                   Variety
@@ -219,7 +221,7 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
             <div className={inputBox}>
               <label className={label}>
                 Country of product origin
-                <Select
+                <select className={nativeSelectClass}
                   name="capability_origin_country"
                   defaultValue={initial.capabilities?.[slot]?.originCountryCode ?? ""}
                 >
@@ -229,7 +231,7 @@ export function supplierApplicationSections(initial: SupplierFormPrefill = {}) {
                   <option value="TZ">Tanzania</option>
                   <option value="KE">Kenya</option>
                   <option value="ET">Ethiopia</option>
-                </Select>
+                </select>
               </label>
               <label className={label}>
                 Harvest / supply season
