@@ -30,9 +30,8 @@ test.describe("Figma Make responsive estate contract", () => {
           }))
         return { overflows: root.scrollWidth > root.clientWidth + 1, offenders }
       })
-      expect(layout.overflows, `Document overflows at ${width}px: ${JSON.stringify(layout.offenders)}`).toBe(
-        false,
-      )
+      const message = `Document overflows at ${width}px: ${JSON.stringify(layout.offenders)}`
+      expect(layout.overflows, message).toBe(false)
 
       if (width < 1280) {
         const menu = page.getByRole("button", { name: /menu/i })
