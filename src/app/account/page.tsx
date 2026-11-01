@@ -1,3 +1,4 @@
+import { BuyerWorkspaceModules } from "@/components/buyer/workspace-modules"
 import { BuyerCapabilityBoundary } from "@/components/buyer/capability-boundary"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -136,6 +137,9 @@ export default async function AccountDashboardPage() {
         </ButtonLink>
       </Card>
       <BuyerCapabilityBoundary capabilities={capabilities} />
+      <div className="lg:col-span-2">
+        <BuyerWorkspaceModules />
+      </div>
     </div>
   )
 }
