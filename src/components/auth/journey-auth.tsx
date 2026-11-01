@@ -4,6 +4,7 @@ import { Alert } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { FieldDescription, Input } from "@/components/ui/form-controls"
 import { loginSchema } from "@/lib/validation/login"
+import { toSafeRelativePath } from "@/lib/auth/safe-redirect"
 import { loginAction, loginWithSsoAction, type LoginErrorCode } from "@/app/login/actions"
 import { registerAction, type RegisterErrorCode } from "@/app/register/actions"
 
@@ -25,13 +26,17 @@ export function JourneyAuth({
   journey,
   mode,
   error,
+  requestedNext,
 }: {
   journey: Journey
   mode: Mode
   error?: string
+  requestedNext?: string
 }) {
   const buyer = journey === "buyer"
-  const next = buyer ? "/account" : "/supplier"
+  const defaultNext = buyer ? "/account" : "/supplier"
+  const allowedNext = toSafeRelativePath(requestedNext)
+  const next = allowedNext && (buyer ? allowedNext.startsWith("/account") : allowedNext.startsWith("/supplier")) ? allowedNext : defaultNext
   const afterRegistration = buyer ? "/account/apply" : "/supplier/apply"
   const prefix = buyer ? "/buyer" : "/supplier"
   const title = mode === "login"
