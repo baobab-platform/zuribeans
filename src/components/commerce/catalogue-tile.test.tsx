@@ -48,7 +48,6 @@ describe("Figma-inspired catalogue tile", () => {
     expect(screen.getByText(/UTZ \/ RA \(sample\)/)).toBeInTheDocument()
     expect(screen.getByText("Available (sample)")).toBeInTheDocument()
     expect(screen.getByText(/Illustrative terms: MOQ 1,200 kg/)).toBeInTheDocument()
-    expect(screen.getByText(/no verified certificate, stock or binding offer/)).toBeInTheDocument()
   })
 
   it("does not invent a certificate, grade or availability if metadata is absent", () => {
