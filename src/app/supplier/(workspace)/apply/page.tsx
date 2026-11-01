@@ -5,7 +5,10 @@ import { getSupplierApplicationForCustomer } from "@/lib/supplier/repository"
 import { SupplierApplicationJourney } from "@/components/supplier/supplier-application-journey"
 import { SupplierApplicationHeader } from "@/components/supplier/supplier-application-header"
 import { supplierApplicationSections } from "@/components/supplier/supplier-application-sections"
-import { submitSupplierApplicationAction, type SupplierApplicationErrorCode } from "./actions"
+import {
+  submitSupplierApplicationAction,
+  type SupplierApplicationErrorCode,
+} from "@/app/supplier/apply/actions"
 
 const errorMessages: Record<SupplierApplicationErrorCode, string> = {
   invalid_input: "Check the form for missing or invalid fields — at least one product is required.",
@@ -20,7 +23,7 @@ export default async function SupplierApplyPage({
   searchParams: Promise<{ error?: string }>
 }) {
   const customer = await getCurrentCustomer()
-  if (!customer) redirect("/login?next=/supplier/apply")
+  if (!customer) redirect("/supplier/login?next=/supplier/apply")
 
   let existing: Awaited<ReturnType<typeof getSupplierApplicationForCustomer>>
   try {

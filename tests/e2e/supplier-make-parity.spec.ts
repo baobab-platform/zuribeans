@@ -3,16 +3,16 @@ import { expect, test } from "@playwright/test"
 test("supplier entry links to real onboarding", async ({ page }) => {
   await page.goto("/sourcing/become-a-supplier")
   await expect(
-    page.getByRole("heading", { level: 1, name: /Become a ZuriBeans supplier/i }),
+    page.getByRole("heading", { level: 1, name: "Bring a clear supply picture." }),
   ).toBeVisible()
   const begin = page.getByRole("link", { name: "Begin supplier application" })
-  await expect(begin).toHaveAttribute("href", "/supplier/apply")
-  await expect(page.getByRole("link", { name: /Existing supplier.*workspace/i })).toHaveAttribute(
+  await expect(begin).toHaveAttribute("href", "/supplier/register")
+  await expect(page.getByRole("link", { name: /Existing supplier.*Sign in/i })).toHaveAttribute(
     "href",
-    "/supplier",
+    "/supplier/login",
   )
   await expect(
-    page.getByText(/application review does not create supplier approval/i),
+    page.getByText(/Submission starts review; it does not grant supplier approval/i),
   ).toBeVisible()
 })
 

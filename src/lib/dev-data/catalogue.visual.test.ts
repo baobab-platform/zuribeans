@@ -10,7 +10,10 @@ import {
 describe("synthetic Figma procurement showcase", () => {
   it("cannot enable synthetic publication in production", () => {
     expect(
-      isSyntheticExperienceEnabled({ NODE_ENV: "production", ZB_DEV_DATA_MODE: "synthetic" } as NodeJS.ProcessEnv),
+      isSyntheticExperienceEnabled({
+        NODE_ENV: "production",
+        ZB_DEV_DATA_MODE: "synthetic",
+      } as NodeJS.ProcessEnv),
     ).toBe(false)
   })
 

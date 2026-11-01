@@ -6,6 +6,10 @@ import { Button, ButtonLink } from "@/components/ui/button"
 import { Input } from "@/components/ui/form-controls"
 import { EmptyState, ErrorState } from "@/components/ui/state-panel"
 import { catalogueHref, parseCatalogueQuery } from "@/lib/catalogue/query"
+import {
+  catalogueNavigationCategories,
+  PUBLIC_CATALOGUE_CATEGORIES,
+} from "@/lib/catalogue/navigation-categories"
 import { getMarketContext } from "@/lib/market/request"
 import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { listProductCategories, listProducts } from "@/lib/medusa/products"
@@ -72,7 +76,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     failed = true
   }
 
-  const selectedCategory = categories.find((category) => category.handle === query.category)
+  const navigationCategories = catalogueNavigationCategories(categories)
+  // The approved Make toolbar has four commodity filters plus All.
+  // Additional provider taxonomy remains addressable through catalogue URLs.
+  const toolbarHandles = new Set(
+    PUBLIC_CATALOGUE_CATEGORIES.slice(0, 4).map(({ handle }) => handle),
+  )
+  const toolbarCategories = navigationCategories.filter(({ handle }) => toolbarHandles.has(handle))
+  const selectedCategory = navigationCategories.find(
+    (category) => category.handle === query.category,
+  )
   const totalPages = catalogue ? Math.max(1, Math.ceil(catalogue.count / catalogue.limit)) : 1
   if (catalogue && query.page > totalPages) {
     redirect(catalogueHref({ ...query, page: totalPages }))
@@ -116,7 +129,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       <div className="sticky z-30 border-b border-line bg-canvas" style={{ top: "64px" }}>
         <div className="page-container flex flex-wrap items-center gap-3 py-3">
-          <form action="/products" method="get" className="flex min-w-0 flex-1 items-center gap-2">
+          <form
+            action="/products"
+            method="get"
+            className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-80"
+          >
             {query.category ? <input type="hidden" name="category" value={query.category} /> : null}
             <label htmlFor="catalogue-search" className="min-w-0 flex-1">
               <span className="sr-only">Search products or origins</span>
@@ -136,70 +153,91 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               Clear
             </ButtonLink>
           ) : null}
-          {categories.length > 0 ? (
-            <>
-              <nav
-                aria-label="Product categories"
-                className="hidden min-w-0 flex-wrap gap-2 md:flex"
+          <nav
+            aria-label="Product categories"
+            className="hidden min-w-0 flex-wrap items-center gap-2 sm:flex"
+          >
+            <Link
+              href={catalogueHref({ query: query.query })}
+              aria-label="All products"
+              aria-current={!selectedCategory ? "page" : undefined}
+              style={{ color: !selectedCategory ? "var(--color-canvas)" : "var(--color-ink)" }}
+              className="min-h-10 rounded-control border border-line-strong px-3 py-2 text-xs font-semibold whitespace-nowrap aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
+            >
+              All
+            </Link>
+            {toolbarCategories.map((category) => (
+              <Link
+                key={category.id}
+                href={catalogueHref({
+                  query: query.query,
+                  category: category.handle,
+                })}
+                aria-current={selectedCategory?.id === category.id ? "page" : undefined}
+                style={{
+                  color:
+                    selectedCategory?.id === category.id
+                      ? "var(--color-canvas)"
+                      : "var(--color-ink)",
+                }}
+                className="min-h-10 rounded-control border border-line-strong px-3 py-2 text-xs font-semibold whitespace-nowrap aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
               >
+                {category.name}
+              </Link>
+            ))}
+          </nav>
+          <details className="relative sm:hidden">
+            <summary className="min-h-11 cursor-pointer rounded-control border border-line-strong bg-surface px-4 py-3 text-sm font-semibold">
+              Filters{selectedCategory ? " · " + selectedCategory.name : ""}
+            </summary>
+            <nav
+              aria-label="Mobile product categories"
+              className="absolute right-0 flex flex-col gap-2 rounded-control border border-line-strong bg-canvas p-4"
+              style={{
+                top: "calc(100% + 6px)",
+                width: "min(88vw, 340px)",
+                boxShadow: "0 12px 24px rgb(15 44 36 / 0.14)",
+              }}
+            >
+              <Link
+                href={catalogueHref({ query: query.query })}
+                aria-label="All products"
+                aria-current={!selectedCategory ? "page" : undefined}
+                style={{ color: !selectedCategory ? "var(--color-canvas)" : "var(--color-ink)" }}
+                className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
+              >
+                All
+              </Link>
+              {toolbarCategories.map((category) => (
                 <Link
-                  href={catalogueHref({ query: query.query })}
-                  aria-current={!selectedCategory ? "page" : undefined}
-                  className="rounded-full border border-line px-4 py-2 text-sm font-semibold aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-white"
-                >
-                  All products
-                </Link>
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    href={catalogueHref({
-                      query: query.query,
-                      category: category.handle,
-                    })}
-                    aria-current={selectedCategory?.id === category.id ? "page" : undefined}
-                    className="rounded-full border border-line px-4 py-2 text-sm font-semibold aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-white"
-                  >
-                    {category.name}
-                  </Link>
-                ))}
-              </nav>
-              <details className="relative md:hidden">
-                <summary className="min-h-11 cursor-pointer rounded-control border border-line-strong bg-surface px-4 py-3 text-sm font-semibold">
-                  Filters{selectedCategory ? " · " + selectedCategory.name : ""}
-                </summary>
-                <nav
-                  aria-label="Mobile product categories"
-                  className="absolute right-0 flex flex-col gap-2 rounded-control border border-line-strong bg-canvas p-4"
+                  key={category.id}
+                  href={catalogueHref({
+                    query: query.query,
+                    category: category.handle,
+                  })}
+                  aria-current={selectedCategory?.id === category.id ? "page" : undefined}
                   style={{
-                    top: "calc(100% + 6px)",
-                    width: "min(88vw, 340px)",
-                    boxShadow: "0 12px 24px rgb(15 44 36 / 0.14)",
+                    color:
+                      selectedCategory?.id === category.id
+                        ? "var(--color-canvas)"
+                        : "var(--color-ink)",
                   }}
+                  className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
                 >
-                  <Link
-                    href={catalogueHref({ query: query.query })}
-                    aria-current={!selectedCategory ? "page" : undefined}
-                    className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
-                  >
-                    All products
-                  </Link>
-                  {categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      href={catalogueHref({
-                        query: query.query,
-                        category: category.handle,
-                      })}
-                      aria-current={selectedCategory?.id === category.id ? "page" : undefined}
-                      className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
-                    >
-                      {category.name}
-                    </Link>
-                  ))}
-                </nav>
-              </details>
-            </>
-          ) : null}
+                  {category.name}
+                </Link>
+              ))}
+            </nav>
+          </details>
+          <p
+            className="ml-auto shrink-0 text-xs text-muted"
+            aria-live="polite"
+            data-testid="catalogue-product-count"
+          >
+            {catalogue
+              ? `${catalogue.count} ${catalogue.count === 1 ? "product" : "products"}`
+              : "Count unavailable"}
+          </p>
         </div>
       </div>
 
@@ -219,15 +257,16 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             </h2>
             <p className="mt-2 text-sm text-muted">
               {synthetic
-                ? "Illustrative market context for " + market.displayName + ". No stock or commercial authorisation."
-                : "Published catalogue for " + market.displayName + " (" + market.currency + "). Publication does not itself confirm market sellability or current stock."}
+                ? "Illustrative market context for " +
+                  market.displayName +
+                  ". No stock or commercial authorisation."
+                : "Published catalogue for " +
+                  market.displayName +
+                  " (" +
+                  market.currency +
+                  "). Publication does not itself confirm market sellability or current stock."}
             </p>
           </div>
-          {catalogue ? (
-            <p className="text-sm font-semibold text-muted" aria-live="polite">
-              {catalogue.count} {catalogue.count === 1 ? "product" : "products"}{synthetic ? " · synthetic" : ""}
-            </p>
-          ) : null}
         </div>
 
         {failed ? (
@@ -238,12 +277,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           />
         ) : catalogue?.items.length ? (
           <>
-            <div
-              className="grid gap-px border border-line bg-line"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
-              }}
-            >
+            <div className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
               {catalogue.items.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}

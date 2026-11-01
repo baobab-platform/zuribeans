@@ -39,9 +39,17 @@ test.describe("Figma Make responsive estate contract", () => {
         await menu.click()
         const dialog = page.getByRole("dialog", { name: "Explore ZuriBeans" })
         await expect(dialog).toBeVisible()
-        await expect(dialog.getByRole("link", { name: /supplier portal/i })).toHaveAttribute(
+        await expect(dialog.getByRole("link", { name: "Supplier sign in" })).toHaveAttribute(
           "href",
-          "/supplier",
+          "/supplier/login",
+        )
+        await expect(dialog.getByRole("link", { name: "Become a Supplier" })).toHaveAttribute(
+          "href",
+          "/supplier/register",
+        )
+        await expect(dialog.getByRole("link", { name: "Buyer sign in" })).toHaveAttribute(
+          "href",
+          "/buyer/login",
         )
         await page.keyboard.press("Escape")
         await expect(dialog).toBeHidden()

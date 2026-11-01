@@ -83,11 +83,8 @@ export function TradePathways({ pathways }: { pathways: readonly TradePathway[] 
                 </p>
                 <ButtonLink
                   href={pathway.href}
-                  variant={buyer ? "primary" : "outline"}
-                  className={classNames(
-                    "mt-4 min-h-11 self-start sm:mt-8 sm:min-h-12",
-                    buyer && "bg-clay text-ink hover:bg-clay-inverse",
-                  )}
+                  variant={buyer ? "gold" : "outline"}
+                  className="mt-4 min-h-11 self-start sm:mt-8 sm:min-h-12"
                 >
                   {pathway.actionLabel}
                 </ButtonLink>

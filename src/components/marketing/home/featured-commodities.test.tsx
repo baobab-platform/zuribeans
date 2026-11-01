@@ -38,7 +38,12 @@ describe("Featured procurement catalogue", () => {
       "href",
       "/products/uganda-arabica",
     )
-    expect(screen.queryByRole("link", { name: "View coffee: Green coffee" })).toBeNull()
+    // With fewer than four market-published records, honest category discovery
+    // fills an unused slot without claiming that the category is a published lot.
+    expect(screen.getByRole("link", { name: "View coffee: Green coffee" })).toHaveAttribute(
+      "href",
+      "/products?category=coffee",
+    )
     expect(screen.queryByText("Available (sample)")).toBeNull()
     expect(screen.queryByText("Limited (sample)")).toBeNull()
     expect(screen.queryByText(/^(ISO 22000|EUDR Ready|UTZ Certified)$/)).toBeNull()

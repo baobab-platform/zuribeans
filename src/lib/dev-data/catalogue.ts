@@ -400,7 +400,8 @@ const TEMPLATES: readonly GradeTemplate[] = [
     process: "Fermented and dried",
     packaging: "20 kg food-grade bags",
     moq: "200 kg",
-    description: "Synthetic Rooibos catalogue lot; tariff classification is indicative, not a customs ruling.",
+    description:
+      "Synthetic Rooibos catalogue lot; tariff classification is indicative, not a customs ruling.",
   },
   {
     key: "coffee-husks",
@@ -532,8 +533,8 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
                     ? "Cederberg, South Africa"
                     : origin.name,
         category:
-          DEMO_PRODUCT_CATEGORIES.find((category) => category.handle === template.commodity)?.name ??
-          "Agricultural commodities",
+          DEMO_PRODUCT_CATEGORIES.find((category) => category.handle === template.commodity)
+            ?.name ?? "Agricultural commodities",
         grade,
         process,
         certification:
@@ -546,7 +547,8 @@ export const DEMO_PRODUCTS: readonly DemoProduct[] = TEMPLATES.flatMap((template
                 : template.key === "sesame-hulled"
                   ? "Phytosanitary (sample)"
                   : "Certification specimen",
-        supplyStatus: template.key === "arabica-aa-washed" ? "Limited" as const : "Available" as const,
+        supplyStatus:
+          template.key === "arabica-aa-washed" ? ("Limited" as const) : ("Available" as const),
         harvest: "Illustrative 2026 crop",
         minimumOrder: template.moq,
         incoterms: dossier.terms?.incoterms.join(" / "),
@@ -616,11 +618,7 @@ export function listDemoProducts(options: {
   const category = DEMO_PRODUCT_CATEGORIES.find((entry) => entry.id === options.categoryId)
   const q = (options.query ?? "").trim().toLowerCase()
   // Keep prototype's varied product mix at the top of the default preview.
-  const previewOrder = [
-    ...DEMO_FEATURED_HANDLES,
-    "demo-rooibos-grade1-za",
-    "demo-arabica-g1-et",
-  ]
+  const previewOrder = [...DEMO_FEATURED_HANDLES, "demo-rooibos-grade1-za", "demo-arabica-g1-et"]
   const promoted = previewOrder.flatMap((handle) => {
     const product = DEMO_PRODUCTS.find((candidate) => candidate.handle === handle)
     return product ? [product] : []

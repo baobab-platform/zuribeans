@@ -33,7 +33,7 @@ export default async function RegisterPage({
     <AuthShell
       eyebrow="Trade account"
       title="Create a ZuriBeans login"
-      description="Create a personal sign-in for buyer and supplier journeys. This does not approve an organisation for trading or sourcing."
+      description="Create your login to get started. Business approval is required before you can trade."
     >
       {message ? (
         <Alert id="registration-error" tone="danger" title="We could not create the account.">

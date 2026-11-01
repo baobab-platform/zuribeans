@@ -11,14 +11,10 @@ type SupplierPortalEntryProps = {
   preview?: boolean
 }
 
-/**
- * Port of Figma Make's PortalEntry supplier variant. Navigation remains Next.js
- * App Router links, not the prototype's in-memory route state.
- */
 export function SupplierPortalEntry({
   eyebrow = "Supplier portal",
   title = "Manage your supplier relationship.",
-  description = "The supplier workspace is separate from buyer accounts and supports applications, evidence requests and qualification updates.",
+  description = "Review your supplier application, provide supporting information and check your status.",
   primaryHref = "/supplier/apply",
   primaryLabel = "Start supplier application",
   secondaryHref = "/sourcing",
@@ -83,7 +79,7 @@ export function SupplierPortalEntry({
             {secondaryLabel} →
           </Link>
           <p className="text-xs text-muted" style={{ marginTop: "1.25rem", lineHeight: "1.25rem" }}>
-            Application review does not create supplier approval, buyer access or an active mandate.
+            Your application must be approved before you can supply ZuriBeans.
           </p>
         </div>
       </section>

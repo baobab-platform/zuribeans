@@ -12,7 +12,7 @@ import { SupplierPortalEntry } from "@/components/supplier/supplier-portal-entry
 
 export default async function SupplierDashboardPage() {
   const customer = await getCurrentCustomer()
-  if (!customer) redirect("/login?next=/supplier")
+  if (!customer) redirect("/supplier/login?next=/supplier")
 
   let application: Awaited<ReturnType<typeof getSupplierApplicationForCustomer>>
   try {
@@ -75,8 +75,7 @@ export default async function SupplierDashboardPage() {
           </div>
           <p className="mt-3 max-w-2xl leading-7 text-muted">{status.description}</p>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
-            Declarations remain unverified until the sourcing team completes the relevant review.
-            Registration is not approval.
+            We may request more information before approving your application.
           </p>
           {needsApplicantAttention ? (
             <div className="mt-6 space-y-4">
@@ -106,10 +105,6 @@ export default async function SupplierDashboardPage() {
             <div>
               <dt className="font-semibold text-muted">Tax identifier</dt>
               <dd className="mt-1">{application.organisation.taxIdentifier || "Not supplied"}</dd>
-            </div>
-            <div>
-              <dt className="font-semibold text-muted">ERP projection</dt>
-              <dd className="mt-1">{application.organisation.erpProjectionStatus}</dd>
             </div>
           </dl>
         </Card>
@@ -160,9 +155,7 @@ export default async function SupplierDashboardPage() {
         {application.documents.length > 0 ? (
           <Card className="p-8 lg:col-span-2">
             <h3 className="font-display text-xl">Document references</h3>
-            <p className="mt-2 text-sm text-muted">
-              Metadata pointers only — files are not stored in this estate.
-            </p>
+            <p className="mt-2 text-sm text-muted">Documents referenced in your application.</p>
             <ul className="mt-4 space-y-2 text-sm">
               {application.documents.map((doc) => (
                 <li key={doc.id} className="rounded-control bg-surface-muted p-3">

@@ -20,12 +20,29 @@ test.describe("two-tier trade-desk header", () => {
       "/sourcing/become-a-supplier",
     )
     await expect(header.getByRole("link", { name: "Help" })).toHaveAttribute("href", "/help")
-    await expect(header.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login")
+    await expect(header.getByRole("link", { name: "Supplier Portal" })).toHaveAttribute(
+      "href",
+      "/supplier/login",
+    )
+    await expect(header.getByRole("link", { name: "Sourcing", exact: true })).toHaveAttribute(
+      "href",
+      "/sourcing",
+    )
+    await expect(header.getByRole("link", { name: "Login/Register" })).toHaveAttribute(
+      "href",
+      "/buyer/login",
+    )
 
     await expect(header.getByRole("navigation", { name: "Primary navigation" })).toBeVisible()
     await expect(header.getByRole("link", { name: "Request a Quote" })).toHaveAttribute(
       "href",
       "/contact",
+    )
+    // A readable link is more than a present DOM node: the CTA foreground
+    // must contrast with the ink background in the actual rendered CSS.
+    await expect(header.getByRole("link", { name: "Request a Quote" })).toHaveCSS(
+      "color",
+      "rgb(247, 242, 233)",
     )
   })
 
@@ -57,7 +74,10 @@ test.describe("two-tier trade-desk header", () => {
     await page.goto("/")
     const header = page.getByRole("banner")
 
-    await expect(header.getByRole("link", { name: "Account" })).toHaveAttribute("href", "/account")
+    await expect(header.getByRole("link", { name: "Buyer account" })).toHaveAttribute(
+      "href",
+      "/account",
+    )
     await expect(header.getByRole("link", { name: "Sign in" })).toHaveCount(0)
   })
 

@@ -7,7 +7,7 @@ import type { SupplierStatus } from "@/lib/supplier/lifecycle"
 import { SupplierApplicationJourney } from "@/components/supplier/supplier-application-journey"
 import { SupplierApplicationHeader } from "@/components/supplier/supplier-application-header"
 import { supplierApplicationSections } from "@/components/supplier/supplier-application-sections"
-import { resubmitSupplierApplicationAction } from "./actions"
+import { resubmitSupplierApplicationAction } from "@/app/supplier/resubmit/actions"
 
 const EDITABLE: SupplierStatus[] = ["more_information_required", "sample_required"]
 
@@ -17,7 +17,7 @@ export default async function SupplierResubmitPage({
   searchParams: Promise<{ error?: string }>
 }) {
   const customer = await getCurrentCustomer()
-  if (!customer) redirect("/login?next=/supplier/resubmit")
+  if (!customer) redirect("/supplier/login?next=/supplier/resubmit")
 
   let application: Awaited<ReturnType<typeof getSupplierApplicationForCustomer>>
   try {

@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { PUBLIC_PRODUCT_CLASSES } from "@/lib/content/public-estate"
+import { PUBLIC_CATALOGUE_CATEGORIES } from "@/lib/catalogue/navigation-categories"
 import type { MarketContext } from "@/lib/market/request"
 import { NavDisclosure, type NavDisclosureItem } from "./nav-disclosure"
 
@@ -16,9 +16,9 @@ const navLinkClassName =
 export function DesktopNavigation({ marketContext }: { marketContext: MarketContext }) {
   const commodities: NavDisclosureItem[] = [
     { href: "/products", label: "View all commodities" },
-    ...PUBLIC_PRODUCT_CLASSES.map((productClass) => ({
-      href: productClass.href,
-      label: productClass.name,
+    ...PUBLIC_CATALOGUE_CATEGORIES.map((category) => ({
+      href: `/products?category=${category.handle}`,
+      label: category.name,
     })),
   ]
 
@@ -38,8 +38,6 @@ export function DesktopNavigation({ marketContext }: { marketContext: MarketCont
   const resources: NavDisclosureItem[] = [
     { href: "/quality-traceability", label: "Quality & Traceability" },
     { href: "/insights", label: "Insights" },
-    { href: "/sourcing/become-a-supplier", label: "Become a Supplier" },
-    { href: "/supplier", label: "Supplier Portal" },
     { href: "/help", label: "Help" },
   ]
 

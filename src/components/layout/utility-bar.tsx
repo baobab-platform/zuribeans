@@ -37,6 +37,12 @@ export function UtilityBar({
 
         <div className="flex shrink-0 items-center gap-5">
           <Link
+            href="/sourcing"
+            className="whitespace-nowrap transition-colors hover:text-clay-inverse"
+          >
+            Sourcing
+          </Link>
+          <Link
             href="/sourcing/become-a-supplier"
             className="flex items-center gap-1.5 whitespace-nowrap transition-colors hover:text-clay-inverse"
           >
@@ -46,6 +52,12 @@ export function UtilityBar({
               className="size-4 shrink-0 text-clay-inverse"
             />
             Become a Supplier
+          </Link>
+          <Link
+            href="/supplier/login"
+            className="flex items-center gap-1.5 whitespace-nowrap border-l border-white/20 pl-5 transition-colors hover:text-clay-inverse"
+          >
+            Supplier Portal
           </Link>
           <Link
             href="/help"
@@ -59,7 +71,8 @@ export function UtilityBar({
             Help
           </Link>
           <Link
-            href={hasSession ? "/account" : "/login"}
+            href={hasSession ? "/account" : "/buyer/login"}
+            title={hasSession ? "Buyer account" : "Buyer login and registration"}
             className="flex items-center gap-1.5 whitespace-nowrap border-l border-white/20 pl-5 transition-colors hover:text-clay-inverse"
           >
             <UserRound
@@ -67,7 +80,7 @@ export function UtilityBar({
               strokeWidth={1.75}
               className="size-4 shrink-0 text-clay-inverse"
             />
-            {hasSession ? "Account" : "Sign in"}
+            {hasSession ? "Buyer account" : "Login/Register"}
           </Link>
         </div>
       </div>
