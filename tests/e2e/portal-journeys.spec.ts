@@ -85,7 +85,8 @@ test.describe("buyer and supplier entry journeys", () => {
           await expect(submit).toBeInViewport()
           expect(
             await page.evaluate(
-              () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+              () =>
+                document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
             ),
           ).toBe(true)
         }
