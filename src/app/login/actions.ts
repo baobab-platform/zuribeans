@@ -11,6 +11,8 @@ export type LoginErrorCode = "invalid_input" | "invalid_credentials" | "sso_unav
 
 export async function loginAction(formData: FormData): Promise<void> {
   const next = toSafeRelativePath(formData.get("next")?.toString()) ?? "/account"
+  const journey = formData.get("journey") === "supplier" ? "supplier" : formData.get("journey") === "buyer" ? "buyer" : null
+  const errorRoute = journey ? `/${journey}/login` : "/login"
   const nextParam = `next=${encodeURIComponent(next)}`
 
   const parsed = loginSchema.safeParse({
@@ -19,7 +21,7 @@ export async function loginAction(formData: FormData): Promise<void> {
   })
 
   if (!parsed.success) {
-    redirect(`/login?error=invalid_input&${nextParam}`)
+    redirect(`${errorRoute}?error=invalid_input&${nextParam}`)
   }
 
   const sdk = createMedusaClient()
@@ -36,7 +38,7 @@ export async function loginAction(formData: FormData): Promise<void> {
   }
 
   if (!succeeded) {
-    redirect(`/login?error=invalid_credentials&${nextParam}`)
+    redirect(`${errorRoute}?error=invalid_credentials&${nextParam}`)
   }
 
   redirect(next)
@@ -77,7 +79,7 @@ export async function loginWithSsoAction(formData: FormData): Promise<void> {
   }
 
   if (!location) {
-    redirect(`/login?error=sso_unavailable&${nextParam}`)
+    redirect(`${errorRoute}?error=sso_unavailable&${nextParam}`)
   }
 
   // Stashed here, not carried through the provider's own `state` parameter
