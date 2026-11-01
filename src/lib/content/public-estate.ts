@@ -23,7 +23,8 @@ export const PUBLIC_PRODUCT_CLASSES = [
   {
     id: "arabica-coffee",
     name: "Arabica coffee",
-    description: "Arabica green-coffee grades and origin information, subject to verified publications.",
+    description:
+      "Arabica green-coffee grades and origin information, subject to verified publications.",
     href: "/products?category=coffee",
     eyebrow: "Coffee product class",
     actionLabel: "View coffee",
@@ -52,7 +53,8 @@ export const PUBLIC_PRODUCT_CLASSES = [
   {
     id: "sesame-seeds",
     name: "Sesame seeds",
-    description: "Sesame and oilseed procurement classes; lot grades and stock are confirmed by providers.",
+    description:
+      "Sesame and oilseed procurement classes; lot grades and stock are confirmed by providers.",
     href: "/products?category=sesame",
     eyebrow: "Grains and seeds",
     actionLabel: "View grains and seeds",
