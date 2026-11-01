@@ -17,10 +17,11 @@ test.describe("two-tier trade-desk header", () => {
 
     await expect(header.getByRole("link", { name: "Become a Supplier" })).toHaveAttribute(
       "href",
-      "/supplier/register",
+      "/sourcing/become-a-supplier",
     )
     await expect(header.getByRole("link", { name: "Help" })).toHaveAttribute("href", "/help")
     await expect(header.getByRole("link", { name: "Supplier Portal" })).toHaveAttribute("href", "/supplier/login")
+    await expect(header.getByRole("link", { name: "Sourcing", exact: true })).toHaveAttribute("href", "/sourcing")
     await expect(header.getByRole("link", { name: "Buyer sign in" })).toHaveAttribute("href", "/buyer/login")
 
     await expect(header.getByRole("navigation", { name: "Primary navigation" })).toBeVisible()
