@@ -6,6 +6,7 @@ import { Button, ButtonLink } from "@/components/ui/button"
 import { Input } from "@/components/ui/form-controls"
 import { EmptyState, ErrorState } from "@/components/ui/state-panel"
 import { catalogueHref, parseCatalogueQuery } from "@/lib/catalogue/query"
+import { catalogueNavigationCategories } from "@/lib/catalogue/navigation-categories"
 import { getMarketContext } from "@/lib/market/request"
 import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { listProductCategories, listProducts } from "@/lib/medusa/products"
@@ -72,7 +73,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     failed = true
   }
 
-  const selectedCategory = categories.find((category) => category.handle === query.category)
+  const navigationCategories = catalogueNavigationCategories(categories)
+  const selectedCategory = navigationCategories.find((category) => category.handle === query.category)
   const totalPages = catalogue ? Math.max(1, Math.ceil(catalogue.count / catalogue.limit)) : 1
   if (catalogue && query.page > totalPages) {
     redirect(catalogueHref({ ...query, page: totalPages }))
@@ -136,11 +138,10 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               Clear
             </ButtonLink>
           ) : null}
-          {categories.length > 0 ? (
-            <>
+          <>
               <nav
                 aria-label="Product categories"
-                className="hidden min-w-0 flex-wrap gap-2 md:flex"
+                className="hidden min-w-0 flex-wrap gap-2 lg:flex"
               >
                 <Link
                   href={catalogueHref({ query: query.query })}
@@ -149,7 +150,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 >
                   All products
                 </Link>
-                {categories.map((category) => (
+                {navigationCategories.map((category) => (
                   <Link
                     key={category.id}
                     href={catalogueHref({
@@ -163,7 +164,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   </Link>
                 ))}
               </nav>
-              <details className="relative md:hidden">
+              <details className="relative lg:hidden">
                 <summary className="min-h-11 cursor-pointer rounded-control border border-line-strong bg-surface px-4 py-3 text-sm font-semibold">
                   Filters{selectedCategory ? " · " + selectedCategory.name : ""}
                 </summary>
@@ -198,8 +199,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   ))}
                 </nav>
               </details>
-            </>
-          ) : null}
+          </>
         </div>
       </div>
 
@@ -239,10 +239,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         ) : catalogue?.items.length ? (
           <>
             <div
-              className="grid gap-px border border-line bg-line"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
-              }}
+              className="grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-4"
             >
               {catalogue.items.map((product) => (
                 <ProductCard key={product.id} product={product} />
