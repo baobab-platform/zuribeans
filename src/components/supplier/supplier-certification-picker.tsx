@@ -126,50 +126,25 @@ export function SupplierCertificationPicker({
         <fieldset key={index} className="rounded-control border border-line bg-surface p-5">
           <legend className="px-2 text-sm font-semibold">Certification {index + 1}</legend>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block text-sm font-semibold text-ink">
-              Certification type
-              <SupplierInput
-                name="certification_type"
-                value={row.type}
-                onChange={(event) => change(index, "type", event.target.value)}
-                list="supplier-certifications"
-                placeholder="Select above or enter a certificate"
-              />
-            </label>
-            <label className="block text-sm font-semibold text-ink">
-              Issuer
-              <SupplierInput
-                name="certification_issuer"
-                value={row.issuer}
-                onChange={(event) => change(index, "issuer", event.target.value)}
-              />
-            </label>
-            <label className="block text-sm font-semibold text-ink">
-              Reference number
-              <SupplierInput
-                name="certification_reference"
-                value={row.reference}
-                onChange={(event) => change(index, "reference", event.target.value)}
-              />
-            </label>
-            <label className="block text-sm font-semibold text-ink">
-              Issued on
-              <SupplierInput
-                type="date"
-                name="certification_issued_on"
-                value={row.issuedOn}
-                onChange={(event) => change(index, "issuedOn", event.target.value)}
-              />
-            </label>
-            <label className="block text-sm font-semibold text-ink">
-              Expires on
-              <SupplierInput
-                type="date"
-                name="certification_expires_on"
-                value={row.expiresOn}
-                onChange={(event) => change(index, "expiresOn", event.target.value)}
-              />
-            </label>
+            {([
+              ["type", "Certification type", "certification_type"],
+              ["issuer", "Issuer", "certification_issuer"],
+              ["reference", "Reference number", "certification_reference"],
+              ["issuedOn", "Issued on", "certification_issued_on"],
+              ["expiresOn", "Expires on", "certification_expires_on"],
+            ] as const).map(([key, label, name]) => (
+              <label key={key} className="block text-sm font-semibold text-ink">
+                {label}
+                <SupplierInput
+                  name={name}
+                  type={key === "issuedOn" || key === "expiresOn" ? "date" : "text"}
+                  value={row[key]}
+                  onChange={(event) => change(index, key, event.target.value)}
+                  list={key === "type" ? "supplier-certifications" : undefined}
+                  placeholder={key === "type" ? "Select above or enter a certificate" : undefined}
+                />
+              </label>
+            ))}
           </div>
         </fieldset>
       ))}
