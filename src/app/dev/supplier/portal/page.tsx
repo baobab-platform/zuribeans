@@ -126,7 +126,9 @@ export default async function SyntheticSupplierPortalPage({
                   <p className="mt-2 text-sm">
                     {capability.capacityDescription || "Capacity not specified"}
                   </p>
-                  <Badge tone="warning" className="mt-3">Declared · not verified</Badge>
+                  <Badge tone="warning" className="mt-3">
+                    Declared · not verified
+                  </Badge>
                 </li>
               ))}
             </ul>
@@ -140,7 +142,9 @@ export default async function SyntheticSupplierPortalPage({
                   <p className="font-semibold">{cert.certificationType}</p>
                   <p className="mt-1 text-sm text-muted">{cert.issuer}</p>
                   <p className="mt-1 break-all text-xs text-muted">{cert.referenceNumber}</p>
-                  <Badge tone="warning" className="mt-2">Declaration only</Badge>
+                  <Badge tone="warning" className="mt-2">
+                    Declaration only
+                  </Badge>
                 </li>
               ))}
             </ul>
@@ -150,14 +154,15 @@ export default async function SyntheticSupplierPortalPage({
             <h3 className="mt-3 font-display text-2xl">Document register</h3>
             <ul className="mt-5 divide-y divide-line">
               {example.documents.map((doc) => (
-                <li key={doc.reference} className="flex flex-wrap items-center justify-between gap-3 py-3">
+                <li
+                  key={doc.reference}
+                  className="flex flex-wrap items-center justify-between gap-3 py-3"
+                >
                   <div className="min-w-0">
                     <p className="text-sm font-semibold">{doc.type}</p>
                     <p className="mt-1 break-all text-xs text-muted">{doc.reference}</p>
                   </div>
-                  <Badge tone={doc.status === "requested" ? "warning" : "info"}>
-                    {doc.status}
-                  </Badge>
+                  <Badge tone={doc.status === "requested" ? "warning" : "info"}>{doc.status}</Badge>
                 </li>
               ))}
             </ul>
