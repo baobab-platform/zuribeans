@@ -20,7 +20,7 @@ export default async function SupplierApplyPage({
   searchParams: Promise<{ error?: string }>
 }) {
   const customer = await getCurrentCustomer()
-  if (!customer) redirect("/login?next=/supplier/apply")
+  if (!customer) redirect("/supplier/login?next=/supplier/apply")
 
   let existing: Awaited<ReturnType<typeof getSupplierApplicationForCustomer>>
   try {
