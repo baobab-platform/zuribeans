@@ -1,3 +1,5 @@
+import type { ProductDossierData } from "@/lib/commerce/product-dossier-model"
+
 export type ProductCardModel = {
   id: string
   handle: string
@@ -27,4 +29,6 @@ export type ProductDetailModel = ProductCardModel & {
   qualityInformation: string | null
   specifications: Array<{ label: string; value: string }>
   variants: Array<{ id: string; title: string; sku: string | null }>
+  /** Optional separately governed public dossier, absent until provider publication. */
+  dossier?: ProductDossierData
 }

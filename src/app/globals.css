@@ -2,13 +2,6 @@
 @import "tailwindcss";
 
 /* -----   Plugins ------------------------------------- */
-@plugin "@tailwindcss/forms" {
-  strategy: "class";
-}
-@plugin "tailwindcss-animate";
-@plugin "tailwind-scrollbar" {
-  nocompatible: true;
-}
 
 /* =============================================================================
    Design tokens (source of truth)
