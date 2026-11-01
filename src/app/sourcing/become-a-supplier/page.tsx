@@ -1,5 +1,4 @@
 import { SupplierPortalEntry } from "@/components/supplier/supplier-portal-entry"
-import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
