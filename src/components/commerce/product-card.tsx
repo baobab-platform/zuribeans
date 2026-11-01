@@ -7,7 +7,7 @@ export function ProductCard({ product }: { product: ProductCardModel }) {
       href={"/products/" + encodeURIComponent(product.handle)}
       title={product.cardFacts?.displayName ?? product.title}
       eyebrow="Published catalogue"
-      origin={product.origin}
+      origin={product.cardFacts?.originLabel ?? product.origin}
       details={product.subtitle}
       image={product.thumbnail}
       actionLabel="View"
