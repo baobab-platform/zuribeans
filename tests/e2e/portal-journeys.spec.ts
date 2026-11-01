@@ -17,7 +17,7 @@ test.describe("buyer and supplier entry journeys", () => {
     ).toBeVisible()
     await expect(page.locator('form input[name="journey"]').first()).toHaveValue("buyer")
     await expect(page.locator('form input[name="next"]').first()).toHaveValue("/account")
-    await expect(page.getByRole("link", { name: "Supplier portal" })).toHaveAttribute(
+    await expect(page.getByRole("region", { name: "Portal credentials" }).getByRole("link", { name: "Supplier portal" })).toHaveAttribute(
       "href",
       "/supplier/login",
     )
@@ -38,7 +38,7 @@ test.describe("buyer and supplier entry journeys", () => {
       page.getByRole("heading", { level: 1, name: "Sign in to your supplier account." }),
     ).toBeVisible()
     await expect(page.locator('form input[name="next"]').first()).toHaveValue("/supplier")
-    await expect(page.getByRole("link", { name: "Buyer portal" })).toHaveAttribute(
+    await expect(page.getByRole("region", { name: "Portal credentials" }).getByRole("link", { name: "Buyer portal" })).toHaveAttribute(
       "href",
       "/buyer/login",
     )
