@@ -31,7 +31,7 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
     .limit(1)
   if (!organisation) return null
 
-  const [capabilities, certifications, latestStatusEvent, documents] = await Promise.all([
+  const [capabilities, certifications, latestStatusEvent, documents, contacts] = await Promise.all([
     db
       .select()
       .from(supplierCapabilities)
@@ -50,6 +50,7 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
       .select()
       .from(supplierDocumentReferences)
       .where(eq(supplierDocumentReferences.supplierOrganisationId, organisation.id)),
+    db.select().from(supplierContacts).where(eq(supplierContacts.supplierOrganisationId, organisation.id)),
   ])
 
   return {
@@ -57,6 +58,7 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
     capabilities,
     certifications,
     documents,
+    contacts,
     latestStatusEvent: latestStatusEvent[0] ?? null,
   }
 }
