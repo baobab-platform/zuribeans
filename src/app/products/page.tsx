@@ -152,6 +152,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               href={catalogueHref({ query: query.query })}
               aria-label="All products"
               aria-current={!selectedCategory ? "page" : undefined}
+              style={{ color: !selectedCategory ? "var(--color-canvas)" : "var(--color-ink)" }}
               className="min-h-10 rounded-control border border-line-strong px-3 py-2 text-xs font-semibold whitespace-nowrap aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
             >
               All
@@ -164,6 +165,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   category: category.handle,
                 })}
                 aria-current={selectedCategory?.id === category.id ? "page" : undefined}
+                style={{ color: selectedCategory?.id === category.id ? "var(--color-canvas)" : "var(--color-ink)" }}
                 className="min-h-10 rounded-control border border-line-strong px-3 py-2 text-xs font-semibold whitespace-nowrap aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
               >
                 {category.name}
@@ -187,6 +189,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 href={catalogueHref({ query: query.query })}
                 aria-label="All products"
                 aria-current={!selectedCategory ? "page" : undefined}
+              style={{ color: !selectedCategory ? "var(--color-canvas)" : "var(--color-ink)" }}
                 className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
               >
                 All
@@ -199,6 +202,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     category: category.handle,
                   })}
                   aria-current={selectedCategory?.id === category.id ? "page" : undefined}
+                style={{ color: selectedCategory?.id === category.id ? "var(--color-canvas)" : "var(--color-ink)" }}
                   className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
                 >
                   {category.name}
