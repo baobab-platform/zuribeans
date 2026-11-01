@@ -1,8 +1,8 @@
 # ZuriBeans engineering lessons learned and regression prevention
 
-Status: **Active engineering practice — proposed for owner acceptance**  
-Established: 2026-11-01  
-Scope: ZuriBeans digital estate (and candidate for adoption by Baobab Experience System consumers)  
+Status: **Active engineering practice — proposed for owner acceptance**
+Established: 2026-11-01
+Scope: ZuriBeans digital estate (and candidate for adoption by Baobab Experience System consumers)
 Source PRs: [#131](https://github.com/baobab-platform/zuribeans/pull/131), [#142](https://github.com/baobab-platform/zuribeans/pull/142), [#144](https://github.com/baobab-platform/zuribeans/pull/144)
 
 ## Purpose
