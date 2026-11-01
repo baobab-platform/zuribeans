@@ -21,7 +21,7 @@ export default function DevelopmentExperiencePage() {
 
   return (
     <section className="bg-canvas py-16">
-      <div className="page-container space-y-14">
+      <div className="page-container flex flex-col" style={{ gap: "3.5rem" }}>
         <header className="space-y-5">
           <p className="eyebrow">ZB-DEV-DATA v1.0 · local development only</p>
           <h1 className="max-w-4xl font-display text-5xl leading-tight md:text-7xl">
