@@ -74,14 +74,27 @@ export function JourneyAuth({
             </label>
             <Button type="submit" size="lg" className="w-full">Sign in to {buyer ? "buyer" : "supplier"} workspace</Button>
           </form>
-          <div className="my-6 flex items-center gap-3 text-sm text-muted">
-            <span aria-hidden="true" className="h-px flex-1 bg-line-strong" />or<span aria-hidden="true" className="h-px flex-1 bg-line-strong" />
-          </div>
-          <form action={loginWithSsoAction}>
-            <input type="hidden" name="next" value={next} />
-            <input type="hidden" name="journey" value={journey} />
-            <Button type="submit" size="lg" variant="outline" className="w-full">Continue with secure SSO</Button>
-          </form>
+          {buyer ? (
+            <>
+              <div className="my-6 flex items-center gap-3 text-sm text-muted">
+                <span aria-hidden="true" className="h-px flex-1 bg-line-strong" />
+                or
+                <span aria-hidden="true" className="h-px flex-1 bg-line-strong" />
+              </div>
+              <form action={loginWithSsoAction}>
+                <input type="hidden" name="next" value={next} />
+                <input type="hidden" name="journey" value={journey} />
+                <Button type="submit" size="lg" variant="outline" className="w-full">
+                  Continue with secure buyer SSO
+                </Button>
+              </form>
+            </>
+          ) : (
+            <p className="mt-5 text-xs leading-6 text-muted">
+              Supplier single sign-on is not yet qualified. Use your existing email and password
+              for the supplier application and review workspace.
+            </p>
+          )}
         </>
       ) : (
         <form action={registerAction} className="space-y-5">
