@@ -53,6 +53,7 @@ export function ProductDossier({
           src={product.thumbnail}
           alt={imageAlt}
           fill
+          unoptimized={synthetic && product.thumbnail.startsWith("https://images.unsplash.com/")}
           priority
           sizes="(min-width: 1024px) 38vw, 100vw"
           className="object-cover"
