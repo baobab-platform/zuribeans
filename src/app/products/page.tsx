@@ -150,10 +150,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           <nav aria-label="Product categories" className="hidden min-w-0 flex-wrap items-center gap-2 sm:flex">
             <Link
               href={catalogueHref({ query: query.query })}
+              aria-label="All products"
               aria-current={!selectedCategory ? "page" : undefined}
               className="min-h-10 rounded-control border border-line-strong px-3 py-2 text-xs font-semibold whitespace-nowrap aria-[current=page]:border-ink aria-[current=page]:bg-ink aria-[current=page]:text-canvas"
             >
-              All products
+              All
             </Link>
             {toolbarCategories.map((category) => (
               <Link
@@ -184,10 +185,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             >
               <Link
                 href={catalogueHref({ query: query.query })}
+                aria-label="All products"
                 aria-current={!selectedCategory ? "page" : undefined}
                 className="min-h-11 rounded-control px-4 py-3 text-sm font-semibold aria-[current=page]:bg-ink aria-[current=page]:text-white"
               >
-                All products
+                All
               </Link>
               {toolbarCategories.map((category) => (
                 <Link
