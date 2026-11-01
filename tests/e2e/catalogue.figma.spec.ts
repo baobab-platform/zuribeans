@@ -13,9 +13,9 @@ test.describe("Figma-inspired procurement catalogue", () => {
     await expect(page.getByRole("searchbox", { name: "Search products or origins" })).toHaveValue(
       "arabica",
     )
-    await expect(
-      page.locator('form[action="/products"] input[name="category"]'),
-    ).toHaveValue("coffee")
+    await expect(page.locator('form[action="/products"] input[name="category"]')).toHaveValue(
+      "coffee",
+    )
     await expect(page.getByRole("region", { name: "Catalogue results" })).toBeVisible()
   })
 
