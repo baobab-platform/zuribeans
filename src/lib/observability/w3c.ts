@@ -13,8 +13,7 @@ type Span = {
 const context = new AsyncLocalStorage<Span>()
 
 const id = (bytes: number): string => randomBytes(bytes).toString("hex")
-const header = (span: Span): string =>
-  `00-${span.traceId}-${span.spanId}-${span.flags}`
+const header = (span: Span): string => `00-${span.traceId}-${span.spanId}-${span.flags}`
 
 /** Trace IDs are untrusted diagnostics, never tenant, subject or grant evidence. */
 export function parseTraceparent(value: string | null): Span | null {
