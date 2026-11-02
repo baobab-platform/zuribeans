@@ -70,10 +70,13 @@ does **not** migrate accounts or permit the native Go session to drive Trade
 purchases. Current CP Principal, buyer Organisation, Market/Site grants and
 spend approval remain independent.
 
-**Release hold:** no current live private ingress, real synthetic Kratos
-recovery/AAL2 run, original Chromium receipt or independent CP authorization
-evidence for these latest heads has been provided. No protected activation,
-provider support promotion or merge.
+**Runtime qualification hold:** no current live private ingress, real synthetic
+Kratos recovery/AAL2 run, original Chromium receipt or independent CP
+authorization evidence for these latest heads has been provided.
+No protected activation, provider support promotion or claim of N02 acceptance.
+Owner-authorised source-only integration behind the default-OFF development gate
+is separate from runtime qualification; it does not unlock IAM #147,
+Infrastructure #69 or any connected/protected gate.
 
 ## Kratos host-only cookie source correction
 
