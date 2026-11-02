@@ -12,13 +12,19 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-export default function NativeRecoveryPage() {
+export default async function NativeRecoveryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ flow?: string | string[] }>
+}) {
   if (
     process.env.ZURIBEANS_N02_NATIVE_QUALIFICATION_ENABLED !== "true" ||
     process.env.ZURIBEANS_IAM_ENVIRONMENT !== "development"
   ) {
     notFound()
   }
+
+  const requestedFlow = (await searchParams).flow
 
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-6 py-20">
@@ -28,7 +34,10 @@ export default function NativeRecoveryPage() {
         This is a genuine Kratos-managed recovery ceremony. Completing it does not create a Control
         Plane Principal or purchasing authority.
       </p>
-      <NativeKratosFlowForm kind="recovery" />
+      <NativeKratosFlowForm
+        kind="recovery"
+        flowId={typeof requestedFlow === "string" ? requestedFlow : null}
+      />
     </main>
   )
 }

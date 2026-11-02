@@ -89,10 +89,14 @@ Kratos Admin is not exposed. Current production Next `/api/iam/*`
 sessions are separate and unchanged.
 
 Development-gated `/identity/kratos/login` and
-`/identity/kratos/recovery` pages now render a strictly projected
-Kratos-issued browser form and post directly to same-origin Kratos public
-endpoints. Disabled CSRF/method controls, unexpected methods and
-server-reflected credentials fail closed. This is **source implementation**
+`/identity/kratos/recovery` pages render the strictly projected Kratos-issued
+browser forms server-side, avoiding an additional client JavaScript bundle.
+The server reads current flow metadata with a browser cookie only after
+`ZURIBEANS_N02_PUBLIC_ORIGIN` pins an exact HTTPS origin matching the request
+Host; all POST submissions send credentials directly from the browser to
+same-origin Kratos. Next never receives passwords, TOTP or recovery secrets.
+Disabled CSRF/method controls, unexpected methods and server-reflected
+credentials fail closed. This is **source implementation**
 only: the verified TLS ingress, real courier/TOTP/recovery and connected
 browser/CP originals remain outstanding. No N02 qualification or
 protected activation is claimed; the existing release hold remains

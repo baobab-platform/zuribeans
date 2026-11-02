@@ -12,13 +12,19 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-export default function NativeLoginPage() {
+export default async function NativeLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ flow?: string | string[] }>
+}) {
   if (
     process.env.ZURIBEANS_N02_NATIVE_QUALIFICATION_ENABLED !== "true" ||
     process.env.ZURIBEANS_IAM_ENVIRONMENT !== "development"
   ) {
     notFound()
   }
+
+  const requestedFlow = (await searchParams).flow
 
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-6 py-20">
@@ -28,7 +34,10 @@ export default function NativeLoginPage() {
         This is a genuine Kratos-managed authentication / AAL2 browser ceremony. Completing it does
         not create a Control Plane Principal or purchasing authority.
       </p>
-      <NativeKratosFlowForm kind="login" />
+      <NativeKratosFlowForm
+        kind="login"
+        flowId={typeof requestedFlow === "string" ? requestedFlow : null}
+      />
     </main>
   )
 }

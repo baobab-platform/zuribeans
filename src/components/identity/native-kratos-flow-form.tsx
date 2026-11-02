@@ -1,6 +1,5 @@
-"use client"
-
-import { useEffect, useState } from "react"
+import "server-only"
+import { headers } from "next/headers"
 import {
   projectNativeKratosFlow,
   validKratosFlowId,
@@ -8,148 +7,142 @@ import {
   type NativeKratosKind,
 } from "@/lib/iam/native-kratos-flow"
 
-type State = "loading" | "ready" | "unavailable"
-
 /**
- * A real browser form submitted directly to Kratos's same-origin public
- * endpoint. Passwords, TOTPs and recovery codes are NEVER placed into React
- * state, JavaScript fetch arguments, app logs or the Next.js server.
+ * Server-rendered Kratos browser form: only a reviewed, exact HTTPS origin may
+ * be contacted. Credentials and one-time codes go from the browser straight
+ * to Kratos; no Next route handler or client-side React state receives them.
+ * The public Kratos flow itself is retrieved using the same browser cookie.
  */
-export function NativeKratosFlowForm({ kind }: { kind: NativeKratosKind }) {
-  const [phase, setPhase] = useState<State>("loading")
-  const [flow, setFlow] = useState<NativeKratosFlow | null>(null)
+async function currentFlow(
+  kind: NativeKratosKind,
+  flowId: string | null,
+): Promise<NativeKratosFlow | null> {
+  if (!validKratosFlowId(flowId)) return null
+  const configuredOrigin = process.env.ZURIBEANS_N02_PUBLIC_ORIGIN
+  if (!configuredOrigin) return null
 
-  useEffect(() => {
-    let live = true
-    async function load() {
-      try {
-        const id = new URL(window.location.href).searchParams.get("flow")
-        if (!validKratosFlowId(id)) throw new Error("Missing flow")
-        if (window.location.protocol !== "https:") throw new Error("TLS required")
-        const response = await fetch(`/self-service/${kind}/flows?id=${encodeURIComponent(id)}`, {
-          credentials: "same-origin",
-          cache: "no-store",
-          redirect: "manual",
-          headers: { Accept: "application/json" },
-        })
-        if (
-          response.status !== 200 ||
-          !response.headers.get("content-type")?.startsWith("application/json")
-        ) {
-          throw new Error("No current browser flow")
-        }
-        const raw = await response.text()
-        if (raw.length > 65536) throw new Error("Oversize Kratos flow")
-        const projected = projectNativeKratosFlow(
-          JSON.parse(raw) as unknown,
-          kind,
-          id,
-          window.location.origin + "/",
-        )
-        if (live) {
-          setFlow(projected)
-          setPhase("ready")
-        }
-      } catch {
-        if (live) {
-          setFlow(null)
-          setPhase("unavailable")
-        }
-      }
+  try {
+    const origin = new URL(configuredOrigin)
+    const requestHeaders = await headers()
+    if (
+      origin.protocol !== "https:" ||
+      origin.username ||
+      origin.password ||
+      origin.pathname !== "/" ||
+      origin.search ||
+      origin.hash ||
+      requestHeaders.get("host") !== origin.host
+    ) {
+      return null
     }
-    void load()
-    return () => {
-      live = false
-    }
-  }, [kind])
 
+    const url = new URL(`/self-service/${kind}/flows?id=${encodeURIComponent(flowId)}`, origin)
+    const cookies = requestHeaders.get("cookie")
+    const response = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+      redirect: "manual",
+      headers: { Accept: "application/json", ...(cookies ? { Cookie: cookies } : {}) },
+    })
+    if (
+      response.status !== 200 ||
+      !response.headers.get("content-type")?.startsWith("application/json")
+    ) {
+      return null
+    }
+    const raw = await response.text()
+    if (raw.length > 65536) return null
+    return projectNativeKratosFlow(JSON.parse(raw) as unknown, kind, flowId, origin.href)
+  } catch {
+    return null
+  }
+}
+
+export async function NativeKratosFlowForm({
+  kind,
+  flowId,
+}: {
+  kind: NativeKratosKind
+  flowId: string | null
+}) {
+  const flow = await currentFlow(kind, flowId)
   const start = `/self-service/${kind}/browser`
+
+  if (!flow) {
+    return (
+      <section aria-label="Kratos browser flow unavailable" className="mt-8 space-y-5">
+        <p role="alert">This authentication flow is unavailable or expired. No access was granted.</p>
+        <a className="underline" href={start}>
+          Start a new governed {kind} flow
+        </a>
+      </section>
+    )
+  }
+
   return (
-    <section
-      aria-label={kind === "login" ? "Kratos login" : "Kratos recovery"}
-      className="mt-8 space-y-5"
-    >
-      {phase === "loading" && <p role="status">Loading current verified IAM flow…</p>}
-      {phase === "unavailable" && (
-        <>
-          <p role="alert">
-            This authentication flow is unavailable or expired. No access was granted.
-          </p>
-          <a className="underline" href={start}>
-            Start a new governed {kind} flow
-          </a>
-        </>
+    <section aria-label={kind === "login" ? "Kratos login" : "Kratos recovery"} className="mt-8 space-y-5">
+      {flow.notices.map((message, index) => (
+        <p role="alert" key={index}>
+          {message}
+        </p>
+      ))}
+      <form method="post" action={flow.action} autoComplete={kind === "login" ? "on" : "off"}>
+        <div className="space-y-4">
+          {flow.inputs.map((input, index) => {
+            if (input.type === "hidden") {
+              return <input key={index} type="hidden" name={input.name} value={input.value ?? ""} />
+            }
+            if (input.type === "submit") {
+              return (
+                <button
+                  key={index}
+                  type="submit"
+                  name={input.name}
+                  value={input.value ?? ""}
+                  className="rounded-control bg-ink px-6 py-3 font-semibold text-white"
+                >
+                  {input.label}
+                </button>
+              )
+            }
+            return (
+              <label key={index} className="block space-y-2">
+                <span>{input.label}</span>
+                <input
+                  className="w-full rounded-control border border-line-strong px-4 py-3"
+                  name={input.name}
+                  type={input.type}
+                  required={input.required}
+                  defaultValue={
+                    input.type === "text" || input.type === "email" ? input.value : undefined
+                  }
+                  autoComplete={
+                    input.name === "password"
+                      ? "current-password"
+                      : input.name === "identifier"
+                        ? "username"
+                        : input.name.includes("email")
+                          ? "email"
+                          : "off"
+                  }
+                />
+              </label>
+            )
+          })}
+        </div>
+      </form>
+      {kind === "login" ? (
+        <a href="/auth/recovery" className="underline">
+          Recover your IAM account
+        </a>
+      ) : (
+        <a href="/self-service/login/browser" className="underline">
+          Return to governed login
+        </a>
       )}
-      {phase === "ready" && flow && (
-        <>
-          {flow.notices.map((message, index) => (
-            <p role="alert" key={index}>
-              {message}
-            </p>
-          ))}
-          <form method="post" action={flow.action} autoComplete={kind === "login" ? "on" : "off"}>
-            <div className="space-y-4">
-              {flow.inputs.map((input, index) => {
-                if (input.type === "hidden") {
-                  return (
-                    <input key={index} type="hidden" name={input.name} value={input.value ?? ""} />
-                  )
-                }
-                if (input.type === "submit") {
-                  return (
-                    <button
-                      key={index}
-                      type="submit"
-                      name={input.name}
-                      value={input.value ?? ""}
-                      className="rounded-control bg-ink px-6 py-3 font-semibold text-white"
-                    >
-                      {input.label}
-                    </button>
-                  )
-                }
-                return (
-                  <label key={index} className="block space-y-2">
-                    <span>{input.label}</span>
-                    <input
-                      className="w-full rounded-control border border-line-strong px-4 py-3"
-                      name={input.name}
-                      type={input.type}
-                      required={input.required}
-                      // Never persist or controlled-bind secrets in React.
-                      defaultValue={
-                        input.type === "text" || input.type === "email" ? input.value : undefined
-                      }
-                      autoComplete={
-                        input.name === "password"
-                          ? "current-password"
-                          : input.name === "identifier"
-                            ? "username"
-                            : input.name.includes("email")
-                              ? "email"
-                              : "off"
-                      }
-                    />
-                  </label>
-                )
-              })}
-            </div>
-          </form>
-          {kind === "login" ? (
-            <a href="/auth/recovery" className="underline">
-              Recover your IAM account
-            </a>
-          ) : (
-            <a href="/self-service/login/browser" className="underline">
-              Return to governed login
-            </a>
-          )}
-          <p className="text-sm text-muted">
-            This Kratos session does not create a buyer, membership, legal mandate or Trade
-            permission.
-          </p>
-        </>
-      )}
+      <p className="text-sm text-muted">
+        This Kratos session does not create a buyer, membership, legal mandate or Trade permission.
+      </p>
     </section>
   )
 }
