@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import type { MarketContext } from "@/lib/market/request"
 import { classNames } from "@/lib/ui/classnames"
 
@@ -56,8 +56,6 @@ export function MarketSwitcher({
  * keys are navigable, and the proxy re-resolves them on every request.
  */
 export function UtilityMarketSelector({ marketContext }: { marketContext: MarketContext }) {
-  const router = useRouter()
-
   const onSelectMarket = (candidate: string) => {
     const selected = marketContext.enabled.find((market) => market.marketKey === candidate)
     if (!selected || selected.marketKey === marketContext.active.marketKey) return
@@ -66,7 +64,10 @@ export function UtilityMarketSelector({ marketContext }: { marketContext: Market
     // A market switch is contextual navigation, not a redirect to the map.
     const url = new URL(window.location.href)
     url.searchParams.set("market", selected.marketKey)
-    router.push(`${url.pathname}${url.search}${url.hash}`, { scroll: false })
+    // A client-side query-only push can keep the root App Router layout cached,
+    // including its server-resolved MarketContext and html lang. A document
+    // request makes the proxy/cookie, SSR data and visible selection agree.
+    window.location.assign(`${url.pathname}${url.search}${url.hash}`)
   }
 
   return (

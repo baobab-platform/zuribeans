@@ -52,7 +52,9 @@ fits the existing 32px tier; its native focus treatment remains visible.
 `UtilityMarketSelector` accepts only the request-resolved `MarketContext`,
 offers only deployment-enabled markets, and navigates by changing the current
 route's `market` query parameter while preserving other query fields and the
-fragment. `src/proxy.ts` still enforces the accepted ADR 0004 precedence
+fragment. It uses a same-origin document navigation because the root App Router
+layout otherwise may retain stale server-resolved market and locale props.
+`src/proxy.ts` still enforces the accepted ADR 0004 precedence
 (explicit market, then cookie, then configured default). The footer and mobile
 drawer retain their larger, touch-friendly `MarketSwitcher` link treatment.
 No market selector is a legal-market activation or buyer authority grant.
