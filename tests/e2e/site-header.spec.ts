@@ -145,7 +145,7 @@ test.describe("two-tier trade-desk header", () => {
       "South Africa · ZAR",
     ])
     await expect(market).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
-    await expect(utility.locator("svg")).toHaveCount(2)
+    await expect(utility.locator("svg.lucide-globe-2")).toHaveCount(0)
 
     await market.focus()
     await expect(market).toBeFocused()
