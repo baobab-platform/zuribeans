@@ -71,7 +71,9 @@ export async function NativeKratosFlowForm({
   if (!flow) {
     return (
       <section aria-label="Kratos browser flow unavailable" className="mt-8 space-y-5">
-        <p role="alert">This authentication flow is unavailable or expired. No access was granted.</p>
+        <p role="alert">
+          This authentication flow is unavailable or expired. No access was granted.
+        </p>
         <a className="underline" href={start}>
           Start a new governed {kind} flow
         </a>
@@ -80,7 +82,10 @@ export async function NativeKratosFlowForm({
   }
 
   return (
-    <section aria-label={kind === "login" ? "Kratos login" : "Kratos recovery"} className="mt-8 space-y-5">
+    <section
+      aria-label={kind === "login" ? "Kratos login" : "Kratos recovery"}
+      className="mt-8 space-y-5"
+    >
       {flow.notices.map((message, index) => (
         <p role="alert" key={index}>
           {message}
