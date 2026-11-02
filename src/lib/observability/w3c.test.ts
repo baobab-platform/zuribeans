@@ -47,6 +47,30 @@ describe("DEV-11 native confidential BFF W3C runtime path", () => {
     expect(parseTraceparent(result.headers.get("traceparent"))?.traceId).not.toBe("0".repeat(32))
   })
 
+  it("diagnoses thrown native transport failure without leaking exception secrets", async () => {
+    const logs = vi.spyOn(console, "info").mockImplementation(() => {})
+    const failure = new Error("TOKEN_SECRET_SHOULD_NOT_ESCAPE")
+    await expect(
+      withBffTrace(
+        new Request("https://zuribeans.example.test/api/buyer/context?secret=private", {
+          method: "POST",
+          headers: { authorization: "Bearer private-credential" },
+        }),
+        "buyer-context",
+        async () => {
+          expect(parseTraceparent(outgoingTraceparent() ?? null)).not.toBeNull()
+          throw failure
+        },
+      ),
+    ).rejects.toBe(failure)
+    const rendered = JSON.stringify(logs.mock.calls)
+    expect(rendered).toContain("UNHANDLED_EXCEPTION")
+    expect(rendered).not.toContain("TOKEN_SECRET_SHOULD_NOT_ESCAPE")
+    expect(rendered).not.toContain("private-credential")
+    expect(rendered).not.toContain("?secret=private")
+    expect(outgoingTraceparent()).toBeUndefined()
+  })
+
   it("is strictly request-scoped across concurrent real operations", async () => {
     vi.spyOn(console, "info").mockImplementation(() => {})
     const calls = await Promise.all(
