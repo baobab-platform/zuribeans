@@ -67,7 +67,7 @@ describe("BXS six-package consumer seam (source/synthetic only)", () => {
     expect(view.chart.rows[0]?.displayValue).toBe("Not reported")
     expect(view.chart.sourceReference).toBe("synthetic-test")
     expect(view.mapBounds).toMatchObject({ west: 12, east: 12, south: -15, north: -15 })
-    expect(view.mapRows[0]?.description).toContain("Synthetic".toLowerCase().replace("S", "s"))
+    expect(view.mapRows[0]?.description).toContain("synthetic fixture only")
     expect(view.overlayRows).toHaveLength(1)
     expect(view.interactiveMapEnabled).toBe(false)
   })
@@ -106,7 +106,7 @@ describe("BXS six-package consumer seam (source/synthetic only)", () => {
     expect(() =>
       composeBxsReadOnly({
         ...input,
-        map: { ...map, projectionReference: "" },
+        map: { visibility: "authorised", projectionReference: "", points: [] },
       }),
     ).toThrow()
   })
