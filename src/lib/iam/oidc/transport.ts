@@ -1,5 +1,6 @@
 import "server-only"
 import { AuthenticationDenied, secureUrl } from "./settings"
+import { outgoingTraceparent } from "@/lib/observability/w3c"
 
 /** Count decoded bytes through completion, including peers that stall after headers.
  * Cancellation is fire-and-forget: an uncooperative peer cannot delay cleanup.
@@ -54,7 +55,16 @@ export function credentialFetch(
         AbortSignal.timeout(5000),
         ...(init?.signal ? [init.signal] : []),
       ])
-      const response = await fetcher(url, { ...init, cache: "no-store", redirect: "error", signal })
+      const headers = new Headers(init?.headers)
+      const traceparent = outgoingTraceparent()
+      if (traceparent) headers.set("traceparent", traceparent)
+      const response = await fetcher(url, {
+        ...init,
+        headers,
+        cache: "no-store",
+        redirect: "error",
+        signal,
+      })
       if (
         !response.ok ||
         !/^application\/(?:json|jwk-set\+json)(?:;|$)/i.test(
