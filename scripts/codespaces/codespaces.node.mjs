@@ -13,7 +13,7 @@ test("private image pinned to publisher v1.4.4 digest and prebuild contains no r
     /^ghcr\.io\/baobab-platform\/baobab-dev:1\.4\.4(?:-frontend)?@sha256:[a-f0-9]{64}$/,
   )
   assert.equal(config.remoteUser, "vscode")
-  assert.equal(config.waitFor, "updateContentCommand")
+  assert.equal(config.waitFor, "postCreateCommand")
   assert.match(config.updateContentCommand, /node --test/)
   assert.doesNotMatch(config.updateContentCommand, /install|private-npm|bootstrap/)
   assert.match(config.postCreateCommand, /bootstrap\.mjs/)
