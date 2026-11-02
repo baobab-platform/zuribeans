@@ -1,8 +1,5 @@
 import { classNames } from "@/lib/ui/classnames"
-import {
-  ZURIBEANS_IDENTITY,
-  type TradeHouseAudience,
-} from "@/lib/brand/identity"
+import { ZURIBEANS_IDENTITY, type TradeHouseAudience } from "@/lib/brand/identity"
 
 /**
  * Editorial identity, not a policy check or legal-entity attestation.
@@ -51,7 +48,12 @@ export function TradeHouseSignature({
           {ZURIBEANS_IDENTITY.category} · {journey.label}
         </p>
         {!compact ? (
-          <p className={classNames("mt-1 text-sm leading-6", inverse ? "text-canvas/80" : "text-muted")}>
+          <p
+            className={classNames(
+              "mt-1 text-sm leading-6",
+              inverse ? "text-canvas/80" : "text-muted",
+            )}
+          >
             {journey.description}
           </p>
         ) : null}

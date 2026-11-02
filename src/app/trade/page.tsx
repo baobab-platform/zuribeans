@@ -46,8 +46,8 @@ export default function TradePage() {
           <h2 className="mt-4 font-display text-3xl">A trade house, not a carrier.</h2>
           <p className="mt-4 leading-7 text-muted">
             ZuriBeans' role centres on agricultural commodity sourcing, product evidence and
-            accountable trade. Shipment services belong to the contracted transport providers;
-            an enquiry does not reserve capacity or book a shipment.
+            accountable trade. Shipment services belong to the contracted transport providers; an
+            enquiry does not reserve capacity or book a shipment.
           </p>
         </Card>
       </section>

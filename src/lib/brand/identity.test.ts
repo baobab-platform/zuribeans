@@ -14,9 +14,7 @@ describe("ZuriBeans trade-house identity", () => {
 
   it("keeps buyer procurement and supplier sourcing separate", () => {
     expect(ZURIBEANS_IDENTITY.journeys.buyer.entry).toBe("/buyer")
-    expect(ZURIBEANS_IDENTITY.journeys.supplier.entry).toBe(
-      "/sourcing/become-a-supplier",
-    )
+    expect(ZURIBEANS_IDENTITY.journeys.supplier.entry).toBe("/sourcing/become-a-supplier")
     expect(ZURIBEANS_IDENTITY.journeys.buyer.label).not.toBe(
       ZURIBEANS_IDENTITY.journeys.supplier.label,
     )

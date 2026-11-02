@@ -78,9 +78,7 @@ export default async function HelpPage() {
           </ButtonLink>
         </Card>
       </section>
-      <section className="page-container pb-20 lg:pb-24"
-        aria-labelledby="help-faq-title"
-      >
+      <section className="page-container pb-20 lg:pb-24" aria-labelledby="help-faq-title">
         <div className="max-w-3xl">
           <h2 id="help-faq-title" className="font-display text-3xl">
             Before you contact our team

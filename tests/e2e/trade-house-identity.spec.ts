@@ -27,7 +27,9 @@ test("buyer and supplier authentication keep a distinct professional trading ide
   }
 })
 
-test("trade-house buyer and supplier entry points remain separately actionable", async ({ page }) => {
+test("trade-house buyer and supplier entry points remain separately actionable", async ({
+  page,
+}) => {
   await page.goto("/about")
   const routes = page.getByRole("region", { name: "Trading relationships" })
   await expect(routes.getByRole("link", { name: "Explore buyer procurement" })).toHaveAttribute(

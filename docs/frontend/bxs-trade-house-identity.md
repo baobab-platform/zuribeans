@@ -11,13 +11,13 @@ accessibility, **not** identical subsidiary imagery or brand colours.
 
 ## Family resemblance versus estate distinction
 
-| Shared Baobab foundation | ZuriBeans-owned identity |
-| --- | --- |
-| Namespaced `--bx-*` semantic roles, keyboard/focus, feedback and disclosure | Deep ink green, warm canvas and sand, restrained clay/gold |
-| Versioned BXS tokens, UI, geo and chart display models | Geometric trade-house mark and own wordmark from Figma Make |
-| WCAG 2.2 AA, responsive, reduced motion and performance gates | Source Serif 4 editorial; Source Sans 3 functional |
-| Evidence/state and provenance presentation, not domain authority | Commodity specification, sourcing, procurement and cross-border trade |
-| Consumer lifecycle and approved provider contracts | Separate buyer and supplier navigation, identity and qualification journeys |
+| Shared Baobab foundation                                                    | ZuriBeans-owned identity                                                    |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Namespaced `--bx-*` semantic roles, keyboard/focus, feedback and disclosure | Deep ink green, warm canvas and sand, restrained clay/gold                  |
+| Versioned BXS tokens, UI, geo and chart display models                      | Geometric trade-house mark and own wordmark from Figma Make                 |
+| WCAG 2.2 AA, responsive, reduced motion and performance gates               | Source Serif 4 editorial; Source Sans 3 functional                          |
+| Evidence/state and provenance presentation, not domain authority            | Commodity specification, sourcing, procurement and cross-border trade       |
+| Consumer lifecycle and approved provider contracts                          | Separate buyer and supplier navigation, identity and qualification journeys |
 
 ZuriBeans is **a B2B agricultural commodity trading business**. Nabhold Group
 Africa is its holding parent, not its public operating persona. Thamani is a

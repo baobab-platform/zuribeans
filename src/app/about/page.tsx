@@ -63,8 +63,8 @@ export default function AboutPage() {
           <p>
             Buyers start with a product and procurement requirement; suppliers begin with their
             business, capacity and product evidence. An enquiry is not a confirmed order, and a
-            supplier application is not a trading approval. Logistics arrangements are defined
-            for each authorised transaction rather than offered as a standalone carrier service.
+            supplier application is not a trading approval. Logistics arrangements are defined for
+            each authorised transaction rather than offered as a standalone carrier service.
           </p>
         </div>
       </section>
