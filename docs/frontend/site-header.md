@@ -85,10 +85,17 @@ the mobile drawer, and is included in `sitemap.ts` and the accessibility route m
 
 ## Brand mark
 
-`public/brand/zuribeans-mark.svg` is an original owned mark (a simple bean/seed silhouette with a
-botanical seam), not a third-party or generic icon-pack asset. It is served with a plain `<img>`,
-not `next/image`: Next Image does not optimize local SVG sources without `dangerouslyAllowSVG`,
-which is a security-header decision (`next.config.ts`) out of this component's scope.
+`public/brand/zuribeans-mark.svg` is the owned square geometric mark from the approved
+ZuriBeans Figma Make `src/components/Nav.tsx` (dark-green field, gold path and seed dot),
+representing an African agricultural **commodity trade house**, not a coffee-only shop
+or a copy of Nabhold Group Africa's holding-company identity. It is served with
+a plain `<img>`, not `next/image`: Next Image does not optimize local SVG
+sources without `dangerouslyAllowSVG`, which is a security-header decision
+(`next.config.ts`) out of this component's scope.
+
+The displayed wordmark is exactly **ZuriBeans** and the desktop lockup identifies
+**African commodity trade**. The root Shared theme only standardises semantic roles;
+it does not change this estate-owned identity.
 
 ## Testing
 
