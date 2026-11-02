@@ -1,5 +1,6 @@
 import { CorporateHero } from "@/components/marketing/corporate-hero"
 import { Card } from "@/components/ui/card"
+import { ButtonLink } from "@/components/ui/button"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
 export const metadata = getPublicPageMetadata({
@@ -50,20 +51,42 @@ export default function AboutPage() {
         <div>
           <p className="eyebrow">Our role</p>
           <h2 className="mt-4 font-display text-4xl text-balance">
-            One accountable trading journey.
+            One accountable commodity trading journey.
           </h2>
         </div>
         <div className="space-y-5 text-base leading-7 text-muted">
           <p>
-            The public estate helps counterparties understand products, markets, sourcing standards
-            and the path to doing business. Authenticated experiences support approved buyers and
-            the existing ZuriBeans-owned supplier lifecycle.
+            We connect professional commodity buyers with potential agricultural suppliers and
+            origin-based product classes. Clear specifications, provenance, quality evidence and
+            appropriate commercial review guide every trading relationship.
           </p>
           <p>
-            ZuriBeans does not turn the browser into a collection of direct platform integrations.
-            The application layer and its adapters remain responsible for communicating with Baobab
-            Trade, IAM, Control Plane, ERP and future CMS services.
+            Buyers start with a product and procurement requirement; suppliers begin with their
+            business, capacity and product evidence. An enquiry is not a confirmed order, and a
+            supplier application is not a trading approval. Logistics arrangements are defined
+            for each authorised transaction rather than offered as a standalone carrier service.
           </p>
+        </div>
+      </section>
+      <section
+        aria-label="Trading relationships"
+        className="border-t border-line bg-ink py-12 text-canvas lg:py-16"
+      >
+        <div className="page-container flex flex-wrap items-center justify-between gap-6">
+          <div>
+            <p className="eyebrow-inverse">Do business with ZuriBeans</p>
+            <h2 className="mt-3 font-display text-3xl font-light sm:text-4xl">
+              One trade house. Two distinct relationships.
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink href="/buyer" variant="gold">
+              Explore buyer procurement
+            </ButtonLink>
+            <ButtonLink href="/sourcing/become-a-supplier" variant="inverse">
+              Explore supplier sourcing
+            </ButtonLink>
+          </div>
         </div>
       </section>
     </>
