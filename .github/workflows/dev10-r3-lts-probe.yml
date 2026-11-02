@@ -25,9 +25,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npm install --global corepack@0.36.0
-          corepack enable
-          corepack prepare pnpm@12.16.1 --activate
+          npm install --global corepack@0.36.0 pnpm@12.16.1
+          test "$(pnpm --version)" = 12.16.1
           test "$(node --version)" = v26.13.0
           test "$(corepack --version)" = 0.36.0
           echo COREPACK_ENABLE_NETWORK=0 >> "$GITHUB_ENV"
