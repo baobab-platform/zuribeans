@@ -25,6 +25,7 @@ export function TradeHouseSignature({
   return (
     <div
       data-testid="trade-house-signature"
+      role="group"
       aria-label="ZuriBeans commodity trading identity"
       className={classNames(
         "flex max-w-2xl items-start gap-3 border-l-2 pl-4",
