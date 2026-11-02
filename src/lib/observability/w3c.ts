@@ -45,17 +45,26 @@ export async function withBffTrace(
     flags: incoming?.flags ?? "01",
   }
   return context.run(span, async () => {
-    const response = await handler()
-    // Server-generated traceparent is diagnostic and cannot affect BFF grants.
-    response.headers.set("traceparent", header(span))
-    // Bounded route name and status only; no input header, tokens, body or URL.
-    console.info("bff request completed", {
-      route,
-      status: response.status,
-      trace_id: span.traceId,
-      span_id: span.spanId,
-      parent_span_id: span.parentSpanId ?? "",
-    })
-    return response
+    let status = 500
+    let cause: "NONE" | "UNHANDLED_EXCEPTION" = "UNHANDLED_EXCEPTION"
+    try {
+      const response = await handler()
+      status = response.status
+      cause = "NONE"
+      // Server-generated traceparent is diagnostic and cannot affect BFF grants.
+      response.headers.set("traceparent", header(span))
+      return response
+    } finally {
+      // Failure diagnosis must survive thrown handlers without ever logging
+      // the exception message, OAuth parameters, URL, request or response body.
+      console.info("bff request completed", {
+        route,
+        status,
+        cause,
+        trace_id: span.traceId,
+        span_id: span.spanId,
+        parent_span_id: span.parentSpanId ?? "",
+      })
+    }
   })
 }
