@@ -1,4 +1,7 @@
-import { toAccessibleChartTable, type ChartSeriesProjection } from "@baobab-platform/experience-charts"
+import {
+  toAccessibleChartTable,
+  type ChartSeriesProjection,
+} from "@baobab-platform/experience-charts"
 import {
   boundsForPositions,
   locationLabel,

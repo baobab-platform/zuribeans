@@ -39,7 +39,10 @@ export default function DevelopmentExperiencePage() {
             <Link className="rounded-control border border-line px-5 py-3" href="/insights">
               Browse synthetic Insights
             </Link>
-            <Link className="rounded-control border border-line px-5 py-3" href="/dev/experience/bxs">
+            <Link
+              className="rounded-control border border-line px-5 py-3"
+              href="/dev/experience/bxs"
+            >
               Inspect shared BXS components
             </Link>
           </div>

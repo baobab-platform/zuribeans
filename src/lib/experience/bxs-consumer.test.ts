@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest"
 import type { ChartSeriesProjection } from "@baobab-platform/experience-charts"
-import type { MapProjection, MapResourcePolicy } from "@baobab-platform/experience-geo-maplibre/model"
+import type {
+  MapProjection,
+  MapResourcePolicy,
+} from "@baobab-platform/experience-geo-maplibre/model"
 import type { EvidenceProjection } from "@baobab-platform/experience-geo-deckgl"
 import { approvedResourceUrl } from "@baobab-platform/experience-geo-maplibre/model"
 import { assertLonLat } from "@baobab-platform/experience-geo-core"

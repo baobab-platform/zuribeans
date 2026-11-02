@@ -2,7 +2,10 @@ import { notFound } from "next/navigation"
 import { FeedbackPanel, StatusLabel } from "@baobab-platform/experience-ui"
 import type { ChartSeriesProjection } from "@baobab-platform/experience-charts"
 import type { EvidenceProjection } from "@baobab-platform/experience-geo-deckgl"
-import type { MapProjection, MapResourcePolicy } from "@baobab-platform/experience-geo-maplibre/model"
+import type {
+  MapProjection,
+  MapResourcePolicy,
+} from "@baobab-platform/experience-geo-maplibre/model"
 import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { composeBxsReadOnly } from "@/lib/experience/bxs-consumer"
 
@@ -93,13 +96,16 @@ export default function BxsDevelopmentPage() {
         <h1 className="font-display text-5xl">Baobab Experience System</h1>
         <StatusLabel tone="info">Synthetic specimens · not operational evidence</StatusLabel>
         <p className="text-muted">
-          Exact published BXS tokens, UI, chart, geography-core, MapLibre model and deck.gl
-          evidence contracts are consumed here. Nothing on this page identifies a real buyer,
-          supplier, shipment, active market, legal approval or available trade capability.
+          Exact published BXS tokens, UI, chart, geography-core, MapLibre model and deck.gl evidence
+          contracts are consumed here. Nothing on this page identifies a real buyer, supplier,
+          shipment, active market, legal approval or available trade capability.
         </p>
       </header>
 
-      <section aria-labelledby="bxs-chart-title" className="rounded-panel border border-line bg-surface p-6">
+      <section
+        aria-labelledby="bxs-chart-title"
+        className="rounded-panel border border-line bg-surface p-6"
+      >
         <h2 id="bxs-chart-title" className="font-display text-3xl">
           Accessible chart data
         </h2>
@@ -108,14 +114,20 @@ export default function BxsDevelopmentPage() {
             <caption className="pb-3 text-left font-semibold">{view.chart.caption}</caption>
             <thead>
               <tr className="border-b border-line">
-                <th scope="col" className="p-3">{view.chart.labelColumn}</th>
-                <th scope="col" className="p-3">{view.chart.valueColumn}</th>
+                <th scope="col" className="p-3">
+                  {view.chart.labelColumn}
+                </th>
+                <th scope="col" className="p-3">
+                  {view.chart.valueColumn}
+                </th>
               </tr>
             </thead>
             <tbody>
               {view.chart.rows.map((row) => (
                 <tr key={row.id} className="border-b border-line">
-                  <th scope="row" className="p-3 font-normal">{row.label}</th>
+                  <th scope="row" className="p-3 font-normal">
+                    {row.label}
+                  </th>
                   <td className="p-3">{row.displayValue}</td>
                 </tr>
               ))}
@@ -123,7 +135,8 @@ export default function BxsDevelopmentPage() {
           </table>
         </div>
         <p className="mt-3 text-xs text-muted">
-          Source: {view.chart.sourceReference} · As of: {view.chart.asOf} · Unit: {view.chart.unitLabel}
+          Source: {view.chart.sourceReference} · As of: {view.chart.asOf} · Unit:{" "}
+          {view.chart.unitLabel}
         </p>
       </section>
 
@@ -147,8 +160,8 @@ export default function BxsDevelopmentPage() {
           ))}
         </ul>
         <p className="text-xs text-muted">
-          Overlay frame: {specimenTime} · {view.overlayRows.length} fictional row(s).
-          No interpolation, routing or simulated carrier data.
+          Overlay frame: {specimenTime} · {view.overlayRows.length} fictional row(s). No
+          interpolation, routing or simulated carrier data.
         </p>
         <FeedbackPanel
           state="unavailable"

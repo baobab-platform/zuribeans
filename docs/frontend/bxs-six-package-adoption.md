@@ -13,14 +13,14 @@ SHA512/export verifier run 39073362603 cover their exact release versions.
 This adoption uses a freshly resolved pnpm 11.24.0 frozen-lockfile graph;
 no Git branch tarballs or unverified version ranges are used.
 
-| Package | Pin | Consumer surface |
-| --- | --- | --- |
-| experience-tokens | 0.3.1 | Existing namespaced base and ZuriBeans theme CSS, not a new brand |
-| experience-ui | 0.3.1 | Existing Help Disclosure; new SSR FeedbackPanel and StatusLabel |
-| experience-geo-core | 0.3.1 | Coordinate and location-label validation for authorised display models |
-| experience-charts | 0.1.0 | Null-preserving, source/timestamp-labelled accessible chart table model |
-| experience-geo-maplibre | 0.2.0 | Server-import-safe `/model` validators; WebGL runtime NOT activated |
-| experience-geo-deckgl | 0.1.0 | Exact-frame, bounded evidence projection and textual overlay alternative |
+| Package                 | Pin   | Consumer surface                                                         |
+| ----------------------- | ----- | ------------------------------------------------------------------------ |
+| experience-tokens       | 0.3.1 | Existing namespaced base and ZuriBeans theme CSS, not a new brand        |
+| experience-ui           | 0.3.1 | Existing Help Disclosure; new SSR FeedbackPanel and StatusLabel          |
+| experience-geo-core     | 0.3.1 | Coordinate and location-label validation for authorised display models   |
+| experience-charts       | 0.1.0 | Null-preserving, source/timestamp-labelled accessible chart table model  |
+| experience-geo-maplibre | 0.2.0 | Server-import-safe `/model` validators; WebGL runtime NOT activated      |
+| experience-geo-deckgl   | 0.1.0 | Exact-frame, bounded evidence projection and textual overlay alternative |
 
 `experience-storybook` is an unpublished private Shared test workspace,
 not a seventh distributable consumer package. ZuriBeans retains its existing
