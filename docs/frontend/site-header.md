@@ -12,7 +12,7 @@ document covers the header's own anatomy.
 ```text
 SiteHeader                          Server Component
 ├── UtilityBar                      Server Component (tier 1)
-│   └── MarketSwitcher              Client island (existing, unchanged contract)
+│   └── UtilityMarketSelector       Client island (Figma Make compact native select)
 ├── BrandLockup                     Server Component
 ├── DesktopNavigation                Server Component (tier 2, ≥ xl)
 │   └── NavDisclosure × 4           Client island, one per dropdown group
@@ -39,6 +39,23 @@ heights rather than colors/radii/shadows already exposed through `@theme inline`
 
 `--color-ink-utility` is also mapped into `@theme inline` as a color token (`bg-ink-utility`),
 following the same pattern as every other brand color.
+
+## Figma Make market selector (utility tier)
+
+The upper-left control matches the approved Figma Make `src/components/Nav.tsx`:
+a gold **Market** label followed by a compact transparent, borderless native
+select displaying the active `Country · Currency` (for example `Uganda · UGX`
+and `South Africa · ZAR`). There is no globe glyph or separate
+alternate-market hyperlink in the desktop utility tier. This presentation
+fits the existing 32px tier; its native focus treatment remains visible.
+
+`UtilityMarketSelector` accepts only the request-resolved `MarketContext`,
+offers only deployment-enabled markets, and navigates by changing the current
+route's `market` query parameter while preserving other query fields and the
+fragment. `src/proxy.ts` still enforces the accepted ADR 0004 precedence
+(explicit market, then cookie, then configured default). The footer and mobile
+drawer retain their larger, touch-friendly `MarketSwitcher` link treatment.
+No market selector is a legal-market activation or buyer authority grant.
 
 ## Primary navigation model
 
@@ -72,7 +89,7 @@ requirement, and skipping it keeps the island smaller.
 useful destination (a drawer lists journeys, it does not nest a disclosure inside a disclosure):
 Commodities → `/products`, Markets → `/origins-markets`, Trade → `/trade`, About Us → `/about`,
 Resources → `/quality-traceability`, Contact → `/contact`. Below that: market selection
-(`MarketSwitcher`), the Request a Quote CTA, sign-in/account, Become a Supplier, Supplier Portal and
+(`MarketSwitcher` links), the Request a Quote CTA, sign-in/account, Become a Supplier, Supplier Portal and
 Help — matching the full action set the desktop utility bar and dropdowns expose.
 
 ## `/help`

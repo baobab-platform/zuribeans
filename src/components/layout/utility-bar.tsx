@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { CircleHelp, Globe2, Handshake, UserRound } from "lucide-react"
-import { MarketSwitcher } from "./market-switcher"
+import { CircleHelp, Handshake, UserRound } from "lucide-react"
+import { UtilityMarketSelector } from "./market-switcher"
 import type { MarketContext } from "@/lib/market/request"
 
 /**
@@ -22,13 +22,8 @@ export function UtilityBar({
       data-testid="utility-bar"
     >
       <div className="page-container flex h-full items-center justify-between gap-6">
-        <div className="flex min-w-0 items-center gap-3 border-r border-white/20 pr-6">
-          <Globe2
-            aria-hidden="true"
-            strokeWidth={1.75}
-            className="size-4 shrink-0 text-clay-inverse"
-          />
-          <MarketSwitcher marketContext={marketContext} tone="inverse" className="min-w-0" />
+        <div className="flex min-w-0 items-center">
+          <UtilityMarketSelector marketContext={marketContext} />
         </div>
 
         <p className="hidden truncate font-medium text-white/80 2xl:block">
