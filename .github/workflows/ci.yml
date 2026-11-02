@@ -87,6 +87,7 @@ jobs:
         id: experience_browser
         env:
           CI: "true"
+          DEV11_EVIDENCE_GATE: functional
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
@@ -98,6 +99,7 @@ jobs:
       - name: Isolated Lighthouse performance lab
         env:
           CI: "true"
+          DEV11_EVIDENCE_GATE: lighthouse
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
@@ -107,6 +109,7 @@ jobs:
       - name: Landing-page accessibility checks
         env:
           CI: "true"
+          DEV11_EVIDENCE_GATE: accessibility
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
@@ -117,6 +120,7 @@ jobs:
         id: experience_visual
         env:
           CI: "true"
+          DEV11_EVIDENCE_GATE: visual
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
@@ -149,6 +153,8 @@ jobs:
             test-results/
             playwright-report/
             tests/e2e/landing-page.visual.spec.ts-snapshots/
+            reports/dev11-*-playwright.json
+            reports/static-budget.json
 
   image:
     name: Build deployable image
