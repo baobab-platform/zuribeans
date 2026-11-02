@@ -1,0 +1,24 @@
+name: One-shot market selector Prettier snapshot
+on:
+  push:
+    branches:
+      - feat/bxs-all-six-experience-packages-20261102
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24.21.0"
+      - name: Format changed selector test with pinned Prettier
+        shell: bash
+        run: |
+          set -eu
+          npm install --global prettier@3.9.8
+          prettier --write tests/e2e/site-header.spec.ts
+          echo "MARKET_FORMAT_BEGIN"
+          base64 -w 120 tests/e2e/site-header.spec.ts
+          echo "MARKET_FORMAT_END"
