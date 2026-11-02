@@ -77,7 +77,6 @@ assertWithin(
   limits.largestPublicImage,
 )
 
-
 // A stable bounded machine-readable receipt for the independent DEV-11 join.
 // Generated from the actual emitted production assets, never from budgets
 // repeated in a test fixture. The existing assertWithin calls above still
