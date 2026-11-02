@@ -47,7 +47,8 @@ test("geometric Figma mark remains visible without layout overflow on a narrow s
 }) => {
   await page.setViewportSize({ width: 320, height: 700 })
   await page.goto("/", { waitUntil: "domcontentloaded" })
-  await expect(page.getByRole("link", { name: "ZuriBeans home" })).toBeVisible()
+  const brandLink = page.getByRole("banner").getByRole("link", { name: "ZuriBeans home" })
+  await expect(brandLink).toBeVisible()
   await expect(page.locator('html[data-bx-theme="zuribeans"]')).toHaveCount(1)
   const viewport = await page.evaluate(() => ({
     available: document.documentElement.clientWidth,
