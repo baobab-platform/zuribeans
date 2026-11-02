@@ -71,6 +71,7 @@ export function JourneyAuth({
   return (
     <AuthShell
       eyebrow={buyer ? "Buyer portal" : "Supplier portal"}
+      audience={journey}
       title={title}
       description={description}
     >

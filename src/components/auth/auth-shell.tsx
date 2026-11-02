@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { TradeHouseSignature } from "@/components/brand/trade-house-signature"
+import type { TradeHouseAudience } from "@/lib/brand/identity"
 import type { ReactNode } from "react"
 
 export function AuthShell({
@@ -6,11 +8,13 @@ export function AuthShell({
   title,
   description,
   children,
+  audience = "public",
 }: {
   eyebrow: string
   title: string
   description: string
   children: ReactNode
+  audience?: TradeHouseAudience
 }) {
   return (
     <div className="grid h-[calc(100svh-4.5rem)] min-h-0 grid-rows-[auto_minmax(0,1fr)] bg-canvas lg:grid-cols-2 lg:grid-rows-1 xl:h-[calc(100svh-6.5rem)]">
@@ -23,9 +27,8 @@ export function AuthShell({
           aria-label="ZuriBeans homepage"
           className="inline-flex items-center gap-3 self-start text-canvas"
         >
-          <span className="grid size-8 place-items-center rounded-control bg-clay text-xs font-bold text-ink">
-            ZB
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element -- owned SVG mark, no SVG optimisation */}
+          <img src="/brand/zuribeans-mark.svg" alt="" width={32} height={32} className="size-8" />
           <span className="font-display text-xl">ZuriBeans</span>
         </Link>
         <div className="mt-8 max-w-xl lg:mt-10">
@@ -33,6 +36,7 @@ export function AuthShell({
           <h1 className="mt-3 font-display text-[clamp(1.9rem,4vw,3.75rem)] font-light leading-[1.07] tracking-[-.025em] text-canvas text-balance">
             {title}
           </h1>
+          <TradeHouseSignature audience={audience} tone="inverse" compact className="mt-6" />
         </div>
       </section>
       <section
