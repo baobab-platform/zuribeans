@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { TradeHouseSignature } from "@/components/brand/trade-house-signature"
 
 export function SupplierEditorialHero({
   eyebrow,
@@ -55,6 +56,7 @@ export function SupplierEditorialHero({
         >
           {description}
         </p>
+        <TradeHouseSignature audience="supplier" tone="inverse" className="mt-7" />
       </div>
     </header>
   )

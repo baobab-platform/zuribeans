@@ -29,10 +29,10 @@ export function BrandLockup() {
       />
       <span className="flex flex-col leading-none">
         <span className="font-display text-xl font-normal tracking-tight text-ink sm:text-[28px] lg:text-3xl">
-          Zuribeans
+          ZuriBeans
         </span>
         <span className="mt-1 hidden text-[10px] font-bold tracking-[0.18em] text-muted uppercase sm:block lg:text-[11px]">
-          Commodities. Connected.
+          African commodity trade
         </span>
       </span>
     </Link>

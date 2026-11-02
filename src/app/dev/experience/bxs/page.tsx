@@ -90,7 +90,7 @@ export default function BxsDevelopmentPage() {
   })
 
   return (
-    <section data-bx-theme="zuribeans" className="page-container space-y-8 py-16">
+    <section className="page-container space-y-8 py-16">
       <header className="max-w-3xl space-y-4">
         <p className="eyebrow">BXS-05 · Development-only consumer inspection</p>
         <h1 className="font-display text-5xl">Baobab Experience System</h1>

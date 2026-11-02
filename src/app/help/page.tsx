@@ -78,9 +78,7 @@ export default async function HelpPage() {
           </ButtonLink>
         </Card>
       </section>
-      <section
-        data-bx-theme="zuribeans"
-        className="page-container pb-20 lg:pb-24"
+      <section className="page-container pb-20 lg:pb-24"
         aria-labelledby="help-faq-title"
       >
         <div className="max-w-3xl">

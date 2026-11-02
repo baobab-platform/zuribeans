@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { TradeHouseSignature } from "@/components/brand/trade-house-signature"
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/ui/breadcrumbs"
 
 type CorporateHeroProps = {
@@ -33,6 +34,7 @@ export function CorporateHero({
               {title}
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">{description}</p>
+            <TradeHouseSignature className="mt-7" />
           </div>
           {image ? (
             <div className="relative aspect-[4/3] overflow-hidden bg-sand">
