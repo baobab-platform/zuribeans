@@ -14,6 +14,20 @@ jobs:
     name: Node26 pnpm12 BXS build and browser tests
     runs-on: ubuntu-26.04
     timeout-minutes: 55
+    services:
+      postgres:
+        image: postgres:17.11-bookworm
+        env:
+          POSTGRES_DB: zuribeans_ci
+          POSTGRES_USER: zuribeans
+          POSTGRES_PASSWORD: zuribeans_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U zuribeans -d zuribeans_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      CI: "true"
+      SUPPLIER_DB_URL: postgres://zuribeans:zuribeans_ci@localhost:5432/zuribeans_ci
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -73,17 +87,30 @@ jobs:
           pnpm install --lockfile-only --ignore-scripts
           pnpm install --frozen-lockfile
       - name: Owner source unit, lint, type and production build
+        env:
+          MEDUSA_BACKEND_URL: http://localhost:9000
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_build_only
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
+          NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         shell: bash
         run: |
           set -euo pipefail
           pnpm run lint
           pnpm run typecheck
+          pnpm db:migrate
           pnpm run test
           pnpm run build
       - name: Qualify Playwright 1.64.1 browser executable and live E2E
+        env:
+          MEDUSA_BACKEND_URL: http://localhost:9000
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
+          NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         shell: bash
         run: |
           set -euo pipefail
           test "$(pnpm exec playwright --version)" = 'Version 1.64.1'
-          pnpm exec playwright install --with-deps chromium
+          pnpm exec playwright install --with-deps chromium firefox webkit
           pnpm run test:e2e
