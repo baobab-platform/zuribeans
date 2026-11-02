@@ -67,6 +67,7 @@ export function UtilityMarketSelector({ marketContext }: { marketContext: Market
     // A client-side query-only push can keep the root App Router layout cached,
     // including its server-resolved MarketContext and html lang. A document
     // request makes the proxy/cookie, SSR data and visible selection agree.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.assign(`${url.pathname}${url.search}${url.hash}`)
   }
 
