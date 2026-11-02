@@ -28,6 +28,10 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@baobab-platform/experience-charts": "0.1.0",
+    "@baobab-platform/experience-geo-core": "0.3.1",
+    "@baobab-platform/experience-geo-deckgl": "0.1.0",
+    "@baobab-platform/experience-geo-maplibre": "0.2.0",
     "@baobab-platform/experience-tokens": "0.3.1",
     "@baobab-platform/experience-ui": "0.3.1",
     "@base-ui/react": "1.9.0",
