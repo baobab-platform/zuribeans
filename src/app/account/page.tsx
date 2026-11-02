@@ -1,3 +1,4 @@
+import { BuyerWorkspaceModules } from "@/components/buyer/workspace-modules"
 import { BuyerCapabilityBoundary } from "@/components/buyer/capability-boundary"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -9,12 +10,12 @@ const statusCopy = (status: BuyerOrganisationStatus | null): { title: string; bo
     case "PENDING":
       return {
         title: "Organisation under review",
-        body: "Your buyer organisation application is awaiting verification, commercial review, and credit review. Trading features stay restricted until activation.",
+        body: "We are reviewing your business application. Purchasing services remain unavailable until approval.",
       }
     case "ACTIVE":
       return {
         title: "Organisation active",
-        body: "Your buyer organisation is active. Company and team open when Trade confirms those capabilities; catalogue, orders and documents remain gated until later contracts.",
+        body: "Your organisation is active. The services available to you depend on your approved permissions.",
       }
     case "SUSPENDED":
       return {
@@ -29,7 +30,7 @@ const statusCopy = (status: BuyerOrganisationStatus | null): { title: string; bo
     default:
       return {
         title: "No buyer organisation yet",
-        body: "A login is not a trading account. Apply for a buyer organisation so ZuriBeans can run KYB, commercial, and credit review.",
+        body: "Apply to register your business before accessing purchasing services.",
       }
   }
 }
@@ -44,7 +45,7 @@ const applicationCopy = (status: BuyerApplicationStatus): { title: string; body:
     case "UNDER_REVIEW":
       return {
         title: "Application under review",
-        body: "Identity, KYB and commercial checks are in progress. Trading remains restricted.",
+        body: "We are reviewing your business details. Purchasing is not available yet.",
       }
     case "REJECTED":
       return {
@@ -59,7 +60,7 @@ const applicationCopy = (status: BuyerApplicationStatus): { title: string; body:
     default:
       return {
         title: "Application submitted",
-        body: "Your application is recorded. It has not created or approved a trading organisation.",
+        body: "We have received your application. You will need approval before purchasing.",
       }
   }
 }
@@ -86,7 +87,7 @@ export default async function AccountDashboardPage() {
         ) : null}
         {loadFailed ? (
           <p className="mt-3 text-sm text-muted">
-            Organisation status could not be refreshed from Trade. Your login remains valid.
+            We could not refresh your organisation status. Please try again later.
           </p>
         ) : null}
         <div className="mt-7 grid gap-4 sm:grid-cols-3">
@@ -128,14 +129,17 @@ export default async function AccountDashboardPage() {
         <p className="eyebrow">While access is reviewed</p>
         <h2 className="mt-4 font-display text-2xl">Explore public product information.</h2>
         <p className="mt-3 text-sm leading-6 text-muted">
-          Public catalogue content remains available. It never substitutes account-specific price,
-          inventory or eligibility.
+          Browse products while your application is reviewed. Contact us to confirm availability and
+          commercial terms.
         </p>
         <ButtonLink href="/products" variant="outline" className="mt-6">
           Browse products
         </ButtonLink>
       </Card>
       <BuyerCapabilityBoundary capabilities={capabilities} />
+      <div className="lg:col-span-2">
+        <BuyerWorkspaceModules />
+      </div>
     </div>
   )
 }

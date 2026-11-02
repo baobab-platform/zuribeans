@@ -18,11 +18,20 @@ test.describe("Figma Make responsive estate contract", () => {
       await expect(page.getByRole("main")).toBeVisible()
       await expect(page.getByRole("link", { name: /request a quote/i }).first()).toBeVisible()
 
-      const documentOverflow = await page.evaluate(() => {
+      const layout = await page.evaluate(() => {
         const root = document.documentElement
-        return root.scrollWidth > root.clientWidth + 1
+        const offenders = Array.from(document.querySelectorAll("*"))
+          .filter((element) => element.getBoundingClientRect().right > root.clientWidth + 1)
+          .slice(0, 12)
+          .map((element) => ({
+            tag: element.tagName,
+            className: element.getAttribute("class"),
+            right: Math.round(element.getBoundingClientRect().right),
+          }))
+        return { overflows: root.scrollWidth > root.clientWidth + 1, offenders }
       })
-      expect(documentOverflow, `Document overflows at ${width}px`).toBe(false)
+      const message = `Document overflows at ${width}px: ${JSON.stringify(layout.offenders)}`
+      expect(layout.overflows, message).toBe(false)
 
       if (width < 1280) {
         const menu = page.getByRole("button", { name: /menu/i })
@@ -30,9 +39,17 @@ test.describe("Figma Make responsive estate contract", () => {
         await menu.click()
         const dialog = page.getByRole("dialog", { name: "Explore ZuriBeans" })
         await expect(dialog).toBeVisible()
-        await expect(dialog.getByRole("link", { name: /supplier portal/i })).toHaveAttribute(
+        await expect(dialog.getByRole("link", { name: "Supplier sign in" })).toHaveAttribute(
           "href",
-          "/supplier",
+          "/supplier/login",
+        )
+        await expect(dialog.getByRole("link", { name: "Become a Supplier" })).toHaveAttribute(
+          "href",
+          "/supplier/register",
+        )
+        await expect(dialog.getByRole("link", { name: "Buyer sign in" })).toHaveAttribute(
+          "href",
+          "/buyer/login",
         )
         await page.keyboard.press("Escape")
         await expect(dialog).toBeHidden()

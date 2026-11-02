@@ -131,6 +131,42 @@ describe("N02 actual Kratos browser flow projection (source-only)", () => {
         doc.type = "api"
       },
     ],
+    [
+      "disabled CSRF",
+      (doc: ReturnType<typeof fixture>) => {
+        Object.assign(doc.ui.nodes[0].attributes, { disabled: true })
+      },
+    ],
+    [
+      "disabled method",
+      (doc: ReturnType<typeof fixture>) => {
+        Object.assign(doc.ui.nodes[3].attributes, { disabled: true })
+      },
+    ],
+    [
+      "non-submit method",
+      (doc: ReturnType<typeof fixture>) => {
+        doc.ui.nodes[3].attributes.type = "text"
+      },
+    ],
+    [
+      "unknown ceremony method",
+      (doc: ReturnType<typeof fixture>) => {
+        doc.ui.nodes[3].attributes.value = "registration"
+      },
+    ],
+    [
+      "password reflected into UI state",
+      (doc: ReturnType<typeof fixture>) => {
+        doc.ui.nodes[2].attributes.value = "should-never-be-reflected"
+      },
+    ],
+    [
+      "password rendered as plaintext",
+      (doc: ReturnType<typeof fixture>) => {
+        doc.ui.nodes[2].attributes.type = "text"
+      },
+    ],
   ])("denies %s", (_, mutate) => {
     const doc = fixture()
     mutate(doc)

@@ -81,6 +81,8 @@ jobs:
           NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm build
+      - name: Enforce frontend performance budgets
+        run: pnpm perf:budget
       - name: End-to-end tests
         id: experience_browser
         env:
@@ -91,6 +93,17 @@ jobs:
           NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm test:e2e
+      # Throttled Lighthouse measurement requires an idle single-worker lab,
+      # not a second concurrent Playwright worker under CPU contention.
+      - name: Isolated Lighthouse performance lab
+        env:
+          CI: "true"
+          MEDUSA_BACKEND_URL: http://localhost:9000
+          NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+          NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
+          NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
+        run: pnpm test:e2e:lighthouse
       - name: Landing-page accessibility checks
         env:
           CI: "true"
@@ -101,6 +114,7 @@ jobs:
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm test:e2e:a11y
       - name: Landing-page visual regression checks
+        id: experience_visual
         env:
           CI: "true"
           MEDUSA_BACKEND_URL: http://localhost:9000
@@ -109,15 +123,13 @@ jobs:
           NEXT_PUBLIC_ENABLED_MARKETS: zuribeans_ug,zuribeans_za
           NEXT_PUBLIC_DEFAULT_MARKET: zuribeans_za
         run: pnpm test:e2e:visual
-      - name: Enforce frontend performance budgets
-        run: pnpm perf:budget
       - name: Validate architecture declarations
         run: pnpm architecture:validate
 
       # Candidate generation preserves the failed gate. Pixels are accepted
       # only by a separately reviewed source commit; normal tests never update.
       - name: Capture visual candidates after browser failure
-        if: failure() && steps.experience_browser.outcome == 'failure'
+        if: failure() && (steps.experience_browser.outcome == 'failure' || steps.experience_visual.outcome == 'failure')
         env:
           CI: "true"
           MEDUSA_BACKEND_URL: http://localhost:9000

@@ -38,6 +38,13 @@ const types = new Set<KratosInput["type"]>([
   "submit",
 ])
 const FLOW = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i
+// Only provider-recognised ceremony methods are rendered. Never permit arbitrary
+// caller-supplied values to select a different account workflow.
+const methods: Record<NativeKratosKind, ReadonlySet<string>> = {
+  login: new Set(["password", "totp", "lookup_secret", "code"]),
+  recovery: new Set(["link", "code"]),
+}
+const secretInputs = new Set(["password", "totp_code", "lookup_secret", "code"])
 
 function record(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value))
@@ -110,23 +117,38 @@ export function projectNativeKratosFlow(
     ) {
       throw new Error("Unknown Kratos credential node")
     }
+    // Disabled controls are not submitted by a browser. They MUST NOT count
+    // toward the mandatory CSRF and provider-selected method requirements.
+    if (attrs.disabled === true) continue
     if (name === "csrf_token") {
       csrfCount += 1
       if (type !== "hidden" || typeof attrs.value !== "string" || attrs.value.length < 16) {
         throw new Error("Missing real Kratos CSRF")
       }
     }
-    if (name === "method") methodCount += 1
-    if (attrs.disabled === true) continue
+    if (name === "method") {
+      methodCount += 1
+      if (type !== "submit" || typeof attrs.value !== "string" || !methods[kind].has(attrs.value)) {
+        throw new Error("Invalid Kratos ceremony method")
+      }
+    }
+    if (name === "password" && type !== "password") {
+      throw new Error("Password must use an obscured control")
+    }
     const value = attrs.value
     if (value !== undefined && typeof value !== "string")
       throw new Error("Unsupported Kratos form value")
+    // Prevent even server-reflected passwords, one-time codes and recovery
+    // secrets from entering a React state object.
+    if (secretInputs.has(name) && typeof value === "string" && value.length > 0) {
+      throw new Error("Unexpected prefilled secret")
+    }
     const meta = node.meta && typeof node.meta === "object" ? record(node.meta) : {}
     const label = meta.label && typeof meta.label === "object" ? record(meta.label).text : undefined
     inputs.push({
       name,
       type: type as KratosInput["type"],
-      ...(typeof value === "string" ? { value } : {}),
+      ...(typeof value === "string" && !secretInputs.has(name) ? { value } : {}),
       required: attrs.required === true,
       label: typeof label === "string" && label.length <= 120 ? label : name,
     })

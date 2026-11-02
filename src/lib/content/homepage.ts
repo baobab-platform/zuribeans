@@ -20,21 +20,27 @@ export type HomeHeroContent = {
     eyebrow: string
     statement: string
   }
+  /** Demonstration values only; must be verified before factual publication. */
+  illustrativeMetrics: readonly {
+    value: string
+    label: string
+    detail: string
+  }[]
 }
 
 export const HOME_HERO = {
-  eyebrow: "African origin. Global reach.",
-  title: "Quality products. Clear provenance.",
-  accent: "Serious trade.",
+  eyebrow: "Uganda · South Africa",
+  title: "African origin.",
+  accent: "International trade discipline.",
   description:
-    "ZuriBeans connects professional buyers and qualified suppliers through disciplined sourcing, useful product information and cross-border capability built for repeat business.",
+    "ZuriBeans connects professional buyers with sourced agricultural commodities from East and Southern Africa, with documented origin, specifications and accountable cross-border trade.",
   primaryCta: {
-    label: "Request a Quote",
-    href: "/contact",
+    label: "View Catalogue",
+    href: "/products",
   },
   secondaryCta: {
-    label: "Explore products",
-    href: "/products",
+    label: "How We Trade",
+    href: "/trade",
   },
   image: {
     src: "/images/zuribeans-origin-trade-hero-v1.webp",
@@ -44,6 +50,11 @@ export const HOME_HERO = {
     eyebrow: "Built for procurement",
     statement: "From a defined requirement to accountable delivery.",
   },
+  illustrativeMetrics: [
+    { value: "12+", label: "Export markets", detail: "Active buyer relationships" },
+    { value: "98%", label: "Documentation rate", detail: "Full traceability on every shipment" },
+    { value: "7", label: "Years trading", detail: "Uganda & South Africa operations" },
+  ],
 } as const satisfies HomeHeroContent
 
 export const TRUST_EVIDENCE = [

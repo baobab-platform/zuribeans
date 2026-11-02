@@ -88,8 +88,12 @@ IAM's `/auth/*` Go BFF, while Hydra stays at a separate HTTPS issuer.
 Kratos Admin is not exposed. Current production Next `/api/iam/*`
 sessions are separate and unchanged.
 
-This route contract does not create or host a Kratos login or recovery
-UI; the real Kratos-issued flow UI and its courier/TOTP remain
-unimplemented as a fully connected estate consumer. The branch stays
-draft until owners deploy the bound TLS topology, prove real cookies
-and AAL2 readbacks, and preserve original browser/CP evidence.
+Development-gated `/identity/kratos/login` and
+`/identity/kratos/recovery` pages now render a strictly projected
+Kratos-issued browser form and post directly to same-origin Kratos public
+endpoints. Disabled CSRF/method controls, unexpected methods and
+server-reflected credentials fail closed. This is **source implementation**
+only: the verified TLS ingress, real courier/TOTP/recovery and connected
+browser/CP originals remain outstanding. No N02 qualification or
+protected activation is claimed; the existing release hold remains
+until owner-reviewed runtime acceptance.

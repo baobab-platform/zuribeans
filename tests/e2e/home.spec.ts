@@ -1,28 +1,65 @@
 import { expect, test } from "@playwright/test"
+
 test("visitor can enter the multi-product catalogue from the home page", async ({ page }) => {
   await page.goto("/")
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Quality products. Clear provenance. Serious trade.",
-  )
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("African origin.")
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("International")
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("trade discipline.")
   await expect(
-    page.locator("#main").getByRole("link", { name: "Explore products", exact: true }),
+    page.locator("#main").getByRole("link", { name: "View Catalogue", exact: true }),
   ).toHaveAttribute("href", "/products")
 })
 
 test("featured commodities expose truthful catalogue routes", async ({ page }) => {
   await page.goto("/")
 
-  const section = page.getByRole("region", { name: "Featured commodities" })
-  await expect(section.getByRole("heading", { name: "Green coffee" })).toBeVisible()
-  await expect(section.getByRole("heading", { name: "Vanilla pods" })).toBeVisible()
-  await expect(section.getByRole("link", { name: "View coffee: Green coffee" })).toHaveAttribute(
-    "href",
-    "/products?category=coffee",
+  // The section's accessible name comes from its editorial heading, which
+  // changes with published products and the explicitly opted-in preview mode.
+  // During streamed Suspense resolution, the hidden fallback and resolved
+  // section can coexist briefly. Interact with the one rendered to users;
+  // never bind this contract to a hidden fallback node.
+  const section = page.locator("section#commodities:visible")
+  await expect(section).toBeVisible()
+  await expect(section.getByRole("heading", { level: 2 })).toBeVisible()
+  await expect(section.locator("#featured-commodities")).toHaveClass(/lg:grid-cols-4/)
+
+  const cards = section.locator("#featured-commodities article a[href]")
+  await expect(cards).toHaveCount(4)
+  await expect(cards.first()).toBeVisible()
+  const hrefs = await cards.evaluateAll((links) =>
+    links.map((link) => link.getAttribute("href") ?? ""),
   )
-  await expect(section.getByRole("link", { name: "View vanilla: Vanilla pods" })).toHaveAttribute(
+
+  // Full provider publication yields four dossiers; an empty or partial market
+  // fills remaining slots with clearly labelled product-class discovery links.
+  for (const href of hrefs) {
+    expect(href).toMatch(/^\/products(?:\/[^/?#]+|\?category=[a-z-]+)$/)
+  }
+  if (hrefs.every((href) => href.startsWith("/products?category="))) {
+    expect(hrefs).toEqual([
+      "/products?category=coffee",
+      "/products?category=coffee",
+      "/products?category=vanilla",
+      "/products?category=sesame",
+    ])
+    for (const title of ["Robusta coffee", "Arabica coffee", "Vanilla pods", "Sesame seeds"]) {
+      await expect(section.getByRole("heading", { name: title })).toBeVisible()
+    }
+    const photos = await section
+      .locator("#featured-commodities img")
+      .evaluateAll((images) => images.map((image) => image.getAttribute("src")))
+    expect(new Set(photos).size).toBe(4)
+  }
+
+  await expect(section.getByRole("link", { name: "Full Procurement Catalogue" })).toHaveAttribute(
     "href",
-    "/products?category=vanilla",
+    "/products",
   )
+  if (process.env.CI) {
+    // CI is a production build without synthetic opt-in; no fictional claims.
+    await expect(section.getByText("Sample data", { exact: true })).toHaveCount(0)
+    await expect(section.getByText(/(?:Available|Limited) \(sample\)/)).toHaveCount(0)
+  }
 })
 
 test("trade process presents the four accountable stages in order", async ({ page }) => {

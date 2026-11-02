@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { MarketSwitcher } from "./market-switcher"
 import type { MarketContext } from "@/lib/market/request"
-import { PUBLIC_PRODUCT_CLASSES } from "@/lib/content/public-estate"
 
 const legalLinks = [
   { href: "/privacy", label: "Privacy" },
@@ -15,10 +14,10 @@ function getFooterGroups(marketContext: MarketContext) {
       title: "Products",
       links: [
         { href: "/products", label: "Catalogue" },
-        ...PUBLIC_PRODUCT_CLASSES.map((productClass) => ({
-          href: productClass.href,
-          label: productClass.name,
-        })),
+        // Site-wide taxonomy must not depend on the homepage's changing four-card showcase.
+        { href: "/products?category=coffee", label: "Green coffee" },
+        { href: "/products?category=vanilla", label: "Vanilla pods" },
+        { href: "/products?category=sesame", label: "Sesame seeds" },
       ],
     },
     {
@@ -45,15 +44,15 @@ function getFooterGroups(marketContext: MarketContext) {
       links: [
         { href: "/sourcing", label: "Sourcing" },
         { href: "/sourcing/become-a-supplier", label: "Become a supplier" },
-        { href: "/supplier", label: "Supplier portal" },
+        { href: "/supplier/login", label: "Supplier portal" },
       ],
     },
     {
       title: "Partner",
       links: [
-        { href: "/login", label: "Buyer portal" },
+        { href: "/buyer", label: "Buyer portal" },
         { href: "/contact", label: "Discuss a requirement" },
-        { href: "/register", label: "Register" },
+        { href: "/buyer/register", label: "Buyer registration" },
       ],
     },
   ] as const
