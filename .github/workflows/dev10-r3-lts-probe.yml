@@ -61,6 +61,11 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/codespaces/private-npm.mjs
       - name: Regenerate candidate lock then prove frozen reinstallation
+        # The user-level npmrc contains only a literal ${GITHUB_TOKEN} lookup.
+        # Keep the read-only Actions identity available during *this* install,
+        # not merely when the config file is generated.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
