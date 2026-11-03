@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ButtonLink } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { TradeHouseSignature } from "@/components/brand/trade-house-signature"
 import { getPublicPageMetadata } from "@/lib/seo/metadata"
 
 export const metadata: Metadata = getPublicPageMetadata({
@@ -43,6 +44,7 @@ export default function BuyerPortalPage() {
               Explore products, apply for a buyer account and manage your ZuriBeans trading
               relationship after approval.
             </p>
+            <TradeHouseSignature audience="buyer" tone="inverse" className="mt-7" />
             <div className="mt-9 flex flex-wrap gap-4">
               <ButtonLink href="/buyer/register" className="text-white hover:text-white">
                 Create buyer account

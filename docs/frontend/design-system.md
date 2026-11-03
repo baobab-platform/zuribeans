@@ -38,15 +38,22 @@ Raw brand colours and arbitrary shadows/radii must not proliferate in route comp
 
 ## Typography
 
-- Display: current system serif stack for confident, editorial headings.
-- Sans: current system sans stack for fast, predictable interface rendering.
-- `.eyebrow`: shared compact section label.
-- Body copy should normally use `text-muted`; avoid opacity stacking that produces uncertain
-  contrast.
-- Heading levels follow document structure, not desired font size.
+The approved Figma Make trade-house identity maps to production CSS roles:
 
-External webfonts were deliberately not added. A future brand-font decision must include licensing,
-subset, preload and Core Web Vitals assessment.
+- Editorial / display: **Source Serif 4**, using the existing `font-display` role;
+  preserve the Georgia serif fallback.
+- Functional / interface: **Source Sans 3**, using `font-sans` with system fallbacks.
+- `.eyebrow` and `.eyebrow-inverse` remain compact, contrast-checked section labels.
+- Body copy normally uses `text-muted`; avoid opacity stacking that produces uncertain contrast.
+- Heading levels follow document structure, not desired font size.
+- Webfont loading and fallback geometry must be assessed under the existing LCP/CLS budgets;
+  the stylesheet currently imports both Source families from Google Fonts. Do not add an
+  alternative font stack merely to make ZuriBeans resemble Nabhold's institutional estate.
+
+The BXS theme is namespaced at `html[data-bx-theme="zuribeans"]`; local brand colours,
+fonts, image treatment and journey content remain owned by ZuriBeans. Shared provides
+semantic colour, focus and interaction conventions, not a universal holding-company skin.
+See `docs/frontend/bxs-trade-house-identity.md`.
 
 ## Layout
 

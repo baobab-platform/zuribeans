@@ -128,4 +128,58 @@ test.describe("two-tier trade-desk header", () => {
     }).toPass()
     await expect(helpLink).toBeFocused()
   })
+
+  test("top-left market selector matches Figma Make and keeps catalogue filters", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1600, height: 1000 })
+    await page.goto("/products?category=coffee&market=zuribeans_ug")
+
+    const utility = page.getByTestId("utility-bar")
+    const market = utility.getByRole("combobox", { name: "Market context" })
+    await expect(utility.getByText("Market", { exact: true })).toBeVisible()
+    await expect(market).toBeVisible()
+    await expect(market).toHaveValue("zuribeans_ug")
+    await expect(market.locator("option")).toHaveText(["Uganda · UGX", "South Africa · ZAR"])
+    await expect(market).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
+    await expect(utility.locator("svg.lucide-globe-2")).toHaveCount(0)
+
+    await market.focus()
+    await expect(market).toBeFocused()
+    await market.selectOption("zuribeans_za")
+
+    await expect(page).toHaveURL(
+      (url) =>
+        url.pathname === "/products" &&
+        url.searchParams.get("category") === "coffee" &&
+        url.searchParams.get("market") === "zuribeans_za",
+    )
+    await expect(market).toHaveValue("zuribeans_za")
+    await expect(market.locator("option:checked")).toHaveText("South Africa · ZAR")
+
+    // The proxy persists the selected market; it is not a client-only label.
+    await page.goto("/")
+    await expect(
+      page.getByTestId("utility-bar").getByRole("combobox", {
+        name: "Market context",
+      }),
+    ).toHaveValue("zuribeans_za")
+  })
+
+  test("an explicit market query overrides a previous market cookie", async ({ page }) => {
+    await page.setViewportSize({ width: 1600, height: 1000 })
+    await page.goto("/?market=zuribeans_za")
+    await expect(
+      page.getByTestId("utility-bar").getByRole("combobox", {
+        name: "Market context",
+      }),
+    ).toHaveValue("zuribeans_za")
+
+    await page.goto("/?market=zuribeans_ug")
+    await expect(
+      page.getByTestId("utility-bar").getByRole("combobox", {
+        name: "Market context",
+      }),
+    ).toHaveValue("zuribeans_ug")
+  })
 })
