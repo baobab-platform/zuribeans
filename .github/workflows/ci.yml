@@ -51,7 +51,8 @@ jobs:
         run: |
           set -eu
           # Bind original reports to the candidate, not GitHub's temporary merge.
-          task_source_sha="$(git rev-parse HEAD)"
+          # Checkout uses a temporary HOME; trust only this job-owned workspace.
+          task_source_sha="$(git -c safe.directory="$GITHUB_WORKSPACE" rev-parse HEAD)"
           test "$task_source_sha" = "$DEV11_EXPECTED_SOURCE_SHA"
           mkdir -p reports
           printf '%s\n' "$task_source_sha" > reports/dev11-source-sha.txt
