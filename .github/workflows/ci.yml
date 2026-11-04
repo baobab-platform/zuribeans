@@ -57,6 +57,8 @@ jobs:
       # required by this repository's synchronized 1.63.0 client before any suite.
       - name: Install synchronized Playwright browser revisions
         run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - name: Preserve earlier gate originals after an unscoped Playwright invocation
+        run: node scripts/dev11-report-custody.node.mjs
       - name: Prepare Firefox home ownership
         run: chown 0:0 /github/home
       - name: Launch every pinned browser

@@ -14,9 +14,10 @@ export default defineConfig({
         ["json", { outputFile: `reports/dev11-${evidenceGate}-playwright.json` }],
       ]
     : process.env.CI
-      ? [["list"], ["html", { open: "never" }]]
+      ? // Failure diagnostics must preserve every earlier gate's original.
+        [["list"], ["html", { open: "never", outputFolder: "playwright-report/unscoped" }]]
       : "list",
-  ...(evidenceGate ? { outputDir: `test-results/dev11-${evidenceGate}` } : {}),
+  outputDir: evidenceGate ? `test-results/dev11-${evidenceGate}` : "test-results/unscoped",
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
