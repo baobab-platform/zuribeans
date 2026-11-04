@@ -12,7 +12,7 @@ document covers the header's own anatomy.
 ```text
 SiteHeader                          Server Component
 ├── UtilityBar                      Server Component (tier 1)
-│   └── MarketSwitcher              Client island (existing, unchanged contract)
+│   └── UtilityMarketSelector       Client island (Figma Make compact native select)
 ├── BrandLockup                     Server Component
 ├── DesktopNavigation                Server Component (tier 2, ≥ xl)
 │   └── NavDisclosure × 4           Client island, one per dropdown group
@@ -39,6 +39,25 @@ heights rather than colors/radii/shadows already exposed through `@theme inline`
 
 `--color-ink-utility` is also mapped into `@theme inline` as a color token (`bg-ink-utility`),
 following the same pattern as every other brand color.
+
+## Figma Make market selector (utility tier)
+
+The upper-left control matches the approved Figma Make `src/components/Nav.tsx`:
+a gold **Market** label followed by a compact transparent, borderless native
+select displaying the active `Country · Currency` (for example `Uganda · UGX`
+and `South Africa · ZAR`). There is no globe glyph or separate
+alternate-market hyperlink in the desktop utility tier. This presentation
+fits the existing 32px tier; its native focus treatment remains visible.
+
+`UtilityMarketSelector` accepts only the request-resolved `MarketContext`,
+offers only deployment-enabled markets, and navigates by changing the current
+route's `market` query parameter while preserving other query fields and the
+fragment. It uses a same-origin document navigation because the root App Router
+layout otherwise may retain stale server-resolved market and locale props.
+`src/proxy.ts` still enforces the accepted ADR 0004 precedence
+(explicit market, then cookie, then configured default). The footer and mobile
+drawer retain their larger, touch-friendly `MarketSwitcher` link treatment.
+No market selector is a legal-market activation or buyer authority grant.
 
 ## Primary navigation model
 
@@ -72,7 +91,7 @@ requirement, and skipping it keeps the island smaller.
 useful destination (a drawer lists journeys, it does not nest a disclosure inside a disclosure):
 Commodities → `/products`, Markets → `/origins-markets`, Trade → `/trade`, About Us → `/about`,
 Resources → `/quality-traceability`, Contact → `/contact`. Below that: market selection
-(`MarketSwitcher`), the Request a Quote CTA, sign-in/account, Become a Supplier, Supplier Portal and
+(`MarketSwitcher` links), the Request a Quote CTA, sign-in/account, Become a Supplier, Supplier Portal and
 Help — matching the full action set the desktop utility bar and dropdowns expose.
 
 ## `/help`
@@ -85,10 +104,17 @@ the mobile drawer, and is included in `sitemap.ts` and the accessibility route m
 
 ## Brand mark
 
-`public/brand/zuribeans-mark.svg` is an original owned mark (a simple bean/seed silhouette with a
-botanical seam), not a third-party or generic icon-pack asset. It is served with a plain `<img>`,
-not `next/image`: Next Image does not optimize local SVG sources without `dangerouslyAllowSVG`,
-which is a security-header decision (`next.config.ts`) out of this component's scope.
+`public/brand/zuribeans-mark.svg` is the owned square geometric mark from the approved
+ZuriBeans Figma Make `src/components/Nav.tsx` (dark-green field, gold path and seed dot),
+representing an African agricultural **commodity trade house**, not a coffee-only shop
+or a copy of Nabhold Group Africa's holding-company identity. It is served with
+a plain `<img>`, not `next/image`: Next Image does not optimize local SVG
+sources without `dangerouslyAllowSVG`, which is a security-header decision
+(`next.config.ts`) out of this component's scope.
+
+The displayed wordmark is exactly **ZuriBeans** and the desktop lockup identifies
+**African commodity trade**. The root Shared theme only standardises semantic roles;
+it does not change this estate-owned identity.
 
 ## Testing
 

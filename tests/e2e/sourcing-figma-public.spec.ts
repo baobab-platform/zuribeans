@@ -48,31 +48,34 @@ test.describe("Figma Make public sourcing journeys", () => {
     ).toBeVisible()
   })
 
-  test("public sourcing pages remain responsive without page-width overflow", async ({
-    page,
-  }, testInfo) => {
-    test.skip(
-      testInfo.project.name !== "chromium-desktop",
-      "Canonical responsive matrix uses Chromium",
-    )
-    for (const width of [320, 390, 768, 1440]) {
-      await page.setViewportSize({ width, height: 900 })
-      for (const route of ["/sourcing", "/sourcing/become-a-supplier"] as const) {
-        await page.goto(route, { waitUntil: "domcontentloaded" })
-        await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
-        expect(
-          await page.evaluate(
-            () => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
-          ),
-          `Unexpected horizontal overflow: ${route} at ${width}px`,
-        ).toBe(true)
-        if (width === 390 || width === 1440) {
-          await testInfo.attach(`public-${route.split("/").filter(Boolean).join("-")}-${width}`, {
-            body: await page.screenshot({ fullPage: true, animations: "disabled" }),
-            contentType: "image/png",
-          })
+  test(
+    "public sourcing pages remain responsive without page-width overflow",
+    { tag: "@canonical-browser" },
+    async ({ page }, testInfo) => {
+      test.skip(
+        testInfo.project.name !== "chromium-desktop",
+        "Canonical responsive matrix uses Chromium",
+      )
+      for (const width of [320, 390, 768, 1440]) {
+        await page.setViewportSize({ width, height: 900 })
+        for (const route of ["/sourcing", "/sourcing/become-a-supplier"] as const) {
+          await page.goto(route, { waitUntil: "domcontentloaded" })
+          await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+          expect(
+            await page.evaluate(
+              () =>
+                document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+            ),
+            `Unexpected horizontal overflow: ${route} at ${width}px`,
+          ).toBe(true)
+          if (width === 390 || width === 1440) {
+            await testInfo.attach(`public-${route.split("/").filter(Boolean).join("-")}-${width}`, {
+              body: await page.screenshot({ fullPage: true, animations: "disabled" }),
+              contentType: "image/png",
+            })
+          }
         }
       }
-    }
-  })
+    },
+  )
 })

@@ -39,7 +39,7 @@ test("supplier preview is absent in production", async ({ page }) => {
   ).toBeVisible()
 })
 
-test("supplier wizard preview cannot submit", async ({ page }) => {
+test("supplier wizard preview cannot submit", { tag: "@local-fixture" }, async ({ page }) => {
   test.skip(
     process.env.CI === "true" || process.env.ZB_DEV_DATA_MODE !== "synthetic",
     "Requires explicit local development fixture gate",

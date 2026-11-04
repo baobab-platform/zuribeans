@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 
-test.describe("responsive shell", () => {
+test.describe("responsive shell", { tag: "@canonical-browser" }, () => {
   test.beforeEach(({}, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "Width matrix runs once in Chromium")
   })

@@ -121,21 +121,28 @@ test.describe("buyer and supplier entry journeys", () => {
     }
   })
 
-  test("captures desktop and mobile portal design review evidence", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== "chromium-desktop", "Capture once in the canonical browser")
-    for (const width of [390, 1440]) {
-      await page.setViewportSize({ width, height: 900 })
-      for (const journey of ["buyer", "supplier"] as const) {
-        await page.goto(`/${journey}/login`)
-        await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
-        expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(
-          width + 1,
-        )
-        await testInfo.attach(`${journey}-login-${width}`, {
-          body: await page.screenshot({ fullPage: true, animations: "disabled" }),
-          contentType: "image/png",
-        })
+  test(
+    "captures desktop and mobile portal design review evidence",
+    { tag: "@canonical-browser" },
+    async ({ page }, testInfo) => {
+      test.skip(
+        testInfo.project.name !== "chromium-desktop",
+        "Capture once in the canonical browser",
+      )
+      for (const width of [390, 1440]) {
+        await page.setViewportSize({ width, height: 900 })
+        for (const journey of ["buyer", "supplier"] as const) {
+          await page.goto(`/${journey}/login`)
+          await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+          expect(
+            await page.evaluate(() => document.documentElement.scrollWidth),
+          ).toBeLessThanOrEqual(width + 1)
+          await testInfo.attach(`${journey}-login-${width}`, {
+            body: await page.screenshot({ fullPage: true, animations: "disabled" }),
+            contentType: "image/png",
+          })
+        }
       }
-    }
-  })
+    },
+  )
 })
