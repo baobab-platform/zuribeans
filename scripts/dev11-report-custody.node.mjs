@@ -12,6 +12,7 @@ import { createHash } from "node:crypto"
 
 const require = createRequire(import.meta.url)
 const cli = require.resolve("@playwright/test/cli")
+const testModule = require.resolve("@playwright/test")
 const source = resolve("playwright.config.ts")
 const directory = mkdtempSync(join(tmpdir(), "baobab-report-custody-"))
 
@@ -42,7 +43,7 @@ export default { ...base, testDir: ${JSON.stringify(directory)},
   writeFileSync(
     join(directory, "custody.spec.ts"),
     `
-import {test, expect} from "@playwright/test";
+import {test, expect} from ${JSON.stringify(testModule)};
 test("original reporter custody", async ({}, info) => {
   await info.attach("original", {body: Buffer.from("source-only regression"), contentType: "text/plain"});
   expect(true).toBe(true);
