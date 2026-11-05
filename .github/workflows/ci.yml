@@ -79,6 +79,11 @@ jobs:
         run: node scripts/verify-playwright-browsers.mjs
       - name: Check formatting
         run: pnpm format:check
+      - name: Temporary DEV-11 formatter diagnostic (read-only checkout)
+        if: failure()
+        run: |
+          pnpm exec prettier --write src/lib/observability/w3c.ts src/lib/observability/w3c.test.ts
+          git diff -- src/lib/observability/w3c.ts src/lib/observability/w3c.test.ts
       - name: Lint
         run: pnpm lint
       - name: Type-check
