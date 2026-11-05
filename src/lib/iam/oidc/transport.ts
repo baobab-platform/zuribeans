@@ -1,6 +1,6 @@
 import "server-only"
 import { AuthenticationDenied, secureUrl } from "./settings"
-import { outgoingTraceparent } from "@/lib/observability/w3c"
+import { withBffCredentialedHttpSpan } from "@/lib/observability/w3c"
 
 /** Count decoded bytes through completion, including peers that stall after headers.
  * Cancellation is fire-and-forget: an uncooperative peer cannot delay cleanup.
@@ -55,15 +55,18 @@ export function credentialFetch(
         AbortSignal.timeout(5000),
         ...(init?.signal ? [init.signal] : []),
       ])
-      const headers = new Headers(init?.headers)
-      const traceparent = outgoingTraceparent()
-      if (traceparent) headers.set("traceparent", traceparent)
-      const response = await fetcher(url, {
-        ...init,
-        headers,
-        cache: "no-store",
-        redirect: "error",
-        signal,
+      // One actual allowlisted outbound request owns one exported client
+      // span. Never propagate an invented/unexported child ID.
+      const response = await withBffCredentialedHttpSpan(async (traceparent) => {
+        const headers = new Headers(init?.headers)
+        if (traceparent) headers.set("traceparent", traceparent)
+        return fetcher(url, {
+          ...init,
+          headers,
+          cache: "no-store",
+          redirect: "error",
+          signal,
+        })
       })
       if (
         !response.ok ||
