@@ -82,7 +82,7 @@ jobs:
       - name: DEV-07 bounded formatter source readback (read-only CI workspace)
         if: failure()
         run: |
-          pnpm exec prettier --write src/lib/iam/buyer/workload.ts src/lib/iam/buyer/commit.ts src/lib/iam/buyer/commit.test.ts src/lib/iam/buyer/handoff.ts src/lib/iam/oidc/handlers.ts src/lib/observability/w3c.ts src/app/api/buyer/commit/route.ts
+          pnpm exec prettier --write src/lib/iam/buyer/workload.ts src/lib/iam/buyer/commit.ts src/lib/iam/buyer/commit.test.ts src/lib/iam/buyer/handoff.ts src/lib/iam/oidc/handlers.ts src/lib/observability/w3c.ts src/lib/observability/w3c.test.ts src/app/api/buyer/commit/route.ts
           node - <<'NODE'
           const {readFileSync} = require('node:fs')
           const files = [
@@ -92,6 +92,7 @@ jobs:
             'src/lib/iam/buyer/handoff.ts',
             'src/lib/iam/oidc/handlers.ts',
             'src/lib/observability/w3c.ts',
+            'src/lib/observability/w3c.test.ts',
             'src/app/api/buyer/commit/route.ts',
           ]
           for (const file of files) {
