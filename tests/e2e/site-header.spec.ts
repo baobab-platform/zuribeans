@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 
-test.describe("two-tier trade-desk header", () => {
+test.describe("two-tier trade-desk header", { tag: "@canonical-browser" }, () => {
   test.beforeEach(({}, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "Desktop header runs once in Chromium")
   })

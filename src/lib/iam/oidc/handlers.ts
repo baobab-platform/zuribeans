@@ -7,6 +7,7 @@ import {
   type BuyerHandoffSettings,
 } from "../buyer/handoff"
 import { timingSafeEqual } from "node:crypto"
+import { buyerCommitSelection, commitBuyerPurchase, readBuyerCommitSettings } from "../buyer/commit"
 import { NextRequest, NextResponse } from "next/server"
 import { newOpaqueHandle, type ConfidentialSessionStore } from "../store/confidential-store"
 import { createConfidentialStoreFromEnv } from "../store/redis-backend"
@@ -232,6 +233,46 @@ export function authHandlers(deps: AuthDependencies = production) {
           deps.fetcher,
         )
         return NextResponse.json({ buyer }, { headers })
+      } catch {
+        return denied()
+      }
+    },
+    /** Consequential buyer purchase is distinct from context discovery.
+     * The browser can select only cart, organisation, country and replay key;
+     * a fresh IAM human session, confidential caller token and Trade operation
+     * readback are mandatory on every attempt.
+     */
+    async buyerCommit(request: NextRequest) {
+      try {
+        const ctx = context(request, true)
+        if (!ctx) return denied(404)
+        const target = readBuyerCommitSettings()
+        if (!target) return denied(404)
+        const value = handle(request, SESSION)
+        if (!value || request.headers.get("content-type") !== "application/json")
+          throw new AuthenticationDenied()
+        const session = await ctx.store.readSession(value)
+        if (!session) throw new AuthenticationDenied()
+        const bytes = await limitedBody(request.body, AbortSignal.timeout(5000), 2048)
+        const body = buyerCommitSelection
+          .extend({ csrfToken: z.string().regex(opaque) })
+          .strict()
+          .parse(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)))
+        if (!timingSafeEqual(Buffer.from(body.csrfToken), Buffer.from(session.csrfToken)))
+          throw new AuthenticationDenied()
+        const result = await commitBuyerPurchase(
+          session,
+          ctx.settings,
+          target,
+          {
+            cartId: body.cartId,
+            organisationId: body.organisationId,
+            countryCode: body.countryCode,
+            idempotencyKey: body.idempotencyKey,
+          },
+          deps.fetcher,
+        )
+        return NextResponse.json({ purchase: result }, { headers })
       } catch {
         return denied()
       }

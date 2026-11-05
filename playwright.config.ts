@@ -1,6 +1,23 @@
 import { defineConfig, devices } from "@playwright/test"
+const approvedGates = new Set(["functional", "accessibility", "visual", "lighthouse"])
+const evidenceGate =
+  process.env.CI && approvedGates.has(process.env.DEV11_EVIDENCE_GATE ?? "")
+    ? process.env.DEV11_EVIDENCE_GATE
+    : undefined
+
 export default defineConfig({
   testDir: "./tests/e2e",
+  reporter: evidenceGate
+    ? [
+        ["list"],
+        ["html", { open: "never", outputFolder: `playwright-report/dev11-${evidenceGate}` }],
+        ["json", { outputFile: `reports/dev11-${evidenceGate}-playwright.json` }],
+      ]
+    : process.env.CI
+      ? // Failure diagnostics must preserve every earlier gate's original.
+        [["list"], ["html", { open: "never", outputFolder: "playwright-report/unscoped" }]]
+      : "list",
+  outputDir: evidenceGate ? `test-results/dev11-${evidenceGate}` : "test-results/unscoped",
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,

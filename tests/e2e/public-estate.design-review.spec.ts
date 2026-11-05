@@ -24,7 +24,7 @@ const sizes = [
   { width: 1440, height: 900, label: "desktop" },
 ] as const
 
-test.describe("full public estate design review", () => {
+test.describe("full public estate design review", { tag: "@canonical-browser" }, () => {
   test.setTimeout(90_000)
 
   test.beforeEach(({}, info) => {

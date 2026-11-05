@@ -2,19 +2,13 @@ import "server-only"
 import { randomUUID } from "node:crypto"
 import { z } from "zod"
 import type { ConfidentialSession } from "../store/confidential-store"
-import {
-  AuthenticationDenied,
-  secureUrl,
-  TRADE_AUDIENCE,
-  type AuthSettings,
-} from "../oidc/settings"
+import { AuthenticationDenied, secureUrl, type AuthSettings } from "../oidc/settings"
 import { requireCurrentIamSession } from "../oidc/authority"
-import { discover } from "../oidc/protocol"
 import { fetchJson } from "../oidc/transport"
+import { currentBffWorkloadCredential } from "./workload"
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 const RESOURCE = /^[a-z][a-z0-9]*(?:_[a-z0-9]+)*$/
-const HANDOFF_SCOPE = "trade:buyer-handoff"
 const PUBLISHABLE_KEY = z.string().regex(/^pk_[A-Za-z0-9_-]{16,512}$/)
 export const buyerSelection = z
   .object({
@@ -103,68 +97,8 @@ export async function resolveBuyerHandoff(
     )
       throw new Error()
     const human = await requireCurrentIamSession(session, settings, fetcher)
-    const metadata = (await discover(settings, fetcher)).serverMetadata()
-    const tokenEndpoint = secureUrl(metadata.token_endpoint ?? "")
-    if (tokenEndpoint.origin !== new URL(settings.issuer).origin) throw new Error()
-    const basic = Buffer.from(
-      `${encodeURIComponent(settings.clientId)}:${encodeURIComponent(settings.clientSecret)}`,
-    ).toString("base64")
-    const headers = {
-      Authorization: `Basic ${basic}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    }
-    const token = z
-      .object({
-        access_token: z.string().min(1).max(8192),
-        token_type: z.string().refine((v) => v.toLowerCase() === "bearer"),
-        expires_in: z.number().int().min(1).max(900),
-      })
-      .parse(
-        await fetchJson(
-          tokenEndpoint.href,
-          {
-            method: "POST",
-            headers,
-            body: new URLSearchParams({
-              grant_type: "client_credentials",
-              scope: HANDOFF_SCOPE,
-              audience: TRADE_AUDIENCE,
-            }).toString(),
-          },
-          fetcher,
-        ),
-      )
-    const issuedAt = Date.now()
-    const current = z
-      .object({
-        active: z.literal(true),
-        iss: z.literal(settings.issuer),
-        client_id: z.literal(settings.clientId),
-        sub: z.literal(settings.clientId),
-        aud: z.union([z.string(), z.array(z.string())]).refine((v) => {
-          const values = Array.isArray(v) ? v : [v]
-          return values.length === 1 && values[0] === TRADE_AUDIENCE
-        }),
-        scope: z
-          .string()
-          .refine(
-            (v) => v.split(" ").includes(HANDOFF_SCOPE) && !v.split(" ").includes("trade:buy"),
-          ),
-        exp: z.number().int().positive().safe(),
-      })
-      .parse(
-        await fetchJson(
-          settings.introspectionEndpoint,
-          {
-            method: "POST",
-            headers,
-            body: new URLSearchParams({ token: token.access_token }).toString(),
-          },
-          fetcher,
-        ),
-      )
-    const callerExpiry = Math.min(current.exp * 1000, issuedAt + token.expires_in * 1000)
-    if (callerExpiry <= Date.now() || current.exp * 1000 > issuedAt + 900000) throw new Error()
+    const caller = await currentBffWorkloadCredential(settings, fetcher)
+    if (Date.now() >= Math.min(human.expiresAt, caller.expiresAt)) throw new Error()
     const correlation = randomUUID()
     const result = context.parse(
       await fetchJson(
@@ -172,7 +106,7 @@ export async function resolveBuyerHandoff(
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${token.access_token}`,
+            Authorization: `Bearer ${caller.accessToken}`,
             "Content-Type": "application/json",
             "X-Correlation-ID": correlation,
             // Required by Medusa's Store router. This is instance routing,
@@ -202,7 +136,7 @@ export async function resolveBuyerHandoff(
       expires <= evaluated ||
       expires > evaluated + 60000 ||
       expires > human.tokenExpiresAt ||
-      expires > current.exp * 1000 ||
+      expires > caller.tokenExpiresAt ||
       new Set(result.roles).size !== result.roles.length
     )
       throw new Error()
@@ -211,7 +145,7 @@ export async function resolveBuyerHandoff(
     // absolute issuer bounds. Clip this token-free display summary to our
     // tighter custody/advertised deadline instead of rejecting that valid
     // context. The context itself is never returned or extended by the BFF.
-    const summaryExpiry = Math.min(expires, human.expiresAt, callerExpiry)
+    const summaryExpiry = Math.min(expires, human.expiresAt, caller.expiresAt)
     if (summaryExpiry <= now) throw new Error()
     // A narrow display summary only. Never expose either token, provider body,
     // Principal, raw context/decision or an opaque server-side session record.

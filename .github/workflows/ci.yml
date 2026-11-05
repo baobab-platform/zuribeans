@@ -42,6 +42,20 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact owner source SHA
+        env:
+          DEV11_EXPECTED_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          # Bind original reports to the candidate, not GitHub's temporary merge.
+          # Checkout uses a temporary HOME; trust only this job-owned workspace.
+          task_source_sha="$(git -c safe.directory="$GITHUB_WORKSPACE" rev-parse HEAD)"
+          test "$task_source_sha" = "$DEV11_EXPECTED_SOURCE_SHA"
+          mkdir -p reports
+          printf '%s\n' "$task_source_sha" > reports/dev11-source-sha.txt
       - name: Audit Medusa 2.21.2 Store consumer inventory (static only)
         run: node scripts/verify-medusa-2212-consumer.mjs
       - name: Prepare transient user-level npm authentication
@@ -57,12 +71,34 @@ jobs:
       # required by this repository's synchronized 1.63.0 client before any suite.
       - name: Install synchronized Playwright browser revisions
         run: pnpm exec playwright install --with-deps chromium firefox webkit
+      - name: Preserve earlier gate originals after an unscoped Playwright invocation
+        run: node scripts/dev11-report-custody.node.mjs
       - name: Prepare Firefox home ownership
         run: chown 0:0 /github/home
       - name: Launch every pinned browser
         run: node scripts/verify-playwright-browsers.mjs
       - name: Check formatting
         run: pnpm format:check
+      - name: DEV-07 bounded formatter source readback (read-only CI workspace)
+        if: failure()
+        run: |
+          pnpm exec prettier --write src/lib/iam/buyer/workload.ts src/lib/iam/buyer/commit.ts src/lib/iam/buyer/commit.test.ts src/lib/iam/buyer/handoff.ts src/lib/iam/oidc/handlers.ts src/lib/observability/w3c.ts src/lib/observability/w3c.test.ts src/app/api/buyer/commit/route.ts
+          node - <<'NODE'
+          const {readFileSync} = require('node:fs')
+          const files = [
+            'src/lib/iam/buyer/workload.ts',
+            'src/lib/iam/buyer/commit.ts',
+            'src/lib/iam/buyer/commit.test.ts',
+            'src/lib/iam/buyer/handoff.ts',
+            'src/lib/iam/oidc/handlers.ts',
+            'src/lib/observability/w3c.ts',
+            'src/lib/observability/w3c.test.ts',
+            'src/app/api/buyer/commit/route.ts',
+          ]
+          for (const file of files) {
+            console.log('DEV07_FORMATTED_SOURCE ' + file + ' ' + readFileSync(file).toString('base64'))
+          }
+          NODE
       - name: Lint
         run: pnpm lint
       - name: Type-check
@@ -87,6 +123,7 @@ jobs:
         id: experience_browser
         env:
           CI: "true"
+          DEV11_EVIDENCE_GATE: functional
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
@@ -98,6 +135,7 @@ jobs:
       - name: Isolated Lighthouse performance lab
         env:
           CI: "true"
+          DEV11_EVIDENCE_GATE: lighthouse
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
@@ -107,6 +145,7 @@ jobs:
       - name: Landing-page accessibility checks
         env:
           CI: "true"
+          DEV11_EVIDENCE_GATE: accessibility
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
@@ -117,6 +156,7 @@ jobs:
         id: experience_visual
         env:
           CI: "true"
+          DEV11_EVIDENCE_GATE: visual
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
           NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
@@ -149,6 +189,9 @@ jobs:
             test-results/
             playwright-report/
             tests/e2e/landing-page.visual.spec.ts-snapshots/
+            reports/dev11-*-playwright.json
+            reports/dev11-source-sha.txt
+            reports/static-budget.json
 
   image:
     name: Build deployable image
@@ -156,6 +199,9 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - name: Build image
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
