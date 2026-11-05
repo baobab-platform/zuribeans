@@ -9,23 +9,40 @@ import { randomBytes } from "node:crypto"
 const PARENT = /^00-([0-9a-f]{32})-([0-9a-f]{16})-(0[01])$/
 const ZERO = /^0+$/
 type Span = {
-  traceId: string; spanId: string; parentSpanId?: string; flags: string
-  start: string; name: string; kind: 2 | 3
+  traceId: string
+  spanId: string
+  parentSpanId?: string
+  flags: string
+  start: string
+  name: string
+  kind: 2 | 3
 }
 const context = new AsyncLocalStorage<Span>()
 const id = (bytes: number) => randomBytes(bytes).toString("hex")
 const nanos = () => (BigInt(Date.now()) * 1000000n).toString()
 const header = (s: Span) => ["00", s.traceId, s.spanId, s.flags].join("-")
 const typed = (value: string) => ({ stringValue: value })
-const ROLES = new Set(["buyer-context", "buyer-commit", "iam-session", "iam-login", "iam-callback", "iam-logout"])
-type Route = "buyer-context" | "buyer-commit" | "iam-session" | "iam-login" | "iam-callback" | "iam-logout"
+const ROLES = new Set([
+  "buyer-context",
+  "buyer-commit",
+  "iam-session",
+  "iam-login",
+  "iam-callback",
+  "iam-logout",
+])
+type Route =
+  "buyer-context" | "buyer-commit" | "iam-session" | "iam-login" | "iam-callback" | "iam-logout"
 
 export function parseTraceparent(value: string | null): Span | null {
   const m = value === null ? null : PARENT.exec(value)
   if (!m || ZERO.test(m[1]) || ZERO.test(m[2])) return null
   return {
-    traceId: m[1], spanId: m[2], flags: m[3],
-    start: nanos(), name: "baobab.zuribeans.bff.request", kind: 2,
+    traceId: m[1],
+    spanId: m[2],
+    flags: m[3],
+    start: nanos(),
+    name: "baobab.zuribeans.bff.request",
+    kind: 2,
   }
 }
 
@@ -44,13 +61,22 @@ function collector(): string | undefined {
     // Development L4 candidate only: protected deployments require an approved
     // batched SDK exporter and cannot add synchronous per-request egress.
     if (!["development", "test", "integration"].includes(environment)) return undefined
-    if ((url.protocol !== "https:" &&
-        !(url.protocol === "http:" &&
-          ["development", "test", "integration"].includes(environment))) ||
-        url.username || url.password || url.search || url.hash ||
-        url.pathname !== "/v1/traces") return undefined
+    if (
+      (url.protocol !== "https:" &&
+        !(
+          url.protocol === "http:" && ["development", "test", "integration"].includes(environment)
+        )) ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash ||
+      url.pathname !== "/v1/traces"
+    )
+      return undefined
     return url.href
-  } catch { return undefined }
+  } catch {
+    return undefined
+  }
 }
 const b64 = (hex: string): string => Buffer.from(hex, "hex").toString("base64")
 async function exportSpan(span: Span, status: number, route: string): Promise<void> {
@@ -58,36 +84,60 @@ async function exportSpan(span: Span, status: number, route: string): Promise<vo
   if (!url || span.flags !== "01") return
   if (span.kind === 2 && !ROLES.has(route)) return
   const body = {
-    resourceSpans: [{
-      resource: { attributes: [
-        { key: "service.name", value: typed("zuribeans-bff") },
-        { key: "service.namespace", value: typed("baobab") },
-      ] },
-      scopeSpans: [{
-        scope: { name: "baobab.zuribeans.bff", version: "dev11" },
-        spans: [{
-          traceId: b64(span.traceId), spanId: b64(span.spanId),
-          ...(span.parentSpanId ? { parentSpanId: b64(span.parentSpanId) } : {}),
-          name: span.name, kind: span.kind,
-          startTimeUnixNano: span.start, endTimeUnixNano: nanos(),
+    resourceSpans: [
+      {
+        resource: {
           attributes: [
-            { key: "baobab.route", value: typed(route) },
-            { key: "http.response.status_class", value: typed(
-              status >= 500 ? "5xx" : status >= 400 ? "4xx" :
-              status >= 300 ? "3xx" : status >= 200 ? "2xx" : "OTHER",
-            ) },
+            { key: "service.name", value: typed("zuribeans-bff") },
+            { key: "service.namespace", value: typed("baobab") },
           ],
-          status: { code: status >= 500 ? 2 : 1 },
-        }],
-      }],
-    }],
+        },
+        scopeSpans: [
+          {
+            scope: { name: "baobab.zuribeans.bff", version: "dev11" },
+            spans: [
+              {
+                traceId: b64(span.traceId),
+                spanId: b64(span.spanId),
+                ...(span.parentSpanId ? { parentSpanId: b64(span.parentSpanId) } : {}),
+                name: span.name,
+                kind: span.kind,
+                startTimeUnixNano: span.start,
+                endTimeUnixNano: nanos(),
+                attributes: [
+                  { key: "baobab.route", value: typed(route) },
+                  {
+                    key: "http.response.status_class",
+                    value: typed(
+                      status >= 500
+                        ? "5xx"
+                        : status >= 400
+                          ? "4xx"
+                          : status >= 300
+                            ? "3xx"
+                            : status >= 200
+                              ? "2xx"
+                              : "OTHER",
+                    ),
+                  },
+                ],
+                status: { code: status >= 500 ? 2 : 1 },
+              },
+            ],
+          },
+        ],
+      },
+    ],
   }
   try {
     // Telemetry does not transport any credentials, PII, URLs, request bodies,
     // raw error messages, tenant or subject identifiers.
     await fetch(url, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body), redirect: "error", cache: "no-store",
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      redirect: "error",
+      cache: "no-store",
       signal: AbortSignal.timeout(1000),
     })
   } catch {
@@ -102,9 +152,13 @@ export async function withBffCredentialedHttpSpan<T>(
   const parent = context.getStore()
   if (!parent) return action(undefined)
   const child: Span = {
-    traceId: parent.traceId, spanId: id(8), parentSpanId: parent.spanId,
-    flags: parent.flags, start: nanos(),
-    name: "baobab.zuribeans.bff.credentialed_http", kind: 3,
+    traceId: parent.traceId,
+    spanId: id(8),
+    parentSpanId: parent.spanId,
+    flags: parent.flags,
+    start: nanos(),
+    name: "baobab.zuribeans.bff.credentialed_http",
+    kind: 3,
   }
   return context.run(child, async () => {
     let status = 503
@@ -130,8 +184,11 @@ export async function withBffTrace(
   const span: Span = {
     traceId: incoming?.traceId ?? id(16),
     parentSpanId: incoming?.spanId,
-    spanId: id(8), flags: incoming?.flags ?? "01",
-    start: nanos(), name: "baobab.zuribeans.bff.request", kind: 2,
+    spanId: id(8),
+    flags: incoming?.flags ?? "01",
+    start: nanos(),
+    name: "baobab.zuribeans.bff.request",
+    kind: 2,
   }
   return context.run(span, async () => {
     let status = 500
@@ -145,8 +202,12 @@ export async function withBffTrace(
     } finally {
       await exportSpan(span, status, route)
       console.info("bff request completed", {
-        route, status, cause, trace_id: span.traceId,
-        span_id: span.spanId, parent_span_id: span.parentSpanId ?? "",
+        route,
+        status,
+        cause,
+        trace_id: span.traceId,
+        span_id: span.spanId,
+        parent_span_id: span.parentSpanId ?? "",
       })
     }
   })
