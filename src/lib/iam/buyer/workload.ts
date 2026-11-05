@@ -29,7 +29,7 @@ export async function currentBffWorkloadCredential(
     access_token: z.string().min(1).max(8192),
     token_type: z.string().refine((v) => v.toLowerCase() === "bearer"),
     expires_in: z.number().int().min(1).max(900),
-  }).strict().parse(await fetchJson(endpoint.href, {
+  }).parse(await fetchJson(endpoint.href, {
     method: "POST", headers,
     body: new URLSearchParams({
       grant_type: "client_credentials", scope: HANDOFF_SCOPE,
