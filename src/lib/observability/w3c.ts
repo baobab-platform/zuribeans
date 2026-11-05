@@ -17,8 +17,8 @@ const id = (bytes: number) => randomBytes(bytes).toString("hex")
 const nanos = () => (BigInt(Date.now()) * 1000000n).toString()
 const header = (s: Span) => ["00", s.traceId, s.spanId, s.flags].join("-")
 const typed = (value: string) => ({ stringValue: value })
-const ROLES = new Set(["buyer-context", "iam-session", "iam-login", "iam-callback", "iam-logout"])
-type Route = "buyer-context" | "iam-session" | "iam-login" | "iam-callback" | "iam-logout"
+const ROLES = new Set(["buyer-context", "buyer-commit", "iam-session", "iam-login", "iam-callback", "iam-logout"])
+type Route = "buyer-context" | "buyer-commit" | "iam-session" | "iam-login" | "iam-callback" | "iam-logout"
 
 export function parseTraceparent(value: string | null): Span | null {
   const m = value === null ? null : PARENT.exec(value)
