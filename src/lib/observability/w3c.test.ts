@@ -1,7 +1,12 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from "vitest"
 vi.mock("server-only", () => ({}))
-import { outgoingTraceparent, parseTraceparent, withBffTrace, withBffCredentialedHttpSpan } from "./w3c"
+import {
+  outgoingTraceparent,
+  parseTraceparent,
+  withBffTrace,
+  withBffCredentialedHttpSpan,
+} from "./w3c"
 
 afterEach(() => vi.restoreAllMocks())
 
@@ -42,7 +47,9 @@ describe("DEV-11 native confidential BFF W3C runtime path", () => {
     const spans: Array<Record<string, unknown>> = []
     const exporter = vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
       const message = JSON.parse(String(init?.body))
-      expect(message.resourceSpans[0].resource.attributes[0].value.stringValue).toBe("zuribeans-bff")
+      expect(message.resourceSpans[0].resource.attributes[0].value.stringValue).toBe(
+        "zuribeans-bff",
+      )
       spans.push(message.resourceSpans[0].scopeSpans[0].spans[0])
       return new Response(null, { status: 200 })
     })
