@@ -82,8 +82,11 @@ jobs:
       - name: Temporary DEV-11 formatter diagnostic (read-only checkout)
         if: failure()
         run: |
+          cp src/lib/observability/w3c.ts /tmp/dev11-w3c-original.ts
+          cp src/lib/observability/w3c.test.ts /tmp/dev11-w3c-test-original.ts
           pnpm exec prettier --write src/lib/observability/w3c.ts src/lib/observability/w3c.test.ts
-          git diff -- src/lib/observability/w3c.ts src/lib/observability/w3c.test.ts
+          git diff --no-index -- /tmp/dev11-w3c-original.ts src/lib/observability/w3c.ts || true
+          git diff --no-index -- /tmp/dev11-w3c-test-original.ts src/lib/observability/w3c.test.ts || true
       - name: Lint
         run: pnpm lint
       - name: Type-check
