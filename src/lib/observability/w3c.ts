@@ -107,7 +107,8 @@ export async function withBffCredentialedHttpSpan<T>(
     let status = 503
     try {
       const result = await action(header(child))
-      status = 200
+      // A real IAM/Trade 403/503 cannot be exported as a fabricated HTTP 200.
+      status = result instanceof Response ? result.status : 200
       return result
     } finally {
       await exportSpan(child, status, "credentialed_http")
