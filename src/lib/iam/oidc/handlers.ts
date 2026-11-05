@@ -254,12 +254,16 @@ export function authHandlers(deps: AuthDependencies = production) {
         const session = await ctx.store.readSession(value)
         if (!session) throw new AuthenticationDenied()
         const bytes = await limitedBody(request.body, AbortSignal.timeout(5000), 2048)
-        const body = buyerCommitSelection.extend({ csrfToken: z.string().regex(opaque) })
-          .strict().parse(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)))
+        const body = buyerCommitSelection
+          .extend({ csrfToken: z.string().regex(opaque) })
+          .strict()
+          .parse(JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)))
         if (!timingSafeEqual(Buffer.from(body.csrfToken), Buffer.from(session.csrfToken)))
           throw new AuthenticationDenied()
         const result = await commitBuyerPurchase(
-          session, ctx.settings, target,
+          session,
+          ctx.settings,
+          target,
           {
             cartId: body.cartId,
             organisationId: body.organisationId,
