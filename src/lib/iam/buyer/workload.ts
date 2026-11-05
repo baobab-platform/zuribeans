@@ -25,32 +25,57 @@ export async function currentBffWorkloadCredential(
     "Content-Type": "application/x-www-form-urlencoded",
   }
   const started = Date.now()
-  const token = z.object({
-    access_token: z.string().min(1).max(8192),
-    token_type: z.string().refine((v) => v.toLowerCase() === "bearer"),
-    expires_in: z.number().int().min(1).max(900),
-  }).parse(await fetchJson(endpoint.href, {
-    method: "POST", headers,
-    body: new URLSearchParams({
-      grant_type: "client_credentials", scope: HANDOFF_SCOPE,
-      audience: TRADE_AUDIENCE,
-    }).toString(),
-  }, fetcher))
-  const current = z.object({
-    active: z.literal(true),
-    iss: z.literal(settings.issuer),
-    client_id: z.literal(settings.clientId),
-    sub: z.literal(settings.clientId),
-    aud: z.union([z.string(), z.array(z.string())]).refine((v) =>
-      (Array.isArray(v) ? v : [v]).length === 1 &&
-      (Array.isArray(v) ? v[0] : v) === TRADE_AUDIENCE),
-    scope: z.string().refine((v) =>
-      v.split(" ").includes(HANDOFF_SCOPE) && !v.split(" ").includes("trade:buy")),
-    exp: z.number().int().positive().safe(),
-  }).passthrough().parse(await fetchJson(settings.introspectionEndpoint, {
-    method: "POST", headers,
-    body: new URLSearchParams({ token: token.access_token }).toString(),
-  }, fetcher))
+  const token = z
+    .object({
+      access_token: z.string().min(1).max(8192),
+      token_type: z.string().refine((v) => v.toLowerCase() === "bearer"),
+      expires_in: z.number().int().min(1).max(900),
+    })
+    .parse(
+      await fetchJson(
+        endpoint.href,
+        {
+          method: "POST",
+          headers,
+          body: new URLSearchParams({
+            grant_type: "client_credentials",
+            scope: HANDOFF_SCOPE,
+            audience: TRADE_AUDIENCE,
+          }).toString(),
+        },
+        fetcher,
+      ),
+    )
+  const current = z
+    .object({
+      active: z.literal(true),
+      iss: z.literal(settings.issuer),
+      client_id: z.literal(settings.clientId),
+      sub: z.literal(settings.clientId),
+      aud: z
+        .union([z.string(), z.array(z.string())])
+        .refine(
+          (v) =>
+            (Array.isArray(v) ? v : [v]).length === 1 &&
+            (Array.isArray(v) ? v[0] : v) === TRADE_AUDIENCE,
+        ),
+      scope: z
+        .string()
+        .refine((v) => v.split(" ").includes(HANDOFF_SCOPE) && !v.split(" ").includes("trade:buy")),
+      exp: z.number().int().positive().safe(),
+    })
+    .passthrough()
+    .parse(
+      await fetchJson(
+        settings.introspectionEndpoint,
+        {
+          method: "POST",
+          headers,
+          body: new URLSearchParams({ token: token.access_token }).toString(),
+        },
+        fetcher,
+      ),
+    )
   const expiresAt = Math.min(started + token.expires_in * 1000, current.exp * 1000)
   if (expiresAt <= Date.now() || current.exp * 1000 > started + 900000) {
     throw new Error("IAM_WORKLOAD_NOT_CURRENT")
