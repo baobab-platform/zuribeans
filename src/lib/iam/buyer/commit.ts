@@ -26,6 +26,9 @@ export function readBuyerCommitSettings(
   if (env.ZURIBEANS_BUYER_COMMIT_ENABLED !== "true") return null
   if (
     !["development", "integration"].includes(env.ZURIBEANS_IAM_ENVIRONMENT ?? "") ||
+    [env.BAOBAB_ENVIRONMENT, env.BAOBAB_DEPLOYMENT_ENV].some(
+      (value) => value !== undefined && !["development", "integration"].includes(value),
+    ) ||
     env.NODE_TLS_REJECT_UNAUTHORIZED === "0"
   )
     throw new AuthenticationDenied()
@@ -72,7 +75,7 @@ export async function commitBuyerPurchase(
     const human = await requireCurrentIamSession(session, settings, fetcher)
     const caller = await currentBffWorkloadCredential(settings, fetcher)
     const correlation = randomUUID()
-    if (Date.now() >= Math.min(human.tokenExpiresAt, caller.expiresAt)) throw new Error()
+    if (Date.now() >= Math.min(human.expiresAt, caller.expiresAt)) throw new Error()
     const response = answer.parse(
       await fetchJson(
         endpoint.href,

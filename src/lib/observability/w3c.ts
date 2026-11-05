@@ -57,15 +57,22 @@ function collector(): string | undefined {
   if (!raw) return undefined
   try {
     const url = new URL(raw)
-    const environment = process.env.BAOBAB_ENVIRONMENT ?? process.env.NODE_ENV ?? "development"
+    const local = ["development", "test", "integration"]
+    const profiles = [
+      process.env.BAOBAB_ENVIRONMENT,
+      process.env.BAOBAB_DEPLOYMENT_ENV,
+      process.env.ZURIBEANS_IAM_ENVIRONMENT,
+    ].filter((value) => value !== undefined)
     // Development L4 candidate only: protected deployments require an approved
     // batched SDK exporter and cannot add synchronous per-request egress.
-    if (!["development", "test", "integration"].includes(environment)) return undefined
     if (
-      (url.protocol !== "https:" &&
-        !(
-          url.protocol === "http:" && ["development", "test", "integration"].includes(environment)
-        )) ||
+      !(profiles.length ? profiles : [process.env.NODE_ENV ?? "development"]).every((profile) =>
+        local.includes(profile),
+      )
+    )
+      return undefined
+    if (
+      !["https:", "http:"].includes(url.protocol) ||
       url.username ||
       url.password ||
       url.search ||
@@ -121,7 +128,7 @@ async function exportSpan(span: Span, status: number, route: string): Promise<vo
                     ),
                   },
                 ],
-                status: { code: status >= 500 ? 2 : 1 },
+                status: { code: status >= (span.kind === 3 ? 400 : 500) ? 2 : 0 },
               },
             ],
           },

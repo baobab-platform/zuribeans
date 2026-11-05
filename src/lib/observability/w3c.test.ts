@@ -8,7 +8,10 @@ import {
   withBffCredentialedHttpSpan,
 } from "./w3c"
 
-afterEach(() => vi.restoreAllMocks())
+afterEach(() => {
+  vi.unstubAllEnvs()
+  vi.restoreAllMocks()
+})
 
 describe("DEV-11 native confidential BFF W3C runtime path", () => {
   it("creates a real child for downstream IAM/Trade requests", async () => {
@@ -58,11 +61,11 @@ describe("DEV-11 native confidential BFF W3C runtime path", () => {
         new Request("https://zuribeans.test/api/buyer/context"),
         "buyer-context",
         async () => {
-          await withBffCredentialedHttpSpan(async () => "ok")
-          return new Response(null, { status: 200 })
+          await withBffCredentialedHttpSpan(async () => new Response(null, { status: 403 }))
+          return new Response(null, { status: 403 })
         },
       )
-      expect(result.status).toBe(200)
+      expect(result.status).toBe(403)
       expect(exporter).toHaveBeenCalledTimes(2)
       const server = spans.find((s) => s.kind === 2)!
       const client = spans.find((s) => s.kind === 3)!
@@ -70,8 +73,17 @@ describe("DEV-11 native confidential BFF W3C runtime path", () => {
       expect(client).toBeDefined()
       expect(client.traceId).toBe(server.traceId)
       expect(client.parentSpanId).toBe(server.spanId)
+      expect(client.status).toEqual({ code: 2 })
+      expect(server.status).toEqual({ code: 0 })
       expect(JSON.stringify(spans)).not.toContain("/api/buyer/context")
       expect(JSON.stringify(spans)).not.toContain("Bearer")
+      vi.stubEnv("BAOBAB_DEPLOYMENT_ENV", "staging")
+      await withBffTrace(
+        new Request("https://zuribeans.test"),
+        "buyer-context",
+        async () => new Response(null, { status: 204 }),
+      )
+      expect(exporter).toHaveBeenCalledTimes(2)
     } finally {
       if (original === undefined) delete process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       else process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = original

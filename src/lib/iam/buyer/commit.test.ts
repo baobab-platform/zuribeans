@@ -12,8 +12,10 @@ vi.mock("./workload", () => ({
   currentBffWorkloadCredential: vi.fn(async () => ({
     accessToken: "private-bff-issuer-token",
     expiresAt: Date.now() + 60000,
+    tokenExpiresAt: Date.now() + 60000,
   })),
 }))
+import { requireCurrentIamSession } from "../oidc/authority"
 import { authHandlers, SESSION } from "../oidc/handlers"
 import type { AuthSettings } from "../oidc/settings"
 import type { ConfidentialSession } from "../store/confidential-store"
@@ -62,6 +64,19 @@ describe("DEV-07 confidential buyer commit (source-only, no buyer acceptance)", 
         ZURIBEANS_BUYER_HANDOFF_ENABLED: "true",
         ZURIBEANS_IAM_ENVIRONMENT: "production",
       }),
+    ).toThrow()
+  })
+  it("refuses protected deployment even with the development IAM flag and valid Trade target", () => {
+    const environment = {
+      ZURIBEANS_BUYER_COMMIT_ENABLED: "true",
+      ZURIBEANS_BUYER_HANDOFF_ENABLED: "true",
+      ZURIBEANS_IAM_ENVIRONMENT: "integration",
+      ZURIBEANS_TRADE_BASE_URL: "https://trade.example.test",
+      ZURIBEANS_TRADE_PUBLISHABLE_KEY: target.publishableKey,
+    }
+    expect(readBuyerCommitSettings(environment)).toEqual(target)
+    expect(() =>
+      readBuyerCommitSettings({ ...environment, BAOBAB_DEPLOYMENT_ENV: "staging" }),
     ).toThrow()
   })
   it("admits no browser price or self-declared mandate or granted role", () => {
@@ -120,6 +135,17 @@ describe("DEV-07 confidential buyer commit (source-only, no buyer acceptance)", 
     expect(seen[0].data).not.toHaveProperty("amount_minor")
     expect(seen[0].data).not.toHaveProperty("seller_decision_id")
     expect(JSON.stringify(result)).not.toContain("token")
+  })
+  it("does not forward a commitment when local session custody has expired", async () => {
+    vi.mocked(requireCurrentIamSession).mockResolvedValueOnce({
+      tokenExpiresAt: Date.now() + 60000,
+      expiresAt: Date.now() - 1,
+    })
+    const fetcher = vi.fn<typeof fetch>()
+    await expect(
+      commitBuyerPurchase(session(), settings, target, selection(), fetcher),
+    ).rejects.toThrow()
+    expect(fetcher).not.toHaveBeenCalled()
   })
   it("refuses a price-bearing request and refuses provider success with changed correlation", async () => {
     const fetcher = vi.fn<typeof fetch>(async () =>

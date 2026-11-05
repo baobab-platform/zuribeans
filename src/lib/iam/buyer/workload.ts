@@ -13,7 +13,7 @@ export const HANDOFF_SCOPE = "trade:buyer-handoff"
 export async function currentBffWorkloadCredential(
   settings: AuthSettings,
   fetcher: typeof fetch = fetch,
-): Promise<{ accessToken: string; expiresAt: number }> {
+): Promise<{ accessToken: string; expiresAt: number; tokenExpiresAt: number }> {
   const metadata = (await discover(settings, fetcher)).serverMetadata()
   const endpoint = secureUrl(metadata.token_endpoint ?? "")
   if (endpoint.origin !== new URL(settings.issuer).origin) throw new Error("IAM_ISSUER_UNAVAILABLE")
@@ -76,9 +76,10 @@ export async function currentBffWorkloadCredential(
         fetcher,
       ),
     )
-  const expiresAt = Math.min(started + token.expires_in * 1000, current.exp * 1000)
-  if (expiresAt <= Date.now() || current.exp * 1000 > started + 900000) {
+  const tokenExpiresAt = current.exp * 1000
+  const expiresAt = Math.min(started + token.expires_in * 1000, tokenExpiresAt)
+  if (expiresAt <= Date.now() || tokenExpiresAt > started + 900000) {
     throw new Error("IAM_WORKLOAD_NOT_CURRENT")
   }
-  return { accessToken: token.access_token, expiresAt }
+  return { accessToken: token.access_token, expiresAt, tokenExpiresAt }
 }

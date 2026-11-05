@@ -2,12 +2,7 @@ import "server-only"
 import { randomUUID } from "node:crypto"
 import { z } from "zod"
 import type { ConfidentialSession } from "../store/confidential-store"
-import {
-  AuthenticationDenied,
-  secureUrl,
-  TRADE_AUDIENCE,
-  type AuthSettings,
-} from "../oidc/settings"
+import { AuthenticationDenied, secureUrl, type AuthSettings } from "../oidc/settings"
 import { requireCurrentIamSession } from "../oidc/authority"
 import { fetchJson } from "../oidc/transport"
 import { currentBffWorkloadCredential } from "./workload"
@@ -103,6 +98,7 @@ export async function resolveBuyerHandoff(
       throw new Error()
     const human = await requireCurrentIamSession(session, settings, fetcher)
     const caller = await currentBffWorkloadCredential(settings, fetcher)
+    if (Date.now() >= Math.min(human.expiresAt, caller.expiresAt)) throw new Error()
     const correlation = randomUUID()
     const result = context.parse(
       await fetchJson(
@@ -140,7 +136,7 @@ export async function resolveBuyerHandoff(
       expires <= evaluated ||
       expires > evaluated + 60000 ||
       expires > human.tokenExpiresAt ||
-      expires > caller.expiresAt ||
+      expires > caller.tokenExpiresAt ||
       new Set(result.roles).size !== result.roles.length
     )
       throw new Error()
