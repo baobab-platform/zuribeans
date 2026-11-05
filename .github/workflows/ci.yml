@@ -79,14 +79,25 @@ jobs:
         run: node scripts/verify-playwright-browsers.mjs
       - name: Check formatting
         run: pnpm format:check
-      - name: Temporary DEV-11 formatter diagnostic (read-only checkout)
+      - name: DEV-07 bounded formatter source readback (read-only CI workspace)
         if: failure()
         run: |
-          cp src/lib/observability/w3c.ts /tmp/dev11-w3c-original.ts
-          cp src/lib/observability/w3c.test.ts /tmp/dev11-w3c-test-original.ts
-          pnpm exec prettier --write src/lib/observability/w3c.ts src/lib/observability/w3c.test.ts
-          git diff --no-index -- /tmp/dev11-w3c-original.ts src/lib/observability/w3c.ts || true
-          git diff --no-index -- /tmp/dev11-w3c-test-original.ts src/lib/observability/w3c.test.ts || true
+          pnpm exec prettier --write src/lib/iam/buyer/workload.ts src/lib/iam/buyer/commit.ts src/lib/iam/buyer/commit.test.ts src/lib/iam/buyer/handoff.ts src/lib/iam/oidc/handlers.ts src/lib/observability/w3c.ts src/app/api/buyer/commit/route.ts
+          node - <<'NODE'
+          const {readFileSync} = require('node:fs')
+          const files = [
+            'src/lib/iam/buyer/workload.ts',
+            'src/lib/iam/buyer/commit.ts',
+            'src/lib/iam/buyer/commit.test.ts',
+            'src/lib/iam/buyer/handoff.ts',
+            'src/lib/iam/oidc/handlers.ts',
+            'src/lib/observability/w3c.ts',
+            'src/app/api/buyer/commit/route.ts',
+          ]
+          for (const file of files) {
+            console.log('DEV07_FORMATTED_SOURCE ' + file + ' ' + readFileSync(file).toString('base64'))
+          }
+          NODE
       - name: Lint
         run: pnpm lint
       - name: Type-check
