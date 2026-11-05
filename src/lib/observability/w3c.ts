@@ -41,6 +41,9 @@ function collector(): string | undefined {
   try {
     const url = new URL(raw)
     const environment = process.env.BAOBAB_ENVIRONMENT ?? process.env.NODE_ENV ?? "development"
+    // Development L4 candidate only: protected deployments require an approved
+    // batched SDK exporter and cannot add synchronous per-request egress.
+    if (!["development", "test", "integration"].includes(environment)) return undefined
     if ((url.protocol !== "https:" &&
         !(url.protocol === "http:" &&
           ["development", "test", "integration"].includes(environment))) ||
