@@ -2,7 +2,10 @@ FROM node:24.20.0-alpine3.24 AS dependencies
 WORKDIR /app
 # Next.js documents libc6-compat as needed on Alpine for some native dependencies.
 RUN apk add --no-cache libc6-compat
-RUN npm install --global corepack@latest && corepack enable
+# BA-SEC-DEP-001: do not resolve mutable 'latest' on each build.
+# Match the reviewed Corepack release used by the DEV-10 Node toolchain.
+RUN npm install --global --no-audit --no-fund corepack@0.36.0 && \
+    corepack enable && test "$(corepack --version)" = "0.36.0"
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 # Registry read token is a transient BuildKit mount, never image ARG/ENV.
 RUN --mount=type=secret,id=npm_token,required=true \
