@@ -184,6 +184,10 @@ class EstateDependencyMaintenancePolicyTests(unittest.TestCase):
         self.assertNotIn("pnpm audit --prod", source)
         self.assertRegex(source, r'cron:\s*["\']?\d+\s+\d+\s+\*\s+\*\s+\*')
 
+    def test_security_scanner_uses_estate_verified_immutable_image_digest(self):
+        source = SECURITY.read_text(encoding="utf-8")
+        self.assertIn("sha256:1b3165067912eacbca96b576efb67e0428850b1ff1a953aa9013127a01635371", source)
+
     def test_pinned_reusable_validator_and_ecosystems(self):
         source = POLICY_CALLER.read_text(encoding="utf-8")
         self.assertRegex(source, r'enforce-dependabot-config\.yml@[a-f0-9]{40}')
