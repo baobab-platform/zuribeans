@@ -1,6 +1,7 @@
 # BA-SEC-DEP-001 — Approved Baobab Dependency & Security Maintenance Policy v1.0.
 # Advisory-driven security updates are not constrained by the weekly version schedule.
-# Keep the default branch implicit (target-branch disables security-update routing).
+# Keep default branch implicit: target-branch changes version-update settings;
+# security updates still target the default branch, but cannot use those options.
 # Routine grouping excludes majors and does not coalesce security updates.
 # Review pinned Actions, npm/pnpm, private Baobab Experience packages and
 # image digests independently before qualifying any protected deployment.
