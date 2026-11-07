@@ -52,7 +52,7 @@ def policy_violations(doc: object) -> list[str]:
         if not path.startswith("/") or ".." in path.split("/"):
             errors.append("unsafe directory")
         if "target-branch" in update:
-            errors.append("target-branch disables security-update routing")
+            errors.append("target-branch excludes configuration from security-update options")
         schedule = update.get("schedule")
         if not isinstance(schedule, dict) or schedule.get("interval") not in (
             "daily", "weekly", "monthly", "quarterly"
@@ -122,7 +122,7 @@ class EstateDependencyMaintenancePolicyTests(unittest.TestCase):
         self.assertEqual(policy_violations(self.actual), [])
 
     def test_no_redundant_target_branch(self):
-        self.reject("target-branch disables security-update routing",
+        self.reject("target-branch excludes configuration from security-update options",
                     lambda c: c["updates"][0].update({"target-branch": "main"}))
 
     def test_missing_ecosystem_is_rejected(self):
