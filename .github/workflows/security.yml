@@ -29,7 +29,7 @@ jobs:
     name: Dependency audit
     runs-on: ubuntu-26.04
     container:
-      image: ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend
+      image: ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend@sha256:1b3165067912eacbca96b576efb67e0428850b1ff1a953aa9013127a01635371
       options: --user 0
     steps:
       - name: Checkout source
