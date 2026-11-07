@@ -204,7 +204,8 @@ class EstateDependencyMaintenancePolicyTests(unittest.TestCase):
         self.assertIn(POLICY_ID, record)
 
     def test_zuribeans_corepack_is_not_mutable_latest(self):
-        if ROOT.name == "zuribeans":
+        import json
+        if "zuribeans" in json.loads(PACKAGE.read_text(encoding="utf-8"))["name"]:
             docker = DOCKERFILE.read_text(encoding="utf-8")
             self.assertNotIn("corepack@latest", docker)
             self.assertIn("corepack@0.36.0", docker)
