@@ -99,13 +99,6 @@ jobs:
             console.log('DEV07_FORMATTED_SOURCE ' + file + ' ' + readFileSync(file).toString('base64'))
           }
           NODE
-      - name: Budget-script formatting diagnostic (temporary; preserves failed format gate)
-        if: failure()
-        run: |
-          pnpm exec prettier --write scripts/check-performance-budget.mjs
-          printf 'BUDGET_SCRIPT_BASE64 '
-          base64 -w0 scripts/check-performance-budget.mjs
-          printf '\n'
       - name: Lint
         run: pnpm lint
       - name: Type-check
