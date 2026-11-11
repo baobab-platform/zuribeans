@@ -58,7 +58,11 @@ describe("DEV-11 native confidential BFF W3C runtime path", () => {
     })
     try {
       const result = await withBffTrace(
-        new Request("https://zuribeans.test/api/buyer/context"),
+        new Request("https://zuribeans.test/api/buyer/context", {
+          headers: {
+            traceparent: "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-03",
+          },
+        }),
         "buyer-context",
         async () => {
           await withBffCredentialedHttpSpan(async () => new Response(null, { status: 403 }))
@@ -71,8 +75,13 @@ describe("DEV-11 native confidential BFF W3C runtime path", () => {
       const client = spans.find((s) => s.kind === 3)!
       expect(server).toBeDefined()
       expect(client).toBeDefined()
+      expect(server.traceId).toBe("4bf92f3577b34da6a3ce929d0e0e4736")
+      expect(server.parentSpanId).toBe("00f067aa0ba902b7")
+      expect(server.spanId).toMatch(/^[0-9a-f]{16}$/)
+      expect(client.spanId).toMatch(/^[0-9a-f]{16}$/)
       expect(client.traceId).toBe(server.traceId)
       expect(client.parentSpanId).toBe(server.spanId)
+      expect(result.headers.get("traceparent")).toMatch(/-03$/)
       expect(client.status).toEqual({ code: 2 })
       expect(server.status).toEqual({ code: 0 })
       expect(JSON.stringify(spans)).not.toContain("/api/buyer/context")
@@ -87,6 +96,33 @@ describe("DEV-11 native confidential BFF W3C runtime path", () => {
     } finally {
       if (original === undefined) delete process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       else process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = original
+    }
+  })
+
+  it("bounds pending exports without delaying the real response", async () => {
+    vi.stubEnv("ZURIBEANS_IAM_ENVIRONMENT", "development")
+    vi.stubEnv("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "http://otel-collector:4318/v1/traces")
+    vi.spyOn(console, "info").mockImplementation(() => {})
+    let finishExport: (value: Response) => void = () => {}
+    const pending = new Promise<Response>((resolve) => {
+      finishExport = resolve
+    })
+    const exporter = vi.spyOn(globalThis, "fetch").mockReturnValue(pending)
+    try {
+      const responses = await Promise.all(
+        Array.from({ length: 40 }, () =>
+          withBffTrace(
+            new Request("https://zuribeans.test/api/buyer/context"),
+            "buyer-context",
+            async () => new Response(null, { status: 403 }),
+          ),
+        ),
+      )
+      expect(responses.every((response) => response.status === 403)).toBe(true)
+      expect(exporter).toHaveBeenCalledTimes(32)
+    } finally {
+      finishExport(new Response(null, { status: 200 }))
+      await pending
     }
   })
 
