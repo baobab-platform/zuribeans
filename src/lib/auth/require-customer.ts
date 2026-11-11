@@ -17,5 +17,10 @@ export const requireCustomer = async (fallbackPath: string) => {
 
   const headerList = await headers()
   const pathname = headerList.get(PATHNAME_HEADER_NAME) ?? fallbackPath
-  redirect(`/login?next=${encodeURIComponent(pathname)}`)
+  const signInRoute = pathname.startsWith("/supplier")
+    ? "/supplier/login"
+    : pathname.startsWith("/account")
+      ? "/buyer/login"
+      : "/login"
+  redirect(`${signInRoute}?next=${encodeURIComponent(pathname)}`)
 }

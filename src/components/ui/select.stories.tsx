@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, userEvent, waitFor, within } from "storybook/test"
 import { Select } from "./select"
 const meta = { title: "Forms/Select", component: Select } satisfies Meta<typeof Select>
 export default meta
@@ -25,8 +25,15 @@ export const Country: Story = {
     const form = canvas.getByRole("form", { name: "Synthetic company form" }) as HTMLFormElement
     await expect(new FormData(form).get("country")).toBe("UG")
     await userEvent.click(trigger)
+    // Ensure the portal and its keyboard target are fully open before sending
+    // Escape; the browser runner may schedule focus after the click promise.
+    // Do not bypass dismissal: assert both the closed state and focus return.
+    await waitFor(() => expect(trigger).toHaveAttribute("aria-expanded", "true"))
+    const selected = canvas.getByRole("option", { name: "Uganda" })
+    await waitFor(() => expect(selected).toHaveFocus())
     await userEvent.keyboard("{Escape}")
-    await expect(trigger).toHaveFocus()
+    await waitFor(() => expect(trigger).toHaveAttribute("aria-expanded", "false"))
+    await waitFor(() => expect(trigger).toHaveFocus())
   },
 }
 

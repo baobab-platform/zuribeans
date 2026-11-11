@@ -18,12 +18,19 @@ import { z } from "zod"
 import { getSupplierAdminEnvironment } from "@/lib/configuration/environment"
 import { isAuthorizedInternalRequest } from "@/lib/auth/internal-api-key"
 import { setSupplierCanonicalOrganisationId } from "@/lib/supplier/repository"
+import { SupplierCanonicalLinkConflict } from "@/lib/supplier/canonical-link-conflict"
 
 export const dynamic = "force-dynamic"
 
-const bodySchema = z.object({
-  canonical_organisation_id: z.string().min(1, "canonical_organisation_id is required."),
-})
+const bodySchema = z
+  .object({
+    canonical_organisation_id: z
+      .string()
+      .min(3)
+      .max(128)
+      .regex(/^[A-Za-z0-9][A-Za-z0-9._:-]*$/),
+  })
+  .strict()
 
 export async function POST(
   request: Request,
@@ -47,10 +54,17 @@ export async function POST(
   }
 
   const { id } = await params
-  const organisation = await setSupplierCanonicalOrganisationId(
-    id,
-    parsed.data.canonical_organisation_id,
-  )
+  let organisation
+  try {
+    organisation = await setSupplierCanonicalOrganisationId(
+      id,
+      parsed.data.canonical_organisation_id,
+    )
+  } catch (error) {
+    if (error instanceof SupplierCanonicalLinkConflict)
+      return Response.json({ error: "canonical_link_conflict" }, { status: 409 })
+    throw error
+  }
   if (!organisation) {
     return Response.json({ error: "not_found" }, { status: 404 })
   }

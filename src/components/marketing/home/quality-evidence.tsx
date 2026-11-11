@@ -17,7 +17,7 @@ export function QualityEvidence({ items }: { items: readonly QualityEvidenceItem
 
   return (
     <section
-      className="relative overflow-hidden border-y border-line bg-sand/40 py-24 lg:py-32"
+      className="relative overflow-hidden border-y border-line bg-canvas py-20 lg:py-28"
       aria-label="Quality and traceability"
     >
       <div
@@ -47,7 +47,7 @@ export function QualityEvidence({ items }: { items: readonly QualityEvidenceItem
             return (
               <li
                 key={item.number}
-                className="group relative min-h-56 overflow-hidden rounded-panel border border-line bg-surface-raised p-7 shadow-control transition-transform duration-300 hover:-translate-y-1"
+                className="group relative min-h-56 overflow-hidden border-b border-line bg-canvas p-7 transition-colors duration-300 hover:bg-surface"
               >
                 <span
                   className="absolute -right-3 -top-6 font-display text-8xl text-sand transition-colors group-hover:text-clay/15"

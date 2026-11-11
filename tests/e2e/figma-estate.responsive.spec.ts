@@ -1,0 +1,69 @@
+import { expect, test } from "@playwright/test"
+
+const widths = [320, 390, 768, 1440] as const
+
+/**
+ * Complements screenshot snapshots with layout-independent assertions.
+ * An intentionally horizontal chip list may scroll; the document must not.
+ */
+test.describe("Figma Make responsive estate contract", () => {
+  for (const width of widths) {
+    test(`public home at ${width}px retains navigation, CTA and no document overflow`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height: 900 })
+      await page.goto("/", { waitUntil: "domcontentloaded" })
+
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+      await expect(page.getByRole("main")).toBeVisible()
+      await expect(page.getByRole("link", { name: /request a quote/i }).first()).toBeVisible()
+
+      const layout = await page.evaluate(() => {
+        const root = document.documentElement
+        const offenders = Array.from(document.querySelectorAll("*"))
+          .filter((element) => element.getBoundingClientRect().right > root.clientWidth + 1)
+          .slice(0, 12)
+          .map((element) => ({
+            tag: element.tagName,
+            className: element.getAttribute("class"),
+            right: Math.round(element.getBoundingClientRect().right),
+          }))
+        return { overflows: root.scrollWidth > root.clientWidth + 1, offenders }
+      })
+      const message = `Document overflows at ${width}px: ${JSON.stringify(layout.offenders)}`
+      expect(layout.overflows, message).toBe(false)
+
+      if (width < 1280) {
+        const menu = page.getByRole("button", { name: /menu/i })
+        await expect(menu).toBeVisible()
+        await menu.click()
+        const dialog = page.getByRole("dialog", { name: "Explore ZuriBeans" })
+        await expect(dialog).toBeVisible()
+        await expect(dialog.getByRole("link", { name: "Supplier sign in" })).toHaveAttribute(
+          "href",
+          "/supplier/login",
+        )
+        await expect(dialog.getByRole("link", { name: "Become a Supplier" })).toHaveAttribute(
+          "href",
+          "/supplier/register",
+        )
+        await expect(dialog.getByRole("link", { name: "Buyer sign in" })).toHaveAttribute(
+          "href",
+          "/buyer/login",
+        )
+        await page.keyboard.press("Escape")
+        await expect(dialog).toBeHidden()
+      } else {
+        await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible()
+      }
+    })
+  }
+
+  test("public product and insights routes are real Next routes", async ({ page }) => {
+    await page.goto("/products", { waitUntil: "domcontentloaded" })
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+
+    await page.goto("/insights", { waitUntil: "domcontentloaded" })
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+  })
+})

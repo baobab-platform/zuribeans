@@ -39,7 +39,7 @@ export function MobileNavigation({
         size="sm"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="border border-white/25 text-white hover:bg-white/10 hover:text-white"
+        className="border border-line-strong text-ink hover:bg-surface-muted hover:text-ink"
       >
         <Menu aria-hidden="true" strokeWidth={1.75} className="size-5" />
         Menu
@@ -73,7 +73,8 @@ export function MobileNavigation({
           <ButtonLink
             href="/contact"
             onClick={() => setOpen(false)}
-            className="w-full bg-clay text-ink hover:bg-clay-inverse"
+            className="w-full"
+            variant="gold"
             size="lg"
           >
             Request a Quote
@@ -81,16 +82,16 @@ export function MobileNavigation({
           </ButtonLink>
           <div className="grid gap-3 sm:grid-cols-2">
             <ButtonLink
-              href={hasSession ? "/account" : "/login"}
+              href={hasSession ? "/account" : "/buyer/login"}
               onClick={() => setOpen(false)}
               className="w-full"
               size="lg"
               variant="outline"
             >
-              {hasSession ? "Open account" : "Portal sign in"}
+              {hasSession ? "Buyer workspace" : "Buyer sign in"}
             </ButtonLink>
             <ButtonLink
-              href="/sourcing/become-a-supplier"
+              href="/supplier/register"
               onClick={() => setOpen(false)}
               className="w-full"
               size="lg"
@@ -99,13 +100,13 @@ export function MobileNavigation({
               Become a Supplier
             </ButtonLink>
             <ButtonLink
-              href="/supplier"
+              href="/supplier/login"
               onClick={() => setOpen(false)}
               className="w-full"
               size="lg"
               variant="outline"
             >
-              Supplier Portal
+              Supplier sign in
             </ButtonLink>
             <ButtonLink
               href="/help"

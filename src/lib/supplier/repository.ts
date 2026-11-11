@@ -12,6 +12,8 @@ import {
 import { assertSupplierStatusTransition, type SupplierStatus } from "./lifecycle"
 import { estateApplicationId, enqueueSupplierOutboxEvent, SUPPLIER_EVENT_TYPES } from "./outbox"
 import type { SupplierApplicationInput } from "@/lib/validation/supplier-application"
+import { publicErpBusinessPartnerId } from "@/lib/erp/public-identifier"
+import { SupplierCanonicalLinkConflict } from "./canonical-link-conflict"
 
 const APPLICANT_EDITABLE: readonly SupplierStatus[] = [
   "more_information_required",
@@ -29,7 +31,7 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
     .limit(1)
   if (!organisation) return null
 
-  const [capabilities, certifications, latestStatusEvent, documents] = await Promise.all([
+  const [capabilities, certifications, latestStatusEvent, documents, contacts] = await Promise.all([
     db
       .select()
       .from(supplierCapabilities)
@@ -48,6 +50,10 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
       .select()
       .from(supplierDocumentReferences)
       .where(eq(supplierDocumentReferences.supplierOrganisationId, organisation.id)),
+    db
+      .select()
+      .from(supplierContacts)
+      .where(eq(supplierContacts.supplierOrganisationId, organisation.id)),
   ])
 
   return {
@@ -55,6 +61,7 @@ export const getSupplierApplicationForCustomer = async (medusaCustomerId: string
     capabilities,
     certifications,
     documents,
+    contacts,
     latestStatusEvent: latestStatusEvent[0] ?? null,
   }
 }
@@ -125,23 +132,26 @@ export const submitSupplierApplication = async (
       reason: "Application submitted by applicant.",
     })
 
-    return created
-  })
+    await enqueueSupplierOutboxEvent(
+      {
+        eventType: SUPPLIER_EVENT_TYPES.applicationSubmitted,
+        subject: estateApplicationId(created.id),
+        data: {
+          estate_id: "ZURIBEANS",
+          legal_entity_id: "ZURIBEANS",
+          application_id: estateApplicationId(created.id),
+          canonical_organisation_id: created.canonicalOrganisationId,
+          legal_name: created.legalName,
+          country_code: created.countryCode,
+          product_categories: input.capabilities.map((c) => c.category),
+          submitted_at: created.submittedAt?.toISOString() ?? new Date().toISOString(),
+          revision: 1,
+        },
+      },
+      tx,
+    )
 
-  await enqueueSupplierOutboxEvent({
-    eventType: SUPPLIER_EVENT_TYPES.applicationSubmitted,
-    subject: estateApplicationId(organisation.id),
-    data: {
-      estate_id: "ZURIBEANS",
-      legal_entity_id: "ZURIBEANS",
-      application_id: estateApplicationId(organisation.id),
-      canonical_organisation_id: organisation.canonicalOrganisationId,
-      legal_name: organisation.legalName,
-      country_code: organisation.countryCode,
-      product_categories: input.capabilities.map((c) => c.category),
-      submitted_at: organisation.submittedAt?.toISOString() ?? new Date().toISOString(),
-      revision: 1,
-    },
+    return created
   })
 
   return organisation
@@ -160,6 +170,7 @@ export const resubmitSupplierApplication = async (
       .from(supplierOrganisations)
       .where(eq(supplierOrganisations.medusaCustomerId, medusaCustomerId))
       .limit(1)
+      .for("update")
 
     if (!organisation) return null
 
@@ -239,20 +250,23 @@ export const resubmitSupplierApplication = async (
       reason: note?.trim() || "Applicant resubmitted updated information.",
     })
 
+    if (row) {
+      await enqueueSupplierOutboxEvent(
+        {
+          eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
+          subject: estateApplicationId(row.id),
+          data: {
+            application_id: estateApplicationId(row.id),
+            status: "under_review",
+            reason: note?.trim() || "Applicant resubmitted updated information.",
+          },
+        },
+        tx,
+      )
+    }
+
     return row
   })
-
-  if (updated) {
-    await enqueueSupplierOutboxEvent({
-      eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
-      subject: estateApplicationId(updated.id),
-      data: {
-        application_id: estateApplicationId(updated.id),
-        status: "under_review",
-        reason: note?.trim() || "Applicant resubmitted updated information.",
-      },
-    })
-  }
 
   return updated
 }
@@ -261,13 +275,35 @@ export const setSupplierCanonicalOrganisationId = async (
   supplierOrganisationId: string,
   canonicalOrganisationId: string,
 ) => {
+  if (
+    typeof canonicalOrganisationId !== "string" ||
+    canonicalOrganisationId.length < 3 ||
+    canonicalOrganisationId.length > 128 ||
+    !/^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(canonicalOrganisationId)
+  )
+    throw new Error("A canonical Organisation reference is required.")
   const db = getDb()
-  const [organisation] = await db
-    .update(supplierOrganisations)
-    .set({ canonicalOrganisationId, updatedAt: new Date() })
-    .where(eq(supplierOrganisations.id, supplierOrganisationId))
-    .returning()
-  return organisation ?? null
+  return db.transaction(async (tx) => {
+    const [organisation] = await tx
+      .select()
+      .from(supplierOrganisations)
+      .where(eq(supplierOrganisations.id, supplierOrganisationId))
+      .limit(1)
+      .for("update")
+    if (!organisation) return null
+    if (organisation.canonicalOrganisationId === canonicalOrganisationId) return organisation
+    if (
+      organisation.canonicalOrganisationId !== null ||
+      ["PENDING", "PROJECTED"].includes(organisation.erpProjectionStatus)
+    )
+      throw new SupplierCanonicalLinkConflict()
+    const [updated] = await tx
+      .update(supplierOrganisations)
+      .set({ canonicalOrganisationId, updatedAt: new Date() })
+      .where(eq(supplierOrganisations.id, supplierOrganisationId))
+      .returning()
+    return updated
+  })
 }
 
 export const listSupplierApplications = async (options?: {
@@ -343,6 +379,7 @@ export const transitionSupplierStatus = async (input: {
       .from(supplierOrganisations)
       .where(eq(supplierOrganisations.id, input.supplierOrganisationId))
       .limit(1)
+      .for("update")
 
     if (!organisation) return null
 
@@ -363,32 +400,38 @@ export const transitionSupplierStatus = async (input: {
       reason: input.reason ?? null,
     })
 
+    if (row && DECISION_STATUSES.includes(input.toStatus)) {
+      await enqueueSupplierOutboxEvent(
+        {
+          eventType: SUPPLIER_EVENT_TYPES.applicationDecided,
+          subject: estateApplicationId(row.id),
+          data: {
+            application_id: estateApplicationId(row.id),
+            decision: input.toStatus,
+            actor: input.actor,
+            reason: input.reason ?? null,
+          },
+        },
+        tx,
+      )
+    } else if (row) {
+      await enqueueSupplierOutboxEvent(
+        {
+          eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
+          subject: estateApplicationId(row.id),
+          data: {
+            application_id: estateApplicationId(row.id),
+            status: input.toStatus,
+            actor: input.actor,
+            reason: input.reason ?? null,
+          },
+        },
+        tx,
+      )
+    }
+
     return row
   })
-
-  if (updated && DECISION_STATUSES.includes(input.toStatus)) {
-    await enqueueSupplierOutboxEvent({
-      eventType: SUPPLIER_EVENT_TYPES.applicationDecided,
-      subject: estateApplicationId(updated.id),
-      data: {
-        application_id: estateApplicationId(updated.id),
-        decision: input.toStatus,
-        actor: input.actor,
-        reason: input.reason ?? null,
-      },
-    })
-  } else if (updated) {
-    await enqueueSupplierOutboxEvent({
-      eventType: SUPPLIER_EVENT_TYPES.qualificationUpdated,
-      subject: estateApplicationId(updated.id),
-      data: {
-        application_id: estateApplicationId(updated.id),
-        status: input.toStatus,
-        actor: input.actor,
-        reason: input.reason ?? null,
-      },
-    })
-  }
 
   return updated
 }
@@ -402,36 +445,41 @@ export const setCapabilityVerification = async (input: {
   verifiedBy: string
 }) => {
   const db = getDb()
-  const [row] = await db
-    .update(supplierCapabilities)
-    .set({
-      verificationStatus: input.status,
-      verifiedAt: new Date(),
-      verifiedBy: input.verifiedBy,
-    })
-    .where(
-      and(
-        eq(supplierCapabilities.id, input.capabilityId),
-        eq(supplierCapabilities.supplierOrganisationId, input.supplierOrganisationId),
-      ),
-    )
-    .returning()
+  return db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(supplierCapabilities)
+      .set({
+        verificationStatus: input.status,
+        verifiedAt: new Date(),
+        verifiedBy: input.verifiedBy,
+      })
+      .where(
+        and(
+          eq(supplierCapabilities.id, input.capabilityId),
+          eq(supplierCapabilities.supplierOrganisationId, input.supplierOrganisationId),
+        ),
+      )
+      .returning()
 
-  if (row) {
-    await enqueueSupplierOutboxEvent({
-      eventType: SUPPLIER_EVENT_TYPES.capabilityVerified,
-      subject: estateApplicationId(input.supplierOrganisationId),
-      data: {
-        application_id: estateApplicationId(input.supplierOrganisationId),
-        capability_id: row.id,
-        product_category: row.productCategory,
-        verification_status: input.status,
-        verified_by: input.verifiedBy,
-      },
-    })
-  }
+    if (row) {
+      await enqueueSupplierOutboxEvent(
+        {
+          eventType: SUPPLIER_EVENT_TYPES.capabilityVerified,
+          subject: estateApplicationId(input.supplierOrganisationId),
+          data: {
+            application_id: estateApplicationId(input.supplierOrganisationId),
+            capability_id: row.id,
+            product_category: row.productCategory,
+            verification_status: input.status,
+            verified_by: input.verifiedBy,
+          },
+        },
+        tx,
+      )
+    }
 
-  return row ?? null
+    return row ?? null
+  })
 }
 
 export const setCertificationVerification = async (input: {
@@ -489,53 +537,73 @@ export const setErpProjectionStatus = async (input: {
   erpBusinessPartnerId?: string
 }) => {
   const db = getDb()
-  const [organisation] = await db
-    .select()
-    .from(supplierOrganisations)
-    .where(eq(supplierOrganisations.id, input.supplierOrganisationId))
-    .limit(1)
+  return db.transaction(async (tx) => {
+    const [organisation] = await tx
+      .select()
+      .from(supplierOrganisations)
+      .where(eq(supplierOrganisations.id, input.supplierOrganisationId))
+      .limit(1)
+      .for("update")
+    if (!organisation) return null
 
-  if (!organisation) return null
-
-  if (input.status === "READY") {
-    const st = organisation.status as SupplierStatus
-    if (st !== "approved" && st !== "active") {
-      throw new Error(
-        "ERP projection READY is only allowed when the supplier is approved or active.",
+    if (input.status === "READY" || input.status === "PENDING") {
+      if (
+        !["approved", "active"].includes(organisation.status) ||
+        !organisation.canonicalOrganisationId
       )
+        throw new Error("ERP handoff requires an approved supplier and an existing canonical link.")
     }
-  }
+    if (input.status === "PROJECTED") {
+      if (!publicErpBusinessPartnerId.safeParse(input.erpBusinessPartnerId).success)
+        throw new Error("ERP projection requires a valid public Business Partner identifier.")
+      if (
+        organisation.erpBusinessPartnerId !== null &&
+        organisation.erpBusinessPartnerId !== input.erpBusinessPartnerId
+      )
+        throw new Error("An existing ERP Business Partner link requires governed reconciliation.")
+      if (
+        organisation.erpProjectionStatus === "PROJECTED" &&
+        organisation.erpBusinessPartnerId === input.erpBusinessPartnerId
+      )
+        return organisation
+    }
+    if (input.status === "READY" && organisation.erpProjectionStatus === "READY")
+      return organisation
 
-  const patch: {
-    erpProjectionStatus: typeof input.status
-    updatedAt: Date
-    erpBusinessPartnerId?: string
-  } = {
-    erpProjectionStatus: input.status,
-    updatedAt: new Date(),
-  }
-  if (input.status === "PROJECTED" && input.erpBusinessPartnerId) {
-    patch.erpBusinessPartnerId = input.erpBusinessPartnerId
-  }
+    const transitions: Record<string, readonly string[]> = {
+      NOT_REQUESTED: ["READY"],
+      READY: ["PENDING"],
+      FAILED: ["READY", "PENDING"],
+      PENDING: ["FAILED", "PROJECTED"],
+      PROJECTED: [],
+    }
+    if (!transitions[organisation.erpProjectionStatus]?.includes(input.status))
+      throw new Error(
+        "ERP projection transition requires owner reconciliation or a current exclusive claim.",
+      )
 
-  const [updated] = await db
-    .update(supplierOrganisations)
-    .set(patch)
-    .where(eq(supplierOrganisations.id, organisation.id))
-    .returning()
-
-  const reason =
-    input.status === "PROJECTED" && input.erpBusinessPartnerId
-      ? `erp_projection_status=${input.status}; erp_business_partner_id=${input.erpBusinessPartnerId}`
-      : `erp_projection_status=${input.status}`
-
-  await db.insert(supplierStatusEvents).values({
-    supplierOrganisationId: organisation.id,
-    fromStatus: organisation.status,
-    toStatus: organisation.status,
-    actor: input.actor,
-    reason,
+    const [updated] = await tx
+      .update(supplierOrganisations)
+      .set({
+        erpProjectionStatus: input.status,
+        updatedAt: new Date(),
+        ...(input.status === "PROJECTED"
+          ? { erpBusinessPartnerId: input.erpBusinessPartnerId }
+          : {}),
+      })
+      .where(eq(supplierOrganisations.id, organisation.id))
+      .returning()
+    const reason =
+      input.status === "PROJECTED"
+        ? `erp_projection_status=PROJECTED; erp_business_partner_id=${input.erpBusinessPartnerId}`
+        : `erp_projection_status=${input.status}`
+    await tx.insert(supplierStatusEvents).values({
+      supplierOrganisationId: organisation.id,
+      fromStatus: organisation.status,
+      toStatus: organisation.status,
+      actor: input.actor,
+      reason,
+    })
+    return updated
   })
-
-  return updated
 }

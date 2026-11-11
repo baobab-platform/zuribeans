@@ -22,7 +22,7 @@ export default function QualityAndTraceabilityPage() {
         <div className="page-container grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {QUALITY_LAYERS.map((layer, index) => (
             <Card key={layer.title} className="p-7">
-              <p className="font-display text-3xl text-clay">0{index + 1}</p>
+              <p className="font-display text-3xl text-clay-on-light">0{index + 1}</p>
               <h2 className="mt-7 text-lg font-semibold">{layer.title}</h2>
               <p className="mt-3 text-sm leading-6 text-muted">{layer.detail}</p>
             </Card>

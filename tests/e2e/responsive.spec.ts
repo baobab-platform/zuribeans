@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test"
 
-test.describe("responsive shell", () => {
+test.describe("responsive shell", { tag: "@canonical-browser" }, () => {
   test.beforeEach(({}, testInfo) => {
     test.skip(testInfo.project.name !== "chromium-desktop", "Width matrix runs once in Chromium")
   })
@@ -44,7 +44,14 @@ test.describe("responsive shell", () => {
     await page.goto("/sourcing/become-a-supplier")
 
     await expect(page.getByRole("button", { name: "Menu" })).toBeVisible()
-    await expect(page.getByRole("link", { name: "Start a supplier application" })).toBeVisible()
+    await expect(page.getByRole("link", { name: "Begin supplier application" })).toHaveAttribute(
+      "href",
+      "/supplier/register",
+    )
+    await expect(page.getByRole("link", { name: /Existing supplier.*Sign in/i })).toHaveAttribute(
+      "href",
+      "/supplier/login",
+    )
   })
 
   test("large procurement viewport uses desktop navigation without horizontal overflow", async ({

@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { MarketSwitcher } from "./market-switcher"
 import type { MarketContext } from "@/lib/market/request"
-import { PUBLIC_PRODUCT_CLASSES } from "@/lib/content/public-estate"
 
 const legalLinks = [
   { href: "/privacy", label: "Privacy" },
@@ -15,10 +14,10 @@ function getFooterGroups(marketContext: MarketContext) {
       title: "Products",
       links: [
         { href: "/products", label: "Catalogue" },
-        ...PUBLIC_PRODUCT_CLASSES.map((productClass) => ({
-          href: productClass.href,
-          label: productClass.name,
-        })),
+        // Site-wide taxonomy must not depend on the homepage's changing four-card showcase.
+        { href: "/products?category=coffee", label: "Green coffee" },
+        { href: "/products?category=vanilla", label: "Vanilla pods" },
+        { href: "/products?category=sesame", label: "Sesame seeds" },
       ],
     },
     {
@@ -45,15 +44,15 @@ function getFooterGroups(marketContext: MarketContext) {
       links: [
         { href: "/sourcing", label: "Sourcing" },
         { href: "/sourcing/become-a-supplier", label: "Become a supplier" },
-        { href: "/supplier", label: "Supplier portal" },
+        { href: "/supplier/login", label: "Supplier portal" },
       ],
     },
     {
       title: "Partner",
       links: [
-        { href: "/login", label: "Buyer portal" },
+        { href: "/buyer", label: "Buyer portal" },
         { href: "/contact", label: "Discuss a requirement" },
-        { href: "/register", label: "Register" },
+        { href: "/buyer/register", label: "Buyer registration" },
       ],
     },
   ] as const
@@ -63,12 +62,16 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
   const footerGroups = getFooterGroups(marketContext)
 
   return (
-    <footer className="bg-ink text-white" data-tone="inverse" aria-labelledby="footer-heading">
+    <footer
+      className="bg-ink-utility text-white"
+      data-tone="inverse"
+      aria-labelledby="footer-heading"
+    >
       <h2 id="footer-heading" className="sr-only">
         Footer navigation
       </h2>
       <div className="page-container py-14 lg:py-16">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2.2fr)] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.5fr)] lg:gap-16">
           <div>
             <Link
               href="/"
@@ -102,7 +105,7 @@ export function SiteFooter({ marketContext }: { marketContext: MarketContext }) 
                 <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-clay">
                   {group.title}
                 </h2>
-                <ul className="mt-3 space-y-1 text-sm text-white/65">
+                <ul className="mt-3 space-y-1 text-sm text-white/70">
                   {group.links.map((item) => (
                     <li key={`${group.title}-${item.href}-${item.label}`}>
                       <Link

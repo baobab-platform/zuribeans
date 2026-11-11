@@ -2,25 +2,27 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { classNames } from "@/lib/ui/classnames"
+
+const links = [
+  { href: "/supplier", label: "Overview" },
+  { href: "/supplier/apply", label: "Application" },
+  { href: "/sourcing/become-a-supplier", label: "Requirements" },
+] as const
 
 export function SupplierNavigation() {
-  const isOverview = usePathname() === "/supplier"
-
+  const pathname = usePathname()
   return (
-    <nav className="mt-6 flex gap-2 border-b border-line" aria-label="Supplier navigation">
-      <Link
-        href="/supplier"
-        aria-current={isOverview ? "page" : undefined}
-        className={classNames(
-          "border-b-2 px-3 py-3 text-sm font-semibold",
-          isOverview
-            ? "border-ink text-ink"
-            : "border-transparent text-muted-strong hover:border-line-strong hover:text-ink",
-        )}
-      >
-        Overview
-      </Link>
+    <nav aria-label="Supplier navigation" className="space-y-1">
+      {links.map((link) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          aria-current={pathname === link.href ? "page" : undefined}
+          className="flex min-h-11 items-center rounded-control px-3 text-sm font-semibold text-canvas hover:bg-white/10 hover:text-canvas aria-[current=page]:bg-white/15"
+        >
+          {link.label}
+        </Link>
+      ))}
     </nav>
   )
 }

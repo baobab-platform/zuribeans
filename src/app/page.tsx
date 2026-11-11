@@ -1,4 +1,7 @@
+import { Suspense } from "react"
 import { FeaturedCommodities } from "@/components/marketing/home/featured-commodities"
+import { MarketFeaturedCommodities } from "@/components/marketing/home/market-featured-commodities"
+import { HomeInsights } from "@/components/marketing/home/home-insights"
 import { HomeHero } from "@/components/marketing/home/home-hero"
 import { QualityEvidence } from "@/components/marketing/home/quality-evidence"
 import { TradeProcess } from "@/components/marketing/home/trade-process"
@@ -6,6 +9,7 @@ import { TradePathways } from "@/components/marketing/home/trade-pathways"
 import { TrustEvidenceStrip } from "@/components/marketing/home/trust-evidence-strip"
 import { MarketFootprint } from "@/components/markets/market-footprint"
 import { getVisibleEvidence } from "@/lib/content/evidence"
+import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import { HOME_HERO, TRUST_EVIDENCE } from "@/lib/content/homepage"
 import { PUBLIC_PRODUCT_CLASSES, TRADE_STEPS } from "@/lib/content/public-estate"
 import { QUALITY_EVIDENCE_ITEMS } from "@/lib/content/quality"
@@ -22,17 +26,22 @@ export const metadata = getPublicPageMetadata({
 
 export default async function HomePage() {
   const { active: market } = await getMarketContext()
-  const visibleEvidence = getVisibleEvidence(TRUST_EVIDENCE)
+  const visibleEvidence = isSyntheticExperienceEnabled()
+    ? (await import("@/lib/dev-data/trust-evidence")).DEMO_TRUST_EVIDENCE
+    : getVisibleEvidence(TRUST_EVIDENCE)
 
   return (
     <>
       <HomeHero content={HOME_HERO} market={market} />
       <TrustEvidenceStrip items={visibleEvidence} />
-      <FeaturedCommodities commodities={PUBLIC_PRODUCT_CLASSES} />
+      <Suspense fallback={<FeaturedCommodities commodities={PUBLIC_PRODUCT_CLASSES} />}>
+        <MarketFeaturedCommodities commodities={PUBLIC_PRODUCT_CLASSES} market={market} />
+      </Suspense>
       <MarketFootprint />
       <TradeProcess steps={TRADE_STEPS} />
 
       <QualityEvidence items={QUALITY_EVIDENCE_ITEMS} />
+      <HomeInsights marketKey={market.marketKey} />
       <TradePathways pathways={TRADE_PATHWAYS} />
     </>
   )

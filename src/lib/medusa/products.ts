@@ -1,4 +1,5 @@
 import "server-only"
+import { isSyntheticExperienceEnabled } from "@/lib/dev-data/enablement"
 import {
   applyAssortmentToProductList,
   fetchMarketSellableProductIds,
@@ -27,6 +28,9 @@ type MedusaProduct = {
   variants?: Array<{ id: string; title?: string | null; sku?: string | null }> | null
 }
 
+const publishedText = (value: unknown): string | undefined =>
+  typeof value === "string" && value.trim() ? value.trim() : undefined
+
 const toCard = (product: MedusaProduct): ProductCardModel => ({
   id: product.id,
   handle: product.handle || product.id,
@@ -34,6 +38,14 @@ const toCard = (product: MedusaProduct): ProductCardModel => ({
   subtitle: product.subtitle || null,
   thumbnail: normalizeProductMediaUrl(product.thumbnail),
   origin: typeof product.metadata?.origin === "string" ? product.metadata.origin : null,
+  cardFacts: {
+    source: "provider",
+    category: product.categories?.[0]?.name ?? "Published catalogue",
+    grade: publishedText(product.metadata?.grade),
+    process: publishedText(product.metadata?.processing_method),
+    // Certification/stock/financial terms require separate verified authority.
+    // Arbitrary Medusa metadata is not evidence of certification or inventory.
+  },
 })
 
 export type MarketPricingContext = {
@@ -51,12 +63,20 @@ export type ProductListOptions = MarketPricingContext & {
 }
 
 export const listProductCategories = async (): Promise<ProductCategoryModel[]> => {
+  if (isSyntheticExperienceEnabled()) {
+    const { DEMO_PRODUCT_CATEGORIES } = await import("@/lib/dev-data/catalogue")
+    return [...DEMO_PRODUCT_CATEGORIES]
+  }
   const sdk = createMedusaClient()
   const { product_categories: categories } = await sdk.store.category.list({ limit: 100 })
   return categories.map(({ id, handle, name }) => ({ id, handle, name }))
 }
 
 export const listProducts = async (options: ProductListOptions): Promise<ProductListModel> => {
+  if (isSyntheticExperienceEnabled()) {
+    const { listDemoProducts } = await import("@/lib/dev-data/catalogue")
+    return listDemoProducts(options)
+  }
   const sdk = createMedusaClient()
   const limit = options.limit ?? 12
   const offset = options.offset ?? 0
@@ -120,6 +140,10 @@ export const retrieveProduct = async (
   handle: string,
   context?: MarketPricingContext & { marketKey?: ZuribeansMarketKey },
 ): Promise<ProductDetailModel | null> => {
+  if (isSyntheticExperienceEnabled()) {
+    const { getDemoProduct } = await import("@/lib/dev-data/catalogue")
+    return getDemoProduct(handle)
+  }
   const sdk = createMedusaClient()
   const { products } = await sdk.store.product.list({
     handle,

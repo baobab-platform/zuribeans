@@ -10,6 +10,7 @@ vi.mock("@/lib/configuration/environment", () => ({
 }))
 
 import { POST } from "./route"
+import { SupplierCanonicalLinkConflict } from "@/lib/supplier/canonical-link-conflict"
 
 const validApiKey = "a".repeat(32)
 
@@ -81,5 +82,15 @@ describe("POST /api/admin/suppliers/[id]/canonical-link", () => {
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({ id: "sup-1", canonical_organisation_id: "canon-1" })
     expect(setSupplierCanonicalOrganisationId).toHaveBeenCalledWith("sup-1", "canon-1")
+  })
+
+  it("requires governed reconciliation instead of overwriting an existing supplier identity", async () => {
+    setSupplierCanonicalOrganisationId.mockRejectedValue(new SupplierCanonicalLinkConflict())
+    const response = await post(
+      { canonical_organisation_id: "different-company" },
+      { authorization: `Bearer ${validApiKey}` },
+    )
+    expect(response.status).toBe(409)
+    expect(await response.json()).toEqual({ error: "canonical_link_conflict" })
   })
 })

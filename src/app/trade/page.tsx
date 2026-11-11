@@ -33,19 +33,21 @@ export default function TradePage() {
       </section>
       <section className="page-container grid gap-6 py-20 md:grid-cols-2">
         <Card className="p-8">
-          <p className="eyebrow">Public estate</p>
-          <h2 className="mt-4 font-display text-3xl">Discover without exposing terms.</h2>
+          <p className="eyebrow">Professional procurement</p>
+          <h2 className="mt-4 font-display text-3xl">Products before prices.</h2>
           <p className="mt-4 leading-7 text-muted">
-            Product context can be public. Account prices, eligibility, live inventory and
-            negotiated conditions remain private and contextual.
+            Buyers explore product classes and specifications, then submit a defined requirement.
+            Account prices, eligibility, inventory and negotiated terms require commercial
+            confirmation before any commitment.
           </p>
         </Card>
         <Card className="p-8">
-          <p className="eyebrow">Application layer</p>
-          <h2 className="mt-4 font-display text-3xl">One boundary to the platform.</h2>
+          <p className="eyebrow">Documented execution</p>
+          <h2 className="mt-4 font-display text-3xl">A trade house, not a carrier.</h2>
           <p className="mt-4 leading-7 text-muted">
-            The browser calls ZuriBeans application services. Baobab engines remain behind adapters
-            and retain authority for the domains they own.
+            ZuriBeans&apos; role centres on agricultural commodity sourcing, product evidence and
+            accountable trade. Shipment services belong to the contracted transport providers; an
+            enquiry does not reserve capacity or book a shipment.
           </p>
         </Card>
       </section>

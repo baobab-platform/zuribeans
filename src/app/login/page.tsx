@@ -34,7 +34,7 @@ export default async function LoginPage({
     <AuthShell
       eyebrow="Trade account"
       title="Buyer login"
-      description="Sign in to the existing Medusa customer identity. Authentication establishes who you are; approved trading access remains a separate commercial decision."
+      description="Sign in to view your account. Purchasing services require business approval."
     >
       {message ? (
         <Alert id="login-error" tone="danger" title="We could not sign you in.">

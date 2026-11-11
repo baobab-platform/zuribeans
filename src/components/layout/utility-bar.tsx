@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { CircleHelp, Globe2, Handshake, UserRound } from "lucide-react"
-import { MarketSwitcher } from "./market-switcher"
+import { CircleHelp, Handshake, UserRound } from "lucide-react"
+import { UtilityMarketSelector } from "./market-switcher"
 import type { MarketContext } from "@/lib/market/request"
 
 /**
@@ -22,13 +22,8 @@ export function UtilityBar({
       data-testid="utility-bar"
     >
       <div className="page-container flex h-full items-center justify-between gap-6">
-        <div className="flex min-w-0 items-center gap-3 border-r border-white/20 pr-6">
-          <Globe2
-            aria-hidden="true"
-            strokeWidth={1.75}
-            className="size-4 shrink-0 text-clay-inverse"
-          />
-          <MarketSwitcher marketContext={marketContext} tone="inverse" className="min-w-0" />
+        <div className="flex min-w-0 items-center">
+          <UtilityMarketSelector marketContext={marketContext} />
         </div>
 
         <p className="hidden truncate font-medium text-white/80 2xl:block">
@@ -36,6 +31,12 @@ export function UtilityBar({
         </p>
 
         <div className="flex shrink-0 items-center gap-5">
+          <Link
+            href="/sourcing"
+            className="whitespace-nowrap transition-colors hover:text-clay-inverse"
+          >
+            Sourcing
+          </Link>
           <Link
             href="/sourcing/become-a-supplier"
             className="flex items-center gap-1.5 whitespace-nowrap transition-colors hover:text-clay-inverse"
@@ -46,6 +47,12 @@ export function UtilityBar({
               className="size-4 shrink-0 text-clay-inverse"
             />
             Become a Supplier
+          </Link>
+          <Link
+            href="/supplier/login"
+            className="flex items-center gap-1.5 whitespace-nowrap border-l border-white/20 pl-5 transition-colors hover:text-clay-inverse"
+          >
+            Supplier Portal
           </Link>
           <Link
             href="/help"
@@ -59,7 +66,8 @@ export function UtilityBar({
             Help
           </Link>
           <Link
-            href={hasSession ? "/account" : "/login"}
+            href={hasSession ? "/account" : "/buyer/login"}
+            title={hasSession ? "Buyer account" : "Buyer login and registration"}
             className="flex items-center gap-1.5 whitespace-nowrap border-l border-white/20 pl-5 transition-colors hover:text-clay-inverse"
           >
             <UserRound
@@ -67,7 +75,7 @@ export function UtilityBar({
               strokeWidth={1.75}
               className="size-4 shrink-0 text-clay-inverse"
             />
-            {hasSession ? "Account" : "Sign in"}
+            {hasSession ? "Buyer account" : "Login/Register"}
           </Link>
         </div>
       </div>

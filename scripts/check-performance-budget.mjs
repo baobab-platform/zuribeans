@@ -1,4 +1,4 @@
-import { readdir, stat } from "node:fs/promises"
+import { mkdir, readdir, stat, writeFile } from "node:fs/promises"
 import { join, relative } from "node:path"
 
 const root = process.cwd()
@@ -75,4 +75,28 @@ assertWithin(
   `Largest public image (${largestImage.path})`,
   largestImage.bytes,
   limits.largestPublicImage,
+)
+
+// A stable bounded machine-readable receipt for the independent DEV-11 join.
+// Generated from the actual emitted production assets, never from budgets
+// repeated in a test fixture. The existing assertWithin calls above still
+// enforce all original hard limits before this successful receipt exists.
+await mkdir(join(root, "reports"), { recursive: true })
+await writeFile(
+  join(root, "reports", "static-budget.json"),
+  JSON.stringify(
+    {
+      profile: "CI_PRODUCTION_BUILD",
+      limits,
+      measured: {
+        totalJavaScript: javascript.reduce((total, file) => total + file.bytes, 0),
+        largestJavaScriptChunk: largestJavaScript.bytes,
+        totalCss: css.reduce((total, file) => total + file.bytes, 0),
+        largestPublicImage: largestImage.bytes,
+      },
+      oversized: [],
+    },
+    null,
+    2,
+  ) + "\n",
 )

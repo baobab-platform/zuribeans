@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const [marketContext, hasSession] = await Promise.all([getMarketContext(), hasCustomerSession()])
   return (
-    <html lang={marketContext.active.locale}>
+    <html lang={marketContext.active.locale} data-bx-theme="zuribeans">
       <body className="font-sans antialiased">
         <StructuredData data={getOrganizationStructuredData(siteUrl)} />
         <a

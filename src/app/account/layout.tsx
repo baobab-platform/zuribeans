@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Breadcrumbs } from "@/components/ui/breadcrumbs"
 import { Button } from "@/components/ui/button"
 import { requireCustomer } from "@/lib/auth/require-customer"
-import { getBuyerNavigation } from "@/lib/buyer/capabilities"
+import { getBuyerNavigation, getUnavailableBuyerSections } from "@/lib/buyer/capabilities"
 import { resolveBuyerAccountContext } from "@/lib/buyer/resolve-account-context"
 import { logoutAction } from "./actions"
 
@@ -17,6 +17,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
   const customer = await requireCustomer("/account")
   const { organisation, capabilities } = await resolveBuyerAccountContext()
   const navigation = getBuyerNavigation(capabilities)
+  const unavailable = getUnavailableBuyerSections(capabilities)
 
   const badge =
     organisation?.status === "ACTIVE"
@@ -30,36 +31,69 @@ export default async function AccountLayout({ children }: { children: React.Reac
             : { tone: "warning" as const, label: "Trading review pending" }
 
   return (
-    <section className="page-container py-12 lg:py-16">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Buyer account" }]} />
-      <div className="mt-8 flex flex-col gap-6 border-b border-line pb-7 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            <p className="eyebrow">Buyer account</p>
-            <Badge tone={badge.tone}>{badge.label}</Badge>
+    <section className="min-h-[72vh] bg-surface-muted">
+      <div className="border-b border-white/10 bg-ink py-8 text-canvas">
+        <div className="page-container flex flex-wrap items-center justify-between gap-6">
+          <div>
+            <p className="eyebrow-inverse">Buyer workspace / ZuriBeans</p>
+            <h1 className="mt-3 font-display text-3xl font-light sm:text-4xl">
+              {organisation?.legal_name || customer.company_name || "Trading account"}
+            </h1>
+            <p className="mt-2 text-sm text-canvas/70">Signed in as {customer.email}</p>
           </div>
-          <h1 className="mt-3 font-display text-4xl">
-            {organisation?.legal_name || customer.company_name || customer.email}
-          </h1>
+          <div className="flex flex-wrap items-center gap-4">
+            <Badge tone={badge.tone}>{badge.label}</Badge>
+            <form action={logoutAction}>
+              <Button type="submit" variant="inverse">
+                Sign out
+              </Button>
+            </form>
+          </div>
         </div>
-        <form action={logoutAction}>
-          <Button type="submit" variant="outline">
-            Sign out
-          </Button>
-        </form>
       </div>
-      <nav className="mt-6 flex gap-2 border-b border-line" aria-label="Buyer account navigation">
-        {navigation.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="border-b-2 border-transparent px-3 py-3 text-sm font-semibold hover:border-ink"
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
-      <div className="mt-10">{children}</div>
+      <div className="page-container py-8">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Buyer workspace" }]} />
+        <div className="mt-7 grid items-start gap-6 lg:grid-cols-[230px_minmax(0,1fr)]">
+          <aside className="rounded-panel bg-ink-soft p-4 text-canvas lg:sticky lg:top-24">
+            <p className="px-3 pb-3 text-xs font-bold uppercase tracking-[.16em] text-clay-inverse">
+              Workspace
+            </p>
+            <nav aria-label="Buyer account navigation" className="space-y-1">
+              {navigation.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="flex min-h-11 items-center rounded-control px-3 text-sm font-semibold text-canvas hover:bg-white/10 hover:text-canvas"
+                >
+                  {item.label}
+                </Link>
+              ))}
+              {unavailable.map((item) => (
+                <span
+                  key={item.key}
+                  className="flex min-h-11 items-center justify-between gap-2 px-3 text-sm text-canvas/50"
+                  title={item.description}
+                >
+                  {item.label}
+                  <span className="text-xs">Restricted</span>
+                </span>
+              ))}
+            </nav>
+            <div className="mt-6 border-t border-white/15 px-3 pt-5 text-sm">
+              <p className="text-canvas/70">Need a product specification?</p>
+              <Link
+                href="/products"
+                className="mt-2 inline-flex min-h-11 items-center font-semibold text-clay-inverse underline underline-offset-4"
+              >
+                Browse public catalogue
+              </Link>
+            </div>
+          </aside>
+          <div className="min-w-0 rounded-panel border border-line bg-surface p-5 shadow-panel sm:p-8">
+            {children}
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
