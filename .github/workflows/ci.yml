@@ -99,15 +99,6 @@ jobs:
             console.log('DEV07_FORMATTED_SOURCE ' + file + ' ' + readFileSync(file).toString('base64'))
           }
           NODE
-      - name: BA-SEC-DEP-001 formatting candidate (diagnostic only; failed gate retained)
-        if: failure()
-        run: |
-          if [ -f docs/security/dependency-maintenance.md ]; then
-            pnpm exec prettier --write docs/security/dependency-maintenance.md
-            printf 'BA_SEC_DEP_MD_BASE64 '
-            base64 -w0 docs/security/dependency-maintenance.md
-            printf '\n'
-          fi
       - name: Lint
         run: pnpm lint
       - name: Type-check
