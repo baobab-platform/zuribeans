@@ -1,23 +1,32 @@
+# BA-SEC-DEP-001 — Approved Baobab Dependency & Security Maintenance Policy v1.0.
+# Advisory-driven security updates are not constrained by the weekly version schedule.
+# Keep default branch implicit: target-branch changes version-update settings;
+# security updates still target the default branch, but cannot use those options.
+# Routine grouping excludes majors and does not coalesce security updates.
+# Review pinned Actions, npm/pnpm, private Baobab Experience packages and
+# image digests independently before qualifying any protected deployment.
 version: 2
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule: { interval: "weekly", day: "monday", time: "06:00", timezone: "Africa/Johannesburg" }
     open-pull-requests-limit: 5
+    groups:
+      actions-routine:
+        applies-to: "version-updates"
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
     labels: ["dependencies", "github-actions"]
     commit-message: { prefix: "chore", prefix-development: "chore", include: "scope" }
-    target-branch: "main"
   - package-ecosystem: "npm"
     directory: "/"
     schedule: { interval: "weekly", day: "monday", time: "06:30", timezone: "Africa/Johannesburg" }
     open-pull-requests-limit: 5
     labels: ["dependencies", "javascript"]
     commit-message: { prefix: "chore", prefix-development: "chore", include: "scope" }
-    target-branch: "main"
   - package-ecosystem: "docker"
     directory: "/"
     schedule: { interval: "weekly", day: "monday", time: "07:00", timezone: "Africa/Johannesburg" }
     open-pull-requests-limit: 5
     labels: ["dependencies", "container"]
     commit-message: { prefix: "chore", prefix-development: "chore", include: "scope" }
-    target-branch: "main"

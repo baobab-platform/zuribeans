@@ -1,15 +1,55 @@
-name: Enforce Dependabot Config
+# BA-SEC-DEP-001: migration uses the immutable accepted Shared BASELINE.
+# Do not depend on an unmerged Shared #429 strict workflow or claim full
+# security-alert coverage from this structural check.
+name: Enforce Dependabot Policy
+
 on:
   push:
     branches: [main]
-    paths: [".github/dependabot.yml"]
+    paths:
+      - ".github/dependabot.yml"
+      - ".github/workflows/enforce-dependabot-config.yml"
+      - "scripts/tests/test_dependency_policy.py"
+      - "docs/security/dependency-maintenance.md"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/security.yml"
   pull_request:
-    paths: [".github/dependabot.yml"]
+    paths:
+      - ".github/dependabot.yml"
+      - ".github/workflows/enforce-dependabot-config.yml"
+      - "scripts/tests/test_dependency_policy.py"
+      - "docs/security/dependency-maintenance.md"
+      - "pnpm-workspace.yaml"
+      - ".github/workflows/security.yml"
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
-  check:
+  baseline:
     permissions:
       contents: read
-    uses: baobab-platform/shared/.github/workflows/enforce-dependabot-config.yml@31de2bc3dcd56128c019c640dc7e12c10ae9ca69 # v2.3.0
+    uses: baobab-platform/shared/.github/workflows/enforce-dependabot-config.yml@31de2bc3dcd56128c019c640dc7e12c10ae9ca69 # accepted Shared baseline
+    with:
+      required-ecosystems: "github-actions,npm,docker"
+
+  local-regressions:
+    name: BA-SEC-DEP-001 local manifest and negative fixtures
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact branch for offline policy tests
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install pinned YAML verifier in isolated environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/ba-sec-dep"
+          "$RUNNER_TEMP/ba-sec-dep/bin/python" -m pip install --disable-pip-version-check PyYAML==6.0.3
+      - name: Validate estate manifest and source refusals
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/ba-sec-dep/bin/python" -B -m unittest discover -s scripts/tests -p 'test_dependency_policy.py' -v
