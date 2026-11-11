@@ -6,8 +6,10 @@ import { randomBytes } from "node:crypto"
  * A configured Collector receives the standard OTLP/HTTP JSON encoding.
  * IAM, CP and Trade business authority is never derived from traceparent.
  */
-const PARENT = /^00-([0-9a-f]{32})-([0-9a-f]{16})-(0[01])$/
+const PARENT = /^00-([0-9a-f]{32})-([0-9a-f]{16})-([0-9a-f]{2})$/
 const ZERO = /^0+$/
+const MAX_PENDING_EXPORTS = 32
+let pendingExports = 0
 type Span = {
   traceId: string
   spanId: string
@@ -63,13 +65,10 @@ function collector(): string | undefined {
       process.env.BAOBAB_DEPLOYMENT_ENV,
       process.env.ZURIBEANS_IAM_ENVIRONMENT,
     ].filter((value) => value !== undefined)
-    // Development L4 candidate only: protected deployments require an approved
-    // batched SDK exporter and cannot add synchronous per-request egress.
-    if (
-      !(profiles.length ? profiles : [process.env.NODE_ENV ?? "development"]).every((profile) =>
-        local.includes(profile),
-      )
-    )
+    // Development L4 candidate only. Every configured environment indicator
+    // must agree before telemetry can leave the process.
+    const activeProfiles = profiles.length ? profiles : [process.env.NODE_ENV]
+    if (!activeProfiles.every((profile) => profile !== undefined && local.includes(profile)))
       return undefined
     if (
       !["https:", "http:"].includes(url.protocol) ||
@@ -85,10 +84,10 @@ function collector(): string | undefined {
     return undefined
   }
 }
-const b64 = (hex: string): string => Buffer.from(hex, "hex").toString("base64")
 async function exportSpan(span: Span, status: number, route: string): Promise<void> {
   const url = collector()
-  if (!url || span.flags !== "01") return
+  if (!url || !(Number.parseInt(span.flags, 16) & 1) || pendingExports >= MAX_PENDING_EXPORTS)
+    return
   if (span.kind === 2 && !ROLES.has(route)) return
   const body = {
     resourceSpans: [
@@ -104,9 +103,9 @@ async function exportSpan(span: Span, status: number, route: string): Promise<vo
             scope: { name: "baobab.zuribeans.bff", version: "dev11" },
             spans: [
               {
-                traceId: b64(span.traceId),
-                spanId: b64(span.spanId),
-                ...(span.parentSpanId ? { parentSpanId: b64(span.parentSpanId) } : {}),
+                traceId: span.traceId,
+                spanId: span.spanId,
+                ...(span.parentSpanId ? { parentSpanId: span.parentSpanId } : {}),
                 name: span.name,
                 kind: span.kind,
                 startTimeUnixNano: span.start,
@@ -136,6 +135,7 @@ async function exportSpan(span: Span, status: number, route: string): Promise<vo
       },
     ],
   }
+  pendingExports += 1
   try {
     // Telemetry does not transport any credentials, PII, URLs, request bodies,
     // raw error messages, tenant or subject identifiers.
@@ -149,6 +149,8 @@ async function exportSpan(span: Span, status: number, route: string): Promise<vo
     })
   } catch {
     // Missing OTLP evidence blocks independent L4; never changes grants.
+  } finally {
+    pendingExports -= 1
   }
 }
 
@@ -175,7 +177,7 @@ export async function withBffCredentialedHttpSpan<T>(
       status = result instanceof Response ? result.status : 200
       return result
     } finally {
-      await exportSpan(child, status, "credentialed_http")
+      void exportSpan(child, status, "credentialed_http")
     }
   })
 }
@@ -207,7 +209,7 @@ export async function withBffTrace(
       response.headers.set("traceparent", header(span))
       return response
     } finally {
-      await exportSpan(span, status, route)
+      void exportSpan(span, status, route)
       console.info("bff request completed", {
         route,
         status,
