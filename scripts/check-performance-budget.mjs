@@ -65,11 +65,7 @@ if (totalEmittedJavaScript > limits.totalJavaScript) {
     console.error(`${file.path}: ${(file.bytes / 1024).toFixed(2)} KiB`)
   }
 }
-assertWithin(
-  "All emitted client JavaScript",
-  totalEmittedJavaScript,
-  limits.totalJavaScript,
-)
+assertWithin("All emitted client JavaScript", totalEmittedJavaScript, limits.totalJavaScript)
 assertWithin(
   `Largest client chunk (${largestJavaScript.path})`,
   largestJavaScript.bytes,
