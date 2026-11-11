@@ -9,11 +9,11 @@
 
 All three estates use a **pnpm 11** package-manager declaration, a root `package.json`/`pnpm-lock.yaml`, a real `Dockerfile` and GitHub Actions workflows. Their `.baobab/repository.yaml` declares Node, container, digital-estate and `node: pnpm`. None of the three has a root `docker-compose.yml`; do not invent a Compose ecosystem just to increase coverage.
 
-| Dependabot ecosystem | Authoritative input | Qualifying action |
-| --- | --- | --- |
-| `github-actions` at `/` | `.github/workflows/*.yml` | Review SHA-pin/release provenance, including reusable Shared workflows |
-| `npm` at `/` | `package.json` and root `pnpm-lock.yaml` | Verify pnpm resolver and private Baobab Experience package integrity |
-| `docker` at `/` | root `Dockerfile` | Review base image provenance, applicable security advisories and digest-bound consumer |
+| Dependabot ecosystem    | Authoritative input                      | Qualifying action                                                                      |
+| ----------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------- |
+| `github-actions` at `/` | `.github/workflows/*.yml`                | Review SHA-pin/release provenance, including reusable Shared workflows                 |
+| `npm` at `/`            | `package.json` and root `pnpm-lock.yaml` | Verify pnpm resolver and private Baobab Experience package integrity                   |
+| `docker` at `/`         | root `Dockerfile`                        | Review base image provenance, applicable security advisories and digest-bound consumer |
 
 **Policy controls:** Existing default branch is implicitly authoritative. Do not set `target-branch: main` (GitHub security updates still target the default branch, but the entry's settings would apply to version updates only). Optional groups are restricted to `applies-to: version-updates` and `update-types: [minor, patch]`; majors must be assessed independently. Routine updates run weekly with Monday SAST schedules and nonzero PR limits. Security patch triage follows advisory urgency, not the weekly schedule.
 
@@ -41,6 +41,7 @@ Do not reinstate global `auditConfig.ignoreGhsas` or introduce an unconditional 
 Use explicit `SOURCE_COMMITTED`, `CI_VERIFIED`, `SECURITY_ALERT_PATH_VERIFIED`, `CONSUMER_QUALIFIED`, `WAIVED`, `BLOCKED`, `STAGING_VERIFIED` and `PRODUCTION_VERIFIED` where appropriate. File-level tests establish **source observations**, not live scanner results or proof of the configured release environment.
 
 This is a policy-adoption/change-safety increment only. Existing business identity, IAM/CP authority, tenant isolation, provider access, financial commitments and cross-border verification remain under their respective canonical owner and accepted ADRs.
+
 ## 5. ZuriBeans-specific findings and unresolved risks
 
 **PR:** [zuribeans #157](https://github.com/baobab-platform/zuribeans/pull/157).
