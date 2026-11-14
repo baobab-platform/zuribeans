@@ -47,11 +47,11 @@ jobs:
           # Corepack owns the global pnpm shim. Install native pnpm in a
           # dedicated prefix to avoid EEXIST and keep the selection explicit.
           mkdir -p "$RUNNER_TEMP/pnpm12"
-          npm install --global --prefix "$RUNNER_TEMP/pnpm12" --allow-scripts=pnpm --strict-allow-scripts --no-audit --no-fund pnpm@12.21.0
-          echo "$RUNNER_TEMP/pnpm12/bin" >> "$GITHUB_PATH"
+          npm install --prefix "$RUNNER_TEMP/pnpm12" --allow-scripts=pnpm --strict-allow-scripts --no-audit --no-fund pnpm@12.21.0
+          echo "$RUNNER_TEMP/pnpm12/node_modules/.bin" >> "$GITHUB_PATH"
           # npm 12 blocks dependency lifecycle scripts by default. Explicitly
           # permit only the reviewed pnpm installer in this isolated prefix.
-          test "$("$RUNNER_TEMP/pnpm12/bin/pnpm" --version)" = 12.21.0
+          test "$("$RUNNER_TEMP/pnpm12/node_modules/.bin/pnpm" --version)" = 12.21.0
           echo COREPACK_ENABLE_NETWORK=0 >> "$GITHUB_ENV"
           echo COREPACK_DEFAULT_TO_LATEST=0 >> "$GITHUB_ENV"
           echo COREPACK_ENABLE_DOWNLOAD_PROMPT=0 >> "$GITHUB_ENV"
