@@ -14,9 +14,10 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 
-auditConfig:
-  ignoreGhsas:
-    - GHSA-vfj7-8cjw-p6xm
+# BA-SEC-DEP-001: no unbounded auditConfig.ignoreGhsas suppression.
+# Upstream advisories (including GHSA-vfj7-8cjw-p6xm) must be reported,
+# patched or handled via the existing independently approved, expiring
+# Foundation exception governance. Never silently call an ignored advisory clean.
 
 # Immutable, publisher-verified Experience registry releases only.
 # Fixed-version exceptions are allowed only after independently verified

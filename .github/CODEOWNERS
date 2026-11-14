@@ -5,3 +5,6 @@
 /Dockerfile @baobab-platform/platform-engineering @baobab-platform/security
 /src/lib/ @baobab-platform/platform-engineering
 /SECURITY.md @baobab-platform/security
+/docs/security/dependency-maintenance.md @baobab-platform/platform-engineering @baobab-platform/security
+/scripts/tests/test_dependency_policy.py @baobab-platform/platform-engineering @baobab-platform/security
+/pnpm-workspace.yaml @baobab-platform/platform-engineering @baobab-platform/security
