@@ -6,7 +6,7 @@ async function expectNoAxeViolations(page: Page, include?: string) {
   // is open, audit its complete interactive subtree without repeatedly
   // traversing the background page in Firefox's axe frame evaluation.
   const builder = new AxeBuilder({ page }).exclude('[aria-hidden="true"]')
-  const results = await (include ? builder.include(include) : builder).analyze()
+  // The mobile navigation contains no frames. Prevent axe from traversing\n  // unrelated embedded frames while auditing this isolated dialog.\n  if (include) {\n    expect(await page.locator(`${include} iframe, ${include} frame`).count()).toBe(0)\n  }\n  const results = await (include ? builder.include(include).disableFrames() : builder).analyze()
   const violations = results.violations.flatMap(({ id, help, nodes }) =>
     nodes.map(
       ({ target, failureSummary }) =>
