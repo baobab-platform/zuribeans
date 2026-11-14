@@ -7,7 +7,7 @@ import { externalPackages, failureHint, bootstrap } from "./bootstrap.mjs"
 const root = resolve(fileURLToPath(new URL("../..", import.meta.url)))
 const config = JSON.parse(readFileSync(resolve(root, ".devcontainer/devcontainer.json"), "utf8"))
 const manifest = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"))
-test("private image pinned to publisher v1.4.4 digest and prebuild contains no registry auth", () => {
+test("private image pinned to publisher v1.5.1 digest and prebuild contains no registry auth", () => {
   assert.match(
     config.image,
     /^ghcr\.io\/baobab-platform\/baobab-dev:1\.4\.4(?:-frontend)?@sha256:[a-f0-9]{64}$/,
