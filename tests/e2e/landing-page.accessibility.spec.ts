@@ -1,8 +1,12 @@
 import AxeBuilder from "@axe-core/playwright"
 import { expect, test, type Page } from "@playwright/test"
 
-async function expectNoAxeViolations(page: Page) {
-  const results = await new AxeBuilder({ page }).exclude('[aria-hidden="true"]').analyze()
+async function expectNoAxeViolations(page: Page, include?: string) {
+  // The homepage receives a full-document audit above. When the mobile dialog
+  // is open, audit its complete interactive subtree without repeatedly
+  // traversing the background page in Firefox's axe frame evaluation.
+  const builder = new AxeBuilder({ page }).exclude('[aria-hidden="true"]')
+  const results = await (include ? builder.include(include) : builder).analyze()
   const violations = results.violations.flatMap(({ id, help, nodes }) =>
     nodes.map(
       ({ target, failureSummary }) =>
@@ -24,6 +28,6 @@ test.describe("landing page accessibility", () => {
     await page.goto("/")
     await page.getByRole("button", { name: "Menu" }).click()
     await expect(page.getByRole("dialog", { name: "Explore ZuriBeans" })).toBeVisible()
-    await expectNoAxeViolations(page)
+    await expectNoAxeViolations(page, '[role="dialog"][aria-label="Explore ZuriBeans"]')
   })
 })
