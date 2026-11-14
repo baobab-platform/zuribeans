@@ -1,7 +1,7 @@
 # DEV10-R3: disposable CI compatibility probe, not published image / Codespaces evidence.
 # The committed Node24/pnpm11 lock is preserved. Candidate lock regeneration is
 # confined to this job checkout; adoption requires separate reviewed owner PR.
-name: DEV10 R3 Node26 pnpm12 Playwright Compatibility
+name: DEV10 R3 Node26 pnpm12 Playwright 165 Compatibility
 on:
   pull_request:
     paths: [".github/workflows/dev10-r3-lts-probe.yml"]
@@ -44,14 +44,10 @@ jobs:
           test "$(corepack --version)" = 0.36.0
           native_dir="$RUNNER_TEMP/dev10-native-pnpm"
           mkdir -p "$native_dir/bin" "$native_dir/unpack"
-          curl -fsSL --retry 3 -o "$native_dir/pnpm.tar.gz"             "https://github.com/pnpm/pnpm/releases/download/v12.16.1/pnpm-linux-x64.tar.gz"
-          printf '%s  %s\n'             "565ff81174a14f6f7bd5d84c1b17e51031a80230d370a1fe24be5d16bd02a825"             "$native_dir/pnpm.tar.gz" | sha256sum -c -
-          tar -xzf "$native_dir/pnpm.tar.gz" -C "$native_dir/unpack"
-          bin="$(find "$native_dir/unpack" -type f \( -name pnpm -o -name pnpm-linux-x64 \) -print -quit)"
-          test -n "$bin" && test -f "$bin"
-          install -m 0755 "$bin" "$native_dir/bin/pnpm"
-          (cd "$RUNNER_TEMP"; test "$("$native_dir/bin/pnpm" --version)" = 12.16.1)
-          echo "$native_dir/bin" >> "$GITHUB_PATH"
+          # Install the candidate from its official npm package in this disposable CI job.
+          # npm verifies the registry package integrity; no unreviewed archive hash.
+          npm install --global --no-audit --no-fund pnpm@12.21.0
+          test "$(pnpm --version)" = 12.21.0
           echo COREPACK_ENABLE_NETWORK=0 >> "$GITHUB_ENV"
           echo COREPACK_DEFAULT_TO_LATEST=0 >> "$GITHUB_ENV"
           echo COREPACK_ENABLE_DOWNLOAD_PROMPT=0 >> "$GITHUB_ENV"
@@ -63,10 +59,10 @@ jobs:
           for(const path of ['package.json','frontend/package.json']){
             if(!fs.existsSync(path))continue;
             const p=JSON.parse(fs.readFileSync(path,'utf8'));
-            if(path==='package.json')p.packageManager='pnpm@12.16.1';
+            if(path==='package.json')p.packageManager='pnpm@12.21.0';
             if(p.engines)p.engines.node='>=26.13.0 <27';
-            if(p.devDependencies?.['@playwright/test'])p.devDependencies['@playwright/test']='1.64.1';
-            if(p.devDependencies?.playwright)p.devDependencies.playwright='1.64.1';
+            if(p.devDependencies?.['@playwright/test'])p.devDependencies['@playwright/test']='1.65.0';
+            if(p.devDependencies?.playwright)p.devDependencies.playwright='1.65.0';
             fs.writeFileSync(path,JSON.stringify(p,null,2)+'\n');
           }
           NODE
@@ -83,9 +79,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(pnpm --version)" = 12.16.1
+          test "$(pnpm --version)" = 12.21.0
           pnpm install --lockfile-only --ignore-scripts
           pnpm install --frozen-lockfile
+      - name: Validate candidate dependency alignment
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e 'const p=require("./package.json"); if(p.packageManager!=="pnpm@12.21.0"||p.devDependencies.playwright!=="1.65.0"||p.devDependencies["@playwright/test"]!=="1.65.0")process.exit(1)'
+          pnpm exec playwright --version
       - name: Owner source unit, lint, type and production build
         env:
           MEDUSA_BACKEND_URL: http://localhost:9000
@@ -101,7 +103,7 @@ jobs:
           pnpm db:migrate
           pnpm run test
           pnpm run build
-      - name: Qualify Playwright 1.64.1 browser executable and live E2E
+      - name: Qualify Playwright 1.65.0 browser executable and live E2E
         env:
           MEDUSA_BACKEND_URL: http://localhost:9000
           NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: pk_ci_e2e_only
@@ -111,6 +113,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(pnpm exec playwright --version)" = 'Version 1.64.1'
+          test "$(pnpm exec playwright --version)" = 'Version 1.65.0'
           pnpm exec playwright install --with-deps chromium firefox webkit
           pnpm run test:e2e
