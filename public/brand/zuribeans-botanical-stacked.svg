@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="430" viewBox="0 0 720 430" role="img" aria-labelledby="title desc"><title id="title">ZuriBeans stacked logo</title><desc id="desc">Botanical seed-and-leaf emblem above the ZURIBEANS name; no commodities tagline.</desc><g transform="translate(232,-5) scale(1)"><g id="zuribeans-symbol">
+  <!-- Botanical crown: two leaves growing from the central seed. -->
+  <path fill="#2E5A4C" d="M124 101C82 93 56 66 53 34c36 4 64 29 71 67Z"/>
+  <path fill="#0F2C24" d="M132 100c8-48 40-75 82-82-2 43-33 74-82 82Z"/>
+  <!-- Two interlocking seed lobes, deliberately asymmetrical as in the selected concept. -->
+  <path fill="#FCA300" d="M117 113C94 94 67 104 48 128c-20 25-25 57-11 82 12 22 35 34 70 30-20-43-19-87 10-127Z"/>
+  <path fill="#C9A227" d="M130 113c32-17 68-8 87 17 17 22 21 52 8 77-13 27-40 39-81 33 20-43 18-83-14-127Z"/>
+  <!-- Seed fissure and highlight preserve the reference's distinctive negative-space sweep. -->
+  <path fill="#0F2C24" d="M109 130c-22 30-27 63-14 95-17-13-29-33-32-54 10-19 25-33 46-41Z" opacity=".95"/>
+  <path fill="#FFFDF8" d="M146 225c29-35 40-67 35-98 20 19 24 47 12 69-10 17-25 26-47 29Z"/>
+  <path fill="#FFFDF8" d="M122 99c-7-20-21-36-43-49 24 8 40 25 43 49ZM134 98c14-28 34-45 59-55-29 20-45 38-59 55Z" opacity=".9"/>
+</g></g><text x="360" y="353" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="82" font-weight="800" letter-spacing="-1.7" fill="#0F2C24">ZURIBEANS</text></svg>
