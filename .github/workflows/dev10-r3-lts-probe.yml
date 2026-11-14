@@ -44,8 +44,11 @@ jobs:
           test "$(corepack --version)" = 0.36.0
           # Install the candidate from its official npm package in this disposable CI job.
           # npm verifies the registry package integrity; no unreviewed archive hash.
-          npm install --global --no-audit --no-fund pnpm@12.21.0
-          test "$(pnpm --version)" = 12.21.0
+          # Corepack owns the global pnpm shim. Install native pnpm in a
+          # dedicated prefix to avoid EEXIST and keep the selection explicit.
+          npm install --prefix "$RUNNER_TEMP/pnpm12" --no-audit --no-fund pnpm@12.21.0
+          echo "$RUNNER_TEMP/pnpm12/node_modules/.bin" >> "$GITHUB_PATH"
+          test "$("$RUNNER_TEMP/pnpm12/node_modules/.bin/pnpm" --version)" = 12.21.0
           echo COREPACK_ENABLE_NETWORK=0 >> "$GITHUB_ENV"
           echo COREPACK_DEFAULT_TO_LATEST=0 >> "$GITHUB_ENV"
           echo COREPACK_ENABLE_DOWNLOAD_PROMPT=0 >> "$GITHUB_ENV"
