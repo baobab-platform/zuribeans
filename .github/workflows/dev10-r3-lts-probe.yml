@@ -46,7 +46,9 @@ jobs:
           # npm verifies the registry package integrity; no unreviewed archive hash.
           # Corepack owns the global pnpm shim. Install native pnpm in a
           # dedicated prefix to avoid EEXIST and keep the selection explicit.
-          mkdir -p "$RUNNER_TEMP/pnpm12"
+          # npm 12 resolves <prefix>/lib during global installation; pre-create
+          # its expected layout on the ephemeral runner to avoid ENOENT lstat.
+          mkdir -p "$RUNNER_TEMP/pnpm12/lib/node_modules" "$RUNNER_TEMP/pnpm12/bin"
           npm install --global --prefix "$RUNNER_TEMP/pnpm12" --allow-scripts=pnpm --strict-allow-scripts --no-audit --no-fund pnpm@12.21.0
           echo "$RUNNER_TEMP/pnpm12/bin" >> "$GITHUB_PATH"
           # npm 12 blocks dependency lifecycle scripts by default. Explicitly
