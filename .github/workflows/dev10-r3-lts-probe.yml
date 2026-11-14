@@ -35,15 +35,13 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "26.13.0"
-      - name: Install official checksum-verified native pnpm12 and exact Corepack
+      - name: Install pinned npm-registry pnpm 12 candidate and Corepack
         shell: bash
         run: |
           set -euo pipefail
           test "$(node --version)" = v26.13.0
-          npm install --global corepack@0.36.0
+          npm install --global --no-audit --no-fund corepack@0.36.0
           test "$(corepack --version)" = 0.36.0
-          native_dir="$RUNNER_TEMP/dev10-native-pnpm"
-          mkdir -p "$native_dir/bin" "$native_dir/unpack"
           # Install the candidate from its official npm package in this disposable CI job.
           # npm verifies the registry package integrity; no unreviewed archive hash.
           npm install --global --no-audit --no-fund pnpm@12.21.0
