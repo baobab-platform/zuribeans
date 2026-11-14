@@ -12,9 +12,13 @@
   "containerEnv": {
     "TZ": "Africa/Johannesburg",
     "NEXT_TELEMETRY_DISABLED": "1",
-    "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0"
+    "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0",
+    "COREPACK_HOME": "/home/vscode/.cache/baobab-corepack"
   },
-  "forwardPorts": [3000, 6006],
+  "forwardPorts": [
+    3000,
+    6006
+  ],
   "portsAttributes": {
     "3000": {
       "label": "ZuriBeans Next.js",
@@ -32,7 +36,7 @@
     "onAutoForward": "silent"
   },
   "updateContentCommand": "node --test scripts/codespaces/*.node.mjs",
-  "postCreateCommand": "node scripts/codespaces/bootstrap.mjs && baobab-verify --contract",
+  "postCreateCommand": "mkdir -p \"$COREPACK_HOME\" && node scripts/codespaces/bootstrap.mjs && baobab-verify --contract",
   "postStartCommand": "node scripts/codespaces/private-npm.mjs",
   "waitFor": "postCreateCommand",
   "customizations": {
@@ -51,7 +55,9 @@
           }
         }
       },
-      "openFiles": ["README.md"]
+      "openFiles": [
+        "README.md"
+      ]
     },
     "vscode": {
       "extensions": [
