@@ -46,13 +46,11 @@ jobs:
           # npm verifies the registry package integrity; no unreviewed archive hash.
           # Corepack owns the global pnpm shim. Install native pnpm in a
           # dedicated prefix to avoid EEXIST and keep the selection explicit.
-          npm install --prefix "$RUNNER_TEMP/pnpm12" --no-audit --no-fund pnpm@12.21.0
-          echo "$RUNNER_TEMP/pnpm12/node_modules/.bin" >> "$GITHUB_PATH"
-          # npm 12 may suppress pnpm's lifecycle installer. Exercise the
-          # package's direct JS entrypoint and fail with actionable diagnostics.
-          test -f "$RUNNER_TEMP/pnpm12/node_modules/pnpm/bin/pnpm.cjs"
-          node "$RUNNER_TEMP/pnpm12/node_modules/pnpm/bin/pnpm.cjs" --version
-          test "$(node "$RUNNER_TEMP/pnpm12/node_modules/pnpm/bin/pnpm.cjs" --version)" = 12.21.0
+          npm install --global --prefix "$RUNNER_TEMP/pnpm12" --allow-scripts=pnpm --strict-allow-scripts --no-audit --no-fund pnpm@12.21.0
+          echo "$RUNNER_TEMP/pnpm12/bin" >> "$GITHUB_PATH"
+          # npm 12 blocks dependency lifecycle scripts by default. Explicitly
+          # permit only the reviewed pnpm installer in this isolated prefix.
+          test "$("$RUNNER_TEMP/pnpm12/bin/pnpm" --version)" = 12.21.0
           echo COREPACK_ENABLE_NETWORK=0 >> "$GITHUB_ENV"
           echo COREPACK_DEFAULT_TO_LATEST=0 >> "$GITHUB_ENV"
           echo COREPACK_ENABLE_DOWNLOAD_PROMPT=0 >> "$GITHUB_ENV"
