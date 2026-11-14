@@ -28,6 +28,6 @@ test.describe("landing page accessibility", () => {
     await page.goto("/")
     await page.getByRole("button", { name: "Menu" }).click()
     await expect(page.getByRole("dialog", { name: "Explore ZuriBeans" })).toBeVisible()
-    await expectNoAxeViolations(page, '[role="dialog"][aria-label="Explore ZuriBeans"]')
+    await expectNoAxeViolations(page, '[role="dialog"]')
   })
 })
