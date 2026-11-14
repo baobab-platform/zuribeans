@@ -84,11 +84,12 @@ export function bootstrap({
       )
     const a = run(process.execPath, [join(root, "scripts/codespaces/private-npm.mjs")])
     if (a.error || a.status !== 0) throw Error("private npm user-level configuration denied")
-    const v = run("pnpm", ["--version"])
+    const v = run("corepack", ["pnpm", "--version"])
     if (v.error || v.status !== 0 || v.stdout?.trim() !== "11.24.0")
       throw Error("incorrect pnpm toolchain")
     for (const [name, version] of packages) {
-      const probe = run("pnpm", [
+      const probe = run("corepack", [
+        "pnpm",
         "view",
         name + "@" + version,
         "version",
@@ -104,7 +105,7 @@ export function bootstrap({
       }
       log("Private package read verified: " + name + "@" + version)
     }
-    const install = run("pnpm", ["install", "--frozen-lockfile"], 15 * 60 * 1000)
+    const install = run("corepack", ["pnpm", "install", "--frozen-lockfile"], 15 * 60 * 1000)
     if (install.error || install.status !== 0)
       throw Error("frozen dependency installation failed: " + failureHint(install.stderr))
     log("Pinned Codespaces dependencies installed successfully.")
