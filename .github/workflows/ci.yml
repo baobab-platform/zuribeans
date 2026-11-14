@@ -63,6 +63,17 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           printf '//npm.pkg.github.com/:_authToken=%s\n' "$NODE_AUTH_TOKEN" > "$HOME/.npmrc"
+      # The v1.5.1 development image supplies pnpm 12.16.1, but this estate's
+      # committed pnpm 11.24.0 toolchain and lockfile remain authoritative.
+      # Install the exact project toolchain without bypassing package-manager
+      # version enforcement or changing the image's global pnpm executable.
+      - name: Select exact pnpm 11.24.0 project toolchain
+        run: |
+          set -eu
+          toolchain_dir="${RUNNER_TEMP}/zuribeans-pnpm-11"
+          npm install --prefix "$toolchain_dir" --no-save --ignore-scripts --no-audit --no-fund pnpm@11.24.0
+          printf '%s\n' "$toolchain_dir/node_modules/.bin" >> "$GITHUB_PATH"
+          test "$("$toolchain_dir/node_modules/.bin/pnpm" --version)" = "11.24.0"
       - name: Install exact published BXS dependencies
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
