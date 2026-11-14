@@ -56,6 +56,16 @@ jobs:
           test "$task_source_sha" = "$DEV11_EXPECTED_SOURCE_SHA"
           mkdir -p reports
           printf '%s\n' "$task_source_sha" > reports/dev11-source-sha.txt
+      # The frontend-e2e image is a development toolchain, not the estate's
+      # application runtime. Qualify browser and build gates on the declared
+      # Node 24 line, not the image's newer Node 26 default.
+      - name: Select supported Node 24 runtime
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24.21.0"
+      - name: Assert supported application runtime
+        run: |
+          node -e 'const major=Number(process.versions.node.split(".")[0]); if(major!==24) { console.error("Expected Node 24, got "+process.version); process.exit(1) }'
       - name: Audit Medusa 2.21.2 Store consumer inventory (static only)
         run: node scripts/verify-medusa-2212-consumer.mjs
       - name: Prepare transient user-level npm authentication
@@ -78,8 +88,8 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm install --frozen-lockfile
-      # The governed image carries 1.62.1 browsers. Install the exact revisions
-      # required by this repository's synchronized 1.63.0 client before any suite.
+      # The image browsers may differ from the repository's lockfile. Install
+      # exact synchronized Playwright revisions before browser qualification.
       - name: Install synchronized Playwright browser revisions
         run: pnpm exec playwright install --with-deps chromium firefox webkit
       - name: Preserve earlier gate originals after an unscoped Playwright invocation
