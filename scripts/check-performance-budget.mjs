@@ -56,11 +56,16 @@ const largestImage = publicImages.reduce(
   { path: "none", bytes: 0 },
 )
 
-assertWithin(
-  "All emitted client JavaScript",
-  javascript.reduce((total, file) => total + file.bytes, 0),
-  limits.totalJavaScript,
-)
+const totalEmittedJavaScript = javascript.reduce((total, file) => total + file.bytes, 0)
+if (totalEmittedJavaScript > limits.totalJavaScript) {
+  // Diagnostic only. Preserve the fail-closed 800 KiB gate, but report the
+  // largest immutable Next.js production artifacts for actual remediation.
+  console.error("Largest emitted client JavaScript chunks (production build):")
+  for (const file of [...javascript].sort((a, b) => b.bytes - a.bytes).slice(0, 20)) {
+    console.error(`${file.path}: ${(file.bytes / 1024).toFixed(2)} KiB`)
+  }
+}
+assertWithin("All emitted client JavaScript", totalEmittedJavaScript, limits.totalJavaScript)
 assertWithin(
   `Largest client chunk (${largestJavaScript.path})`,
   largestJavaScript.bytes,
