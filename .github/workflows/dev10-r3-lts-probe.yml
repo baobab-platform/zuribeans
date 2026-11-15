@@ -61,7 +61,8 @@ jobs:
             echo "::error::Isolated pnpm executable missing or not executable after npm installation"
             exit 1
           fi
-          actual_pnpm_version="$("$RUNNER_TEMP/pnpm12/bin/pnpm" --version)"
+          # Verify outside checkout: the committed packageManager selects pnpm 11 until candidate manifests are staged.
+          actual_pnpm_version="$(cd "$RUNNER_TEMP" && "$RUNNER_TEMP/pnpm12/bin/pnpm" --version)"
           printf "Candidate pnpm version: %s\\n" "$actual_pnpm_version"
           if [ "$actual_pnpm_version" != 12.21.0 ]; then
             echo "::error::Expected pnpm 12.21.0, received $actual_pnpm_version"
