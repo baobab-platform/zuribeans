@@ -53,7 +53,21 @@ jobs:
           echo "$RUNNER_TEMP/pnpm12/bin" >> "$GITHUB_PATH"
           # npm 12 blocks dependency lifecycle scripts by default. Explicitly
           # permit only the reviewed pnpm installer in this isolated prefix.
-          test "$("$RUNNER_TEMP/pnpm12/bin/pnpm" --version)" = 12.21.0
+          echo "::group::Candidate pnpm executable diagnostics"
+          npm --version
+          npm root --global --prefix "$RUNNER_TEMP/pnpm12"
+          ls -la "$RUNNER_TEMP/pnpm12/bin" "$RUNNER_TEMP/pnpm12/lib/node_modules/pnpm" || true
+          if [ ! -x "$RUNNER_TEMP/pnpm12/bin/pnpm" ]; then
+            echo "::error::Isolated pnpm executable missing or not executable after npm installation"
+            exit 1
+          fi
+          actual_pnpm_version="$("$RUNNER_TEMP/pnpm12/bin/pnpm" --version)"
+          printf "Candidate pnpm version: %s\\n" "$actual_pnpm_version"
+          if [ "$actual_pnpm_version" != 12.21.0 ]; then
+            echo "::error::Expected pnpm 12.21.0, received $actual_pnpm_version"
+            exit 1
+          fi
+          echo "::endgroup::"
           echo COREPACK_ENABLE_NETWORK=0 >> "$GITHUB_ENV"
           echo COREPACK_DEFAULT_TO_LATEST=0 >> "$GITHUB_ENV"
           echo COREPACK_ENABLE_DOWNLOAD_PROMPT=0 >> "$GITHUB_ENV"
