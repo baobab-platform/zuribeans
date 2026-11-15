@@ -49,3 +49,23 @@ The isolated prefix is a **probe-only technique**, not a recommendation to make 
 ## Version drift warning
 
 The ZuriBeans PR #168 disposable probe targets Node 26.13.0, pnpm 12.21.0 and Playwright 1.65.0; the baobab-dev source manifest observed during this investigation targets Node 26.13.1 and pnpm 12.16.1. The eventual image version manifest, not these independently selected probe numbers, determines production consumer pins. A successful probe for one version does **not** certify another.
+
+## Codespaces v1.5.2 candidate consumer preflight (shared estate pattern)
+
+The `frontend` profile supplies Node, npm, native pnpm and separately installed Corepack. It **does not** supply browser binaries; `frontend-e2e` is the browser-equipped profile. Never run `npm install -g pnpm` or `corepack enable` in `postCreateCommand`: these can overwrite or shadow the image's verified native pnpm.
+
+ZuriBeans now includes `scripts/codespaces/dev10-v152-preflight.mjs`. In a **disposable candidate Codespace**, after the exact v1.5.2 image digest is available and the repository's packageManager/lockfile have been updated and qualified, run:
+
+```bash
+BAOBAB_EXPECT_NODE_MAJOR=26 \
+BAOBAB_EXPECT_PNPM=12.21.0 \
+BAOBAB_EXPECT_COREPACK=0.36.0 \
+BAOBAB_EXPECT_PLAYWRIGHT=1.65.0 \
+node scripts/codespaces/dev10-v152-preflight.mjs
+```
+
+The values above describe the successful ZuriBeans disposable Actions probe, **not** the final v1.5.2 image contract. Use the versions actually published in the image's immutable manifest. For `frontend-e2e`, set `BAOBAB_REQUIRE_BROWSERS=1` to check Playwright browser resolution; separately execute `pnpm run test:e2e` for a real browser acceptance test. The preflight is read-only and refuses mismatches; it does not certify image provenance or private-package authorization.
+
+The existing ZuriBeans `bootstrap.mjs` intentionally requires Node 24/pnpm 11 and invokes `corepack pnpm`; it must be migrated together with the committed packageManager, lockfile and image digest. Do not switch only the image tag and leave the old bootstrap: Codespaces would fail or select the wrong package manager. In the v1.5.2 consumer migration, invoke native `pnpm` directly for private BXS metadata checks and `pnpm install --frozen-lockfile`, with `pnpm_config_pm_on_fail=error`.
+
+**Evidence:** ZuriBeans PR #168 Actions probe run 43670200780 passed 311 Playwright 1.65.0 E2E tests across configured browser projects, plus candidate dependency install, source tests and build. This is **not** a disposable Codespaces run or published v1.5.2 image verification. Nabhold, Thamani and Equator & Estate must each qualify their own manifests, browser suites and private package access; shared profile does not imply identical application behavior.
