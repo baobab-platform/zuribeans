@@ -1,6 +1,6 @@
 {
   "name": "ZuriBeans — Baobab private packages",
-  "image": "ghcr.io/baobab-platform/baobab-dev:1.5.1-frontend@sha256:388d604293fc6a2046d1abb9c7b80b32e78c6003636b091d1e9c7c827e34766d",
+  "image": "ghcr.io/baobab-platform/baobab-dev:1.4.4",
   "remoteUser": "vscode",
   "updateRemoteUserUID": true,
   "init": true,
@@ -14,7 +14,10 @@
     "NEXT_TELEMETRY_DISABLED": "1",
     "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0"
   },
-  "forwardPorts": [3000, 6006],
+  "forwardPorts": [
+    3000,
+    6006
+  ],
   "portsAttributes": {
     "3000": {
       "label": "ZuriBeans Next.js",
@@ -31,8 +34,7 @@
     "visibility": "private",
     "onAutoForward": "silent"
   },
-  "updateContentCommand": "node --test scripts/codespaces/*.node.mjs",
-  "postCreateCommand": "node scripts/codespaces/bootstrap.mjs && baobab-verify --contract",
+  "postCreateCommand": "node --version",
   "postStartCommand": "node scripts/codespaces/private-npm.mjs",
   "waitFor": "postCreateCommand",
   "customizations": {
@@ -51,7 +53,9 @@
           }
         }
       },
-      "openFiles": ["README.md"]
+      "openFiles": [
+        "README.md"
+      ]
     },
     "vscode": {
       "extensions": [
@@ -59,6 +63,11 @@
         "esbenp.prettier-vscode",
         "bradlc.vscode-tailwindcss"
       ]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24.21.0"
     }
   }
 }
