@@ -7,16 +7,14 @@ import { externalPackages, failureHint, bootstrap } from "./bootstrap.mjs"
 const root = resolve(fileURLToPath(new URL("../..", import.meta.url)))
 const config = JSON.parse(readFileSync(resolve(root, ".devcontainer/devcontainer.json"), "utf8"))
 const manifest = JSON.parse(readFileSync(resolve(root, "package.json"), "utf8"))
-test("private image pinned to publisher v1.5.1 digest and prebuild contains no registry auth", () => {
-  assert.match(
-    config.image,
-    /^ghcr\.io\/baobab-platform\/baobab-dev:1\.5\.1-frontend@sha256:[a-f0-9]{64}$/,
-  )
+test("Codespaces uses verified v1.4.4 image with nonblocking startup", () => {
+  assert.equal(config.image, "ghcr.io/baobab-platform/baobab-dev:1.4.4")
   assert.equal(config.remoteUser, "vscode")
   assert.equal(config.waitFor, "postCreateCommand")
-  assert.match(config.updateContentCommand, /node --test/)
-  assert.doesNotMatch(config.updateContentCommand, /install|private-npm|bootstrap/)
-  assert.match(config.postCreateCommand, /bootstrap\.mjs/)
+  assert.equal(config.updateContentCommand, undefined)
+  assert.doesNotMatch(config.postCreateCommand, /install|private-npm|bootstrap/)
+  assert.equal(config.postCreateCommand, "node --version")
+  assert.equal(config.features["ghcr.io/devcontainers/features/node:1"].version, "24.21.0")
   assert.equal(config.portsAttributes["3000"]?.visibility, "private")
   assert.equal(config.otherPortsAttributes.visibility, "private")
   assert.equal(config.containerEnv.GITHUB_TOKEN, undefined)
