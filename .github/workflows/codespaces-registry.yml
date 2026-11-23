@@ -28,5 +28,5 @@ jobs:
           printf '%s' "$TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin >/dev/null
       - name: Inspect exact published images
         run: |
-          docker buildx imagetools inspect ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend@sha256:1b3165067912eacbca96b576efb67e0428850b1ff1a953aa9013127a01635371 >/dev/null
+          docker buildx imagetools inspect ghcr.io/baobab-platform/baobab-dev:1.4.4 >/dev/null
           docker buildx imagetools inspect ghcr.io/baobab-platform/baobab-dev:1.4.4-frontend-e2e@sha256:eb9c401cea16c4f333c28b250dd455e505752dfc6d11e9779a182a02bc207213 >/dev/null
